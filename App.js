@@ -20,10 +20,10 @@ const mockData = {
 
 export default function App() {
   return (
+    // <LoginScreen/>
     // <DashboardScreen/>
     // <ItemCard/>
-    <LoginScreen/>
-    // <BudgetScreen {...mockData}/>
+    <BudgetScreen {...mockData}/>
     // <CreateBudgetScreen/>
   );
 }
