@@ -4,6 +4,8 @@ import DashboardScreen from "./app/screens/DashboardScreen";
 import BudgetScreen from "./app/screens/BudgetScreen";
 import PromptBox from "./app/components/PromptBox";
 import CreateBudgetScreen from "./app/screens/CreateBudgetScreen";
+import ItemCard from "./app/components/ItemCard";
+import LoginScreen from "./app/screens/LoginScreen";
 
 const mockData = {
   totalBudget: 100000,
@@ -19,7 +21,9 @@ const mockData = {
 export default function App() {
   return (
     // <DashboardScreen/>
-    <BudgetScreen {...mockData}/>
+    // <ItemCard/>
+    <LoginScreen/>
+    // <BudgetScreen {...mockData}/>
     // <CreateBudgetScreen/>
   );
 }

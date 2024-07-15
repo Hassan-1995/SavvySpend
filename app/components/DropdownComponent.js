@@ -4,15 +4,11 @@ import { Picker } from "@react-native-picker/picker";
 import defaultStyles from "../config/styles";
 import AppText from "./AppText";
 
-const options = [
-  { label: "Java", value: "java" },
-  { label: "JavaScript", value: "js" },
-  { label: "Python", value: "python" },
-  { label: "C++", value: "cpp" },
-];
+
 
 function DropdownComponent({ dropdownOptions }) {
   const [selectedValue, setSelectedValue] = useState("java");
+
 
   return (
     <View style={styles.container}>

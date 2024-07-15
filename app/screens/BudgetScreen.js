@@ -17,11 +17,10 @@ import colors from "../config/colors";
 import LogoContainer from "../components/LogoContainer";
 import ProgressBar from "../components/ProgressBar";
 import Screen from "../components/Screen";
-import TableCol4 from "../components/TableCol4";
 import BudgetTable from "../components/BudgetTable";
 import PromptBox from "../components/PromptBox";
-import AppButton from "../components/AppButton";
 import Icon from "../components/Icon";
+import ItemCard from "../components/ItemCard";
 
 const chartConfig = {
   backgroundColor: "#fff",
@@ -36,17 +35,8 @@ const chartConfig = {
     strokeWidth: "2",
     stroke: "#ffa726",
   },
-  // backgroundGradientFrom: "#1E2923",
-  // backgroundGradientTo: "#08130D",
-  // color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-  // labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-  // strokeWidth: 5, // optional, default 3
-  // barPercentage: 0.25,
-  // useShadowColorFromDataset: false, // optional
-  // backgroundGradientFrom: "#1E2923",
   backgroundGradientFrom: "transparent",
   backgroundGradientFromOpacity: 0,
-  // backgroundGradientTo: "#08130D",
   backgroundGradientTo: "transparent",
   backgroundGradientToOpacity: 0,
   color: (opacity = 1) => `rgba(255, 82, 82, ${opacity})`,
@@ -70,6 +60,21 @@ const incomeOptions = [
   { label: "Other", value: "other" },
 ];
 
+const utilityOptions = [
+  { label: "Electricity", value: "electricity" },
+  { label: "Water", value: "water" },
+  { label: "Internet", value: "internet" },
+  { label: "Gas", value: "gas" },
+  { label: "Trash Collection", value: "trash" },
+  { label: "Cable TV", value: "cable_tv" },
+  { label: "Mobile Phone", value: "mobile_phone" },
+  { label: "Home Security", value: "home_security" },
+  { label: "Home Maintenance", value: "home_maintenance" },
+  { label: "Insurance", value: "insurance" },
+  { label: "Sewer", value: "sewer" },
+  { label: "Heating", value: "heating" },
+];
+
 const utilityExpenses = [
   { id: 1, name: "Electricity", expense: 1500, date: "01-Jan-24" },
   { id: 2, name: "Water", expense: 800, date: "02-Jan-24" },
@@ -78,9 +83,9 @@ const utilityExpenses = [
   { id: 5, name: "Trash Collection", expense: 400, date: "05-Jan-24" },
   { id: 6, name: "Cable TV", expense: 700, date: "06-Jan-24" },
   { id: 7, name: "Mobile Phone", expense: 900, date: "07-Jan-24" },
-  { id: 8, name: "Home Security", expense: 300, date: "08-Jan-24" },
   { id: 9, name: "Home Maintenance", expense: 1000, date: "09-Jan-24" },
   { id: 10, name: "Insurance", expense: 1300, date: "10-Jan-24" },
+  { id: 8, name: "Home Security", expense: 300, date: "08-Jan-24" },
 ];
 
 const budgetData = [
@@ -168,7 +173,7 @@ const chartColor = ["#104b7d", "#1b598b", "#266799", "#3175a7", "#3c81b5"];
 
 function BudgetScreen({ totalBudget, totalExpenses, categories }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [editBudget, setEditBudget] = useState();
+  const [label, setLabel] = useState();
 
   const barChartData = {
     labels: budgetData.map((item) => item.month),
@@ -211,9 +216,9 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
     ],
   };
 
-  const handleModal = () => {
-    // setEditBudget();
-    // console.log(editBudget);
+  const handleModal = (value) => {
+    setLabel(value)
+    console.log(label);
     toggleModal();
   };
 
@@ -267,7 +272,7 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
           <AppText style={styles.subHeader}>Utilities</AppText>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <AppText style={styles.links}>Add Utility</AppText>
-            <TouchableOpacity onPress={handleModal}>
+            <TouchableOpacity onPress={()=>handleModal('Add new utility.')}>
               <Icon
                 name={"circle-edit-outline"}
                 iconColor={colors.primary}
@@ -277,6 +282,17 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
             </TouchableOpacity>
           </View>
         </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {utilityExpenses.map((item) => (
+            <ItemCard
+              key={item.id}
+              name={item.name}
+              onClick={(value) => handleModal(value)}
+            />
+          ))}
+        </ScrollView>
+
         <BudgetTable
           assets={utilityExpenses}
           onClick={(value) => handleModal(value)}
@@ -318,7 +334,11 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
 
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         {/* <AppButton title={"CLose"} onPress={toggleModal}/> */}
-        <PromptBox  onClick={toggleModal} add={'Utility'} dropdownOptions={incomeOptions} />
+        <PromptBox
+          onClick={toggleModal}
+          label={label}
+          dropdownOptions={utilityOptions}
+        />
       </Modal>
     </Screen>
   );

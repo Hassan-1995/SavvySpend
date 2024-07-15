@@ -7,7 +7,7 @@ import colors from "../config/colors";
 
 function BudgetTable({ assets, onClick }) {
   const handleEdit = (value) => {
-    onClick(value);
+    onClick("Edit " + value);
   };
 
   return (
@@ -15,24 +15,22 @@ function BudgetTable({ assets, onClick }) {
       <View style={styles.tableHeader}>
         <AppText style={[styles.cell, styles.headerCell]}>Particulars</AppText>
         <AppText style={[styles.cell, styles.headerCell]}>Budget</AppText>
-        <AppText style={[styles.cell, styles.headerCell]}>Expense</AppText>
-        <AppText style={[styles.cell, styles.headerCell]}>Net</AppText>
+        <AppText style={[styles.cell, styles.headerCell]}>Edit</AppText>
       </View>
       <ScrollView>
         {assets.map((item) => (
           <View key={item.id} style={styles.row}>
-            <AppText style={styles.cell}>{item.name}</AppText>
-            <AppText style={styles.cell}>Rs {item.expense}</AppText>
-            <AppText style={styles.cell}>Rs {item.expense}</AppText>
-
-            <AppText
-              style={[
-                styles.cell,
-                { color: item.isPositive ? colors.income : colors.expense },
-              ]}
-            >
-              Rs {Math.abs(item.expense - item.expense).toLocaleString()}
-            </AppText>
+            <AppText style={[styles.cell, {textAlign: 'left'}]}>{item.name}</AppText>
+            <AppText style={[styles.cell, {textAlign: 'right'}]}>Rs {item.expense}</AppText>
+            {/* <AppText style={styles.cell}>Rs {item.expense}</AppText> */}
+            <TouchableOpacity style={styles.cell} onPress={() => handleEdit(item.name)}>
+              <Icon
+                name={"circle-edit-outline"}
+                iconColor={colors.primary}
+                backgroundColor="transparent"
+                size={30}
+              />
+            </TouchableOpacity>
           </View>
         ))}
       </ScrollView>
@@ -65,7 +63,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignSelf: "center",
     alignItems: "flex-end",
-    textAlign: "right",
   },
   headerCell: {
     fontWeight: "bold",

@@ -5,17 +5,17 @@ import AppText from "./AppText";
 import AppButton from "./AppButton";
 import Icon from "./Icon";
 import colors from "../config/colors";
-
+import defaultStyles from "../config/styles";
 import AppTextInput from "./AppTextInput";
 import DropdownComponent from "./DropdownComponent";
 
-function PromptBox({ onClick, add, dropdownOptions }) {
+function PromptBox({ onClick, label, dropdownOptions }) {
   // console.log(assets);
   return (
     <View style={styles.container}>
       <View style={styles.promptContainer}>
         <View style={styles.titleContainer}>
-          <AppText style={styles.title}>Add {add}</AppText>
+          <AppText style={styles.title}>{label}</AppText>
           <TouchableOpacity onPress={onClick}>
             <Icon
               name={"close"}
@@ -26,18 +26,22 @@ function PromptBox({ onClick, add, dropdownOptions }) {
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => console.log("View Expenses Sources")}>
-          <AppText style={styles.text}>Add another source of {add}.</AppText>
+          <AppText style={styles.text}>Add another source of {label}.</AppText>
         </TouchableOpacity>
         <View>
-          <DropdownComponent dropdownOptions={dropdownOptions} />
+          {label === "Add new utility." ? (
+            <DropdownComponent dropdownOptions={dropdownOptions} />
+          ) : (
+            <></>
+            // <View style={styles.labelContainer}>
+            //   <AppText style={styles.label}>{label}</AppText>
+            // </View>
+          )}
           <View>
             <AppTextInput placeholder={"Please add expected budget."} />
           </View>
         </View>
-        <AppButton
-        title={'Confirm'}
-        onPress={onClick} 
-        />
+        <AppButton title={"Confirm"} onPress={onClick} />
       </View>
     </View>
   );
@@ -87,6 +91,16 @@ const styles = StyleSheet.create({
     textAlign: "right",
     fontStyle: "italic",
     color: colors.secondary,
+  },
+  labelContainer: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    backgroundColor: defaultStyles.colors.light,
+    borderRadius: 25,
+  },
+  label: {
+    padding: 15,
+    width: "100%",
   },
 });
 
