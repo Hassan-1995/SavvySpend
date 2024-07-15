@@ -1,45 +1,71 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Image, StyleSheet, Text } from "react-native";
 import * as Yup from "yup";
 
-import { AppForm, AppFormField, SubmitButton } from "../components/forms";
-import LogoContainer from "../components/LogoContainer";
 import Screen from "../components/Screen";
+import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import usersApi from "../api/users";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required().label("Name"),
-  password: Yup.string().required().min(4).label("Password"),
+  user_email: Yup.string().required().email().label("Email"),
+  user_password: Yup.string().required().min(4).label("Password"),
 });
 
-function LoginScreen({ navigation }) {
-  const handleSubmit = (values) => {
-    console.log(values);
-    navigation.navigate("HomeScreenCopy");
+function LoginScreen(props) {
+  const [userData, setUserData] = useState([]);
+  const [loginID, setLoginID] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    const response = await usersApi.getAllContentFromUsers();
+    console.log(response.data);
+    setUserData(response.data);
+  };
+
+  const handleSubmit = async (values) => {
+    console.log(values.user_email)
+    const email = userData.find(
+      (user) => user.email === values.user_email
+
+    );
+    if (email) {
+      if (email.password === values.user_password) {
+        setLoginID(true);
+      } else {
+        setLoginID(false);
+      }
+    } else {
+      setLoginID(false);
+    }
   };
 
   return (
     <Screen style={styles.container}>
-      <LogoContainer />
+      <Image style={styles.logo} source={require("../assets/Logo.png")} />
+      {loginID ? <Text></Text> : <Text>User ID or Password is incorrect</Text>}
       <AppForm
-        initialValues={{ name: "", password: "" }}
-        onSubmit={(values) => {
-          handleSubmit(values);
-        }}
+        initialValues={{ user_email: "", user_password: "" }}
+        // onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => handleSubmit(values)}
         validationSchema={validationSchema}
       >
         <AppFormField
-          autoCapitalise="none"
+          autoCapitalize="none"
           autoCorrect={false}
-          icon={"account"}
-          // keyboardType="email-address"
-          name={"name"}
-          placeholder="Name"
+          icon={"email"}
+          keyboardType="email-address"
+          name={"user_email"}
+          placeholder="Email"
+          textContentType="emailAddress"
         />
         <AppFormField
-          autoCapitalise="none"
+          autoCapitalize="none"
           autoCorrect={false}
           icon={"lock"}
-          name={"password"}
+          name={"user_password"}
           placeholder="Password"
           secureTextEntry={true}
           textContentType="emailAddress"
