@@ -6,8 +6,9 @@ import Icon from "./Icon";
 import colors from "../config/colors";
 
 function BudgetTable({ assets, onClick }) {
+  // console.log(assets);
   const handleEdit = (value) => {
-    onClick("Edit " + value);
+    onClick(value);
   };
 
   return (
@@ -19,11 +20,18 @@ function BudgetTable({ assets, onClick }) {
       </View>
       <ScrollView>
         {assets.map((item) => (
-          <View key={item.id} style={styles.row}>
-            <AppText style={[styles.cell, {textAlign: 'left'}]}>{item.name}</AppText>
-            <AppText style={[styles.cell, {textAlign: 'right'}]}>Rs {item.expense}</AppText>
+          <View key={item.utility_id} style={styles.row}>
+            <AppText style={[styles.cell, { textAlign: "left" }]}>
+              {item.utility_name}
+            </AppText>
+            <AppText style={[styles.cell, { textAlign: "right" }]}>
+              Rs {item.amount}
+            </AppText>
             {/* <AppText style={styles.cell}>Rs {item.expense}</AppText> */}
-            <TouchableOpacity style={styles.cell} onPress={() => handleEdit(item.name)}>
+            <TouchableOpacity
+              style={styles.cell}
+              onPress={() => handleEdit(item.utility_id)}
+            >
               <Icon
                 name={"circle-edit-outline"}
                 iconColor={colors.primary}

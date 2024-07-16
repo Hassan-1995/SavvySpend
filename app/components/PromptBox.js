@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import AppText from "./AppText";
@@ -10,13 +10,35 @@ import AppTextInput from "./AppTextInput";
 import DropdownComponent from "./DropdownComponent";
 
 function PromptBox({ onClick, label, dropdownOptions }) {
-  // console.log(assets);
+  const [inputValue, setInputValue] = useState(label.amount);
+  const [isInputEmpty, setIsInputEmpty] = useState(false);
+
+  useEffect(() => {
+    if (!inputValue) {
+      setIsInputEmpty(true);
+    } else {
+      setIsInputEmpty(false);
+    }
+  }, [inputValue]);
+
+  const handleBlur = () => {
+    if (!inputValue) {
+      setIsInputEmpty(true);
+    }
+  };
+
+  const handleEdit = () => {
+    if (!isInputEmpty) {
+      onClick(label, inputValue);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.promptContainer}>
         <View style={styles.titleContainer}>
-          <AppText style={styles.title}>{label}</AppText>
-          <TouchableOpacity onPress={onClick}>
+          <AppText style={styles.title}>{label.utility_name}</AppText>
+          <TouchableOpacity onPress={handleEdit}>
             <Icon
               name={"close"}
               size={30}
@@ -26,7 +48,8 @@ function PromptBox({ onClick, label, dropdownOptions }) {
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => console.log("View Expenses Sources")}>
-          <AppText style={styles.text}>Add another source of {label}.</AppText>
+          {/* <AppText style={styles.text}>Add another source of {label}.</AppText> */}
+          <AppText style={styles.text}>Add another source of label.</AppText>
         </TouchableOpacity>
         <View>
           {label === "Add new utility." ? (
@@ -38,10 +61,18 @@ function PromptBox({ onClick, label, dropdownOptions }) {
             // </View>
           )}
           <View>
-            <AppTextInput placeholder={"Please add expected budget."} />
+            <AppTextInput
+              value={inputValue}
+              onChangeText={(text) => setInputValue(text)}
+              placeholder={"Please add expected budget."}
+              onBlur={handleBlur}
+            />
           </View>
         </View>
-        <AppButton title={"Confirm"} onPress={onClick} />
+        <AppButton title={"Confirm"} onPress={handleEdit} />
+        {isInputEmpty && (
+          <AppText style={styles.error}>Input cannot be empty</AppText>
+        )}
       </View>
     </View>
   );
@@ -90,7 +121,7 @@ const styles = StyleSheet.create({
     color: colors.link,
     textAlign: "right",
     fontStyle: "italic",
-    color: colors.secondary,
+    // color: colors.secondary,
   },
   labelContainer: {
     borderWidth: 1,
@@ -101,6 +132,12 @@ const styles = StyleSheet.create({
   label: {
     padding: 15,
     width: "100%",
+  },
+  error: {
+    marginTop: 5,
+    fontSize: 14,
+    color: colors.danger,
+    fontStyle: "italic",
   },
 });
 

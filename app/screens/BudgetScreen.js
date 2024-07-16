@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import budgetApi from "../api/budget";
 
 import {
   View,
@@ -8,10 +9,8 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-
-const { width, height } = Dimensions.get("window");
-
 import { PieChart, BarChart } from "react-native-chart-kit";
+
 import AppText from "../components/AppText";
 import colors from "../config/colors";
 import LogoContainer from "../components/LogoContainer";
@@ -21,6 +20,9 @@ import BudgetTable from "../components/BudgetTable";
 import PromptBox from "../components/PromptBox";
 import Icon from "../components/Icon";
 import ItemCard from "../components/ItemCard";
+import AppButton from "../components/AppButton";
+
+const { width, height } = Dimensions.get("window");
 
 const chartConfig = {
   backgroundColor: "#fff",
@@ -46,19 +48,6 @@ const chartConfig = {
   barPercentage: 0.25,
   strokeWidth: 5,
 };
-
-const incomeOptions = [
-  { label: "Salary", value: "salary" },
-  { label: "Freelancing", value: "freelancing" },
-  { label: "Investments", value: "investments" },
-  { label: "Rental Income", value: "rental" },
-  { label: "Business", value: "business" },
-  { label: "Dividends", value: "dividends" },
-  { label: "Interest", value: "interest" },
-  { label: "Royalties", value: "royalties" },
-  { label: "Pension", value: "pension" },
-  { label: "Other", value: "other" },
-];
 
 const utilityOptions = [
   { label: "Electricity", value: "electricity" },
@@ -172,6 +161,21 @@ const budgetData = [
 const chartColor = ["#104b7d", "#1b598b", "#266799", "#3175a7", "#3c81b5"];
 
 function BudgetScreen({ totalBudget, totalExpenses, categories }) {
+  const [utility, setUtility] = useState([]);
+  const [temp, setTemp] = useState();
+  const [update, setUpdate] = useState();
+
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    loadData();
+  }, [refresh]);
+
+  const loadData = async () => {
+    const response = await budgetApi.getAllContentFromBudget();
+    setUtility(response.data);
+  };
+
   const [modalVisible, setModalVisible] = useState(false);
   const [label, setLabel] = useState();
 
@@ -216,14 +220,48 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
     ],
   };
 
+  const getSingleData = async (id) => {
+    const response = await budgetApi.getSingleBudgetData(id);
+    // console.log(response.data);
+    return response.data;
+  };
+
   const handleModal = (value) => {
-    setLabel(value)
-    console.log(label);
-    toggleModal();
+    // const singleData = getSingleData(value)
+    // console.log("value ", singleData)
+    getSingleData(value)
+      .then((singleData) => {
+        setLabel(singleData);
+        toggleModal();
+      })
+      .catch((error) => {
+        console.error("Error fetching single data:", error);
+      });
   };
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
+  };
+
+  const refreshScreen = () => {
+    // Toggle the refresh state
+    setRefresh(!refresh);
+  };
+  const updateBudget = async (old_data, new_amount) => {
+    // console.log(old_data);
+    toggleModal();
+    // const response = await budgetApi.getSingleBudgetData(id);
+    const updated_data = {
+      ...old_data,
+      amount: new_amount,
+    };
+    const res = await budgetApi.updateBudget(old_data.utility_id, updated_data);
+    refreshScreen();
+  };
+
+  const addBudget = (value) => {
+    console.log(value);
+    // toggleModal();
   };
 
   return (
@@ -272,7 +310,7 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
           <AppText style={styles.subHeader}>Utilities</AppText>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <AppText style={styles.links}>Add Utility</AppText>
-            <TouchableOpacity onPress={()=>handleModal('Add new utility.')}>
+            <TouchableOpacity onPress={(value) => addBudget(value)}>
               <Icon
                 name={"circle-edit-outline"}
                 iconColor={colors.primary}
@@ -288,15 +326,12 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
             <ItemCard
               key={item.id}
               name={item.name}
-              onClick={(value) => handleModal(value)}
+              onClick={(value) => addBudget(value)}
             />
           ))}
         </ScrollView>
 
-        <BudgetTable
-          assets={utilityExpenses}
-          onClick={(value) => handleModal(value)}
-        />
+        <BudgetTable assets={utility} onClick={(value) => handleModal(value)} />
 
         <AppText style={styles.subHeader}>Expense Breakdown</AppText>
         {/* <TableCol4 assets={budgetData} /> */}
@@ -335,10 +370,18 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         {/* <AppButton title={"CLose"} onPress={toggleModal}/> */}
         <PromptBox
-          onClick={toggleModal}
+          onClick={(old_data, new_amount) => updateBudget(old_data, new_amount)}
           label={label}
           dropdownOptions={utilityOptions}
         />
+      </Modal>
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <AppButton title={"Close"} onPress={toggleModal}/>
+        {/* <PromptBox
+          onClick={(old_data, new_amount) => updateBudget(old_data, new_amount)}
+          label={label}
+          dropdownOptions={utilityOptions}
+        /> */}
       </Modal>
     </Screen>
   );
