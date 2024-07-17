@@ -176,7 +176,9 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
     setUtility(response.data);
   };
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalUpdateVisible, setModalUpdateVisible] = useState(false);
+  const [modalAddVisible, setModalAddVisible] = useState(false);
+  // const [modalVisible, setModalVisible] = useState(false);
   const [label, setLabel] = useState();
 
   const barChartData = {
@@ -211,46 +213,45 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
 
   const remainingBalance = totalBudget - totalExpenses;
 
-  const chartData = {
-    labels: categories.map((category) => category.name),
-    datasets: [
-      {
-        data: categories.map((category) => category.amount),
-      },
-    ],
-  };
-
   const getSingleData = async (id) => {
     const response = await budgetApi.getSingleBudgetData(id);
-    // console.log(response.data);
     return response.data;
   };
 
   const handleModal = (value) => {
-    // const singleData = getSingleData(value)
-    // console.log("value ", singleData)
-    getSingleData(value)
-      .then((singleData) => {
-        setLabel(singleData);
-        toggleModal();
-      })
-      .catch((error) => {
-        console.error("Error fetching single data:", error);
-      });
+    console.log(typeof value);
+
+    if (typeof value === "number") {
+      getSingleData(value)
+        .then((singleData) => {
+          setLabel(singleData);
+          toggleUpdateModal();
+        })
+        .catch((error) => {
+          console.error("Error fetching single data:", error);
+        });
+    } else {
+      setLabel(value);
+      toggleAddModal();
+    }
   };
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
+  const toggleUpdateModal = () => {
+    setModalUpdateVisible(!modalUpdateVisible);
   };
+  const toggleAddModal = () => {
+    setModalAddVisible(!modalAddVisible);
+  };
+  // const toggleModal = () => {
+  //   setModalVisible(!modalVisible);
+  // };
 
   const refreshScreen = () => {
-    // Toggle the refresh state
     setRefresh(!refresh);
   };
+
   const updateBudget = async (old_data, new_amount) => {
-    // console.log(old_data);
-    toggleModal();
-    // const response = await budgetApi.getSingleBudgetData(id);
+    toggleUpdateModal();
     const updated_data = {
       ...old_data,
       amount: new_amount,
@@ -259,9 +260,16 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
     refreshScreen();
   };
 
-  const addBudget = (value) => {
-    console.log(value);
-    // toggleModal();
+  const addBudget = async (newData) => {
+    toggleAddModal();
+    console.log("Add budget ", newData);
+    try {
+      const response = await budgetApi.addNewBudget(newData);
+      console.log("Budget added successfully", response);
+    } catch (error) {
+      console.error("Error adding budget", error);
+    }
+    refreshScreen();
   };
 
   return (
@@ -310,7 +318,7 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
           <AppText style={styles.subHeader}>Utilities</AppText>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <AppText style={styles.links}>Add Utility</AppText>
-            <TouchableOpacity onPress={(value) => addBudget(value)}>
+            <TouchableOpacity onPress={() => handleModal("Add new utility.")}>
               <Icon
                 name={"circle-edit-outline"}
                 iconColor={colors.primary}
@@ -367,22 +375,35 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
         {/* </View> */}
       </ScrollView>
 
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        {/* <AppButton title={"CLose"} onPress={toggleModal}/> */}
-        <PromptBox
-          onClick={(old_data, new_amount) => updateBudget(old_data, new_amount)}
-          label={label}
-          dropdownOptions={utilityOptions}
-        />
-      </Modal>
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <AppButton title={"Close"} onPress={toggleModal}/>
-        {/* <PromptBox
-          onClick={(old_data, new_amount) => updateBudget(old_data, new_amount)}
-          label={label}
-          dropdownOptions={utilityOptions}
-        /> */}
-      </Modal>
+      <>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalUpdateVisible}
+        >
+          <PromptBox
+            onClick={(old_data, new_amount) =>
+              updateBudget(old_data, new_amount)
+            }
+            label={label}
+            dropdownOptions={utilityOptions}
+          />
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalAddVisible}
+        >
+          <PromptBox
+            // onClick={(old_data, new_amount) => updateBudget(old_data, new_amount)}
+            // onClick={() => addBudget("hello from add budget")}
+            onClick={(newData) => addBudget(newData)}
+            label={label}
+            dropdownOptions={utilityOptions}
+          />
+        </Modal>
+      </>
     </Screen>
   );
 }

@@ -1,23 +1,41 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import defaultStyles from "../config/styles";
 import AppText from "./AppText";
+import defaultStyles from "../config/styles";
 
+function DropdownComponent({ dropdownOptions, onValueChange, initialValue }) {
+  const [selectedValue, setSelectedValue] = useState(
+    initialValue || dropdownOptions[0].value
+  );
+  const [selectedLabel, setSelectedLabel] = useState("");
 
+  useEffect(() => {
+    const initialOption = dropdownOptions.find(
+      (option) => option.value === selectedValue
+    );
+    setSelectedLabel(
+      initialOption ? initialOption.label : dropdownOptions[0].label
+    );
+  }, [selectedValue, dropdownOptions]);
 
-function DropdownComponent({ dropdownOptions }) {
-  const [selectedValue, setSelectedValue] = useState("java");
-
+  const handleValueChange = (itemValue) => {
+    const selectedOption = dropdownOptions.find(
+      (option) => option.value === itemValue
+    );
+    setSelectedValue(itemValue);
+    setSelectedLabel(selectedOption.label);
+    onValueChange(itemValue, selectedOption.label); // Notify the parent component of the change
+  };
 
   return (
     <View style={styles.container}>
-      <AppText style={styles.label}>Select source of {}:</AppText>
+      <AppText style={styles.label}>Select source of:</AppText>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={selectedValue}
           style={styles.picker}
-          onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+          onValueChange={handleValueChange}
         >
           {dropdownOptions.map((option) => (
             <Picker.Item

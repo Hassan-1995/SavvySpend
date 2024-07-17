@@ -24,15 +24,15 @@ const updateBudget = async (budgetID, updatedData) => {
   }
 };
 
-const addBudget = async (newData) => {
-  const data = new FormData();
-  data.append("user_email", newData.email);
-  data.append("user_name", newData.name);
-  data.append("user_password", newData.password);
-  data.append("user_phone", newData.phone);
+const addNewBudget = async (newData) => {
+  const data = {
+    amount: newData.amount,
+    description: newData.description,
+    utility_name: newData.utility_name,
+  };
+
   try {
-    const response = await client.post(endPoint, listings);
-    // console.log('data', response.data)
+    const response = await client.post(endPoint, data);
     return response.data;
   } catch (error) {
     console.error("Error posting data:", error);
@@ -41,8 +41,8 @@ const addBudget = async (newData) => {
 };
 
 export default {
-  getAllContentFromBudget,  //getAllData,   -- Read
-  getSingleBudgetData,      //getAllData,   -- Read
-  updateBudget,             //update        -- Update
-  addBudget,                //add           -- Create
+  getAllContentFromBudget, //getAllData,   -- Read
+  getSingleBudgetData, //getAllData,   -- Read
+  updateBudget, //update        -- Update
+  addNewBudget, //add           -- Create
 };

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import AppText from "./AppText";
 import AppButton from "./AppButton";
 import Icon from "./Icon";
@@ -10,8 +9,17 @@ import AppTextInput from "./AppTextInput";
 import DropdownComponent from "./DropdownComponent";
 
 function PromptBox({ onClick, label, dropdownOptions }) {
-  const [inputValue, setInputValue] = useState(label.amount);
+  const [inputValue, setInputValue] = useState(
+    label.amount !== undefined ? label.amount : ""
+  );
+  const [utilityDescription, setUtilityDescription] = useState("");
   const [isInputEmpty, setIsInputEmpty] = useState(false);
+  const [selectedDropdownValue, setSelectedDropdownValue] = useState(
+    dropdownOptions[0].value
+  );
+  const [selectedDropdownLabel, setSelectedDropdownLabel] = useState(
+    dropdownOptions[0].label
+  );
 
   useEffect(() => {
     if (!inputValue) {
@@ -29,7 +37,18 @@ function PromptBox({ onClick, label, dropdownOptions }) {
 
   const handleEdit = () => {
     if (!isInputEmpty) {
-      onClick(label, inputValue);
+      const data = {
+        // utilityAmount: inputValue,
+        // utilityName: selectedDropdownLabel,
+        // utilityDescription: utilityDescription || "", // If utilityDescription is empty, set it to an empty string
+        utility_name: selectedDropdownLabel,
+        amount: inputValue,
+        description: utilityDescription || "", // If utilityDescription is empty, set it to an empty string
+        // utility_name: "Water",
+        // amount: 123,
+        // description: "hello world" || "", // If utilityDescription is empty, set it to an empty string
+      };
+      onClick(data); // Pass the data object to the parent
     }
   };
 
@@ -37,7 +56,11 @@ function PromptBox({ onClick, label, dropdownOptions }) {
     <View style={styles.container}>
       <View style={styles.promptContainer}>
         <View style={styles.titleContainer}>
-          <AppText style={styles.title}>{label.utility_name}</AppText>
+          {label === "Add new utility." ? (
+            <AppText style={styles.title}>{label}</AppText>
+          ) : (
+            <AppText style={styles.title}>{label.utility_name}</AppText>
+          )}
           <TouchableOpacity onPress={handleEdit}>
             <Icon
               name={"close"}
@@ -48,17 +71,20 @@ function PromptBox({ onClick, label, dropdownOptions }) {
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => console.log("View Expenses Sources")}>
-          {/* <AppText style={styles.text}>Add another source of {label}.</AppText> */}
           <AppText style={styles.text}>Add another source of label.</AppText>
         </TouchableOpacity>
         <View>
           {label === "Add new utility." ? (
-            <DropdownComponent dropdownOptions={dropdownOptions} />
+            <DropdownComponent
+              dropdownOptions={dropdownOptions}
+              initialValue={dropdownOptions[0].value} // Pass initial value
+              onValueChange={(value, label) => {
+                setSelectedDropdownValue(value);
+                setSelectedDropdownLabel(label);
+              }} // Set the selected value and label in the state
+            />
           ) : (
             <></>
-            // <View style={styles.labelContainer}>
-            //   <AppText style={styles.label}>{label}</AppText>
-            // </View>
           )}
           <View>
             <AppTextInput
@@ -66,6 +92,13 @@ function PromptBox({ onClick, label, dropdownOptions }) {
               onChangeText={(text) => setInputValue(text)}
               placeholder={"Please add expected budget."}
               onBlur={handleBlur}
+            />
+          </View>
+          <View>
+            <AppTextInput
+              value={utilityDescription}
+              onChangeText={(text) => setUtilityDescription(text)}
+              placeholder={"Please add a description (optional)."}
             />
           </View>
         </View>
@@ -88,7 +121,6 @@ const styles = StyleSheet.create({
   promptContainer: {
     padding: 20,
     width: "90%",
-    // height: "30%",
     backgroundColor: "#fff",
     borderRadius: 10,
     shadowColor: "#000",
@@ -96,13 +128,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-    // alignItems: "center",
     margin: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    // marginBottom: 10,
     textAlignVertical: "center",
     color: "#333",
   },
@@ -121,7 +151,6 @@ const styles = StyleSheet.create({
     color: colors.link,
     textAlign: "right",
     fontStyle: "italic",
-    // color: colors.secondary,
   },
   labelContainer: {
     borderWidth: 1,
