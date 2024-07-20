@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import expensesApi from "../api/expenses";
 import budgetsApi from "../api/budgets";
 
 import {
@@ -9,7 +8,6 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import LogoContainer from "../components/LogoContainer";
@@ -18,59 +16,53 @@ import Icon from "../components/Icon";
 import AddBudget from "../components/AddBudget";
 import CategoryTable from "../components/CategoryTable";
 import MonthPicker from "../components/MonthPicker";
-import ExpenseTable from "../components/ExpenseTable";
-import AddExpense from "../components/AddExpense";
-import SummaryHeader from "../components/SummaryHeader";
 
 const user_id = 1;
 
-function ExpenseScreen(props) {
-  const [expenses, setExpenses] = useState([]);
-  const [filteredExpenseData, setFilteredExpenseData] = useState([]);
-
+function BudgetScreenNew(props) {
+  const [categories, setCategories] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     loadData();
   }, [refresh]);
-
+  
   const loadData = async () => {
-    const response = await expensesApi.getAllExpenses(user_id);
-    setExpenses(response.data);
-    setFilteredExpenseData(response.data);
+    const response = await budgetsApi.getAllBudgets(user_id);
+    setCategories(response.data);
+    setFilteredData(response.data);
   };
   const refreshScreen = () => {
     setRefresh(!refresh);
   };
 
-  const calculateTotalAmount = (expenses) => {
-    return expenses.reduce((total, item) => {
+  const calculateTotalAmount = (categories) => {
+    return categories.reduce((total, item) => {
       return total + parseFloat(item.amount);
     }, 0);
   };
-  const totalExpenses = calculateTotalAmount(expenses);
-
-  const filterByMonth = (data, month) => {
-    return data.filter((item) => {
-      const itemDate = new Date(item.date);
-      const itemMonth = itemDate.getMonth();
+  const totalBudget = calculateTotalAmount(categories);
+  
+  const filterByMonth = (categories, month) => {
+    return categories.filter((item) => {
+      const itemMonth = new Date(item.period).getMonth();
       return itemMonth === month;
     });
   };
-
   const handleMonthSelect = (month) => {
     if (month !== null) {
-      const filtered = filterByMonth(expenses, month - 1);
-      setFilteredExpenseData(filtered);
+      const filtered = filterByMonth(categories, month);
+      setFilteredData(filtered);
       if (month === 12) {
-        const filtered = filterByMonth(expenses, 11);
-        setFilteredExpenseData(filtered);
+        const filtered = filterByMonth(categories, 0);
+        setFilteredData(filtered);
       }
     }
     if (month === "null") {
       loadData();
-      setFilteredExpenseData(expenses);
+      setFilteredData(categories);
     }
   };
 
@@ -81,11 +73,12 @@ function ExpenseScreen(props) {
     toggleModal();
   };
 
-  const addExpense = async (data) => {
+  const addBudget = async (data) => {
+    console.log("BudgetScreenNew ", data);
 
     toggleModal();
     try {
-      const response = await expensesApi.addNewRowInExpenses(1, data);
+      const response = await budgetsApi.addNewRowInBudgets(1, data);
       console.log("Budget added successfully", response);
     } catch (error) {
       console.error("Error adding budget", error);
@@ -97,11 +90,35 @@ function ExpenseScreen(props) {
     <Screen>
       <LogoContainer />
       <View style={styles.labelContainer}>
-        <AppText style={styles.label}>Expenses</AppText>
+        <AppText style={styles.label}>Categories</AppText>
       </View>
-
-      <SummaryHeader totalExpenses={totalExpenses} totalBudget={2000} />
-
+      <View style={styles.summaryContainer}>
+        <View style={styles.summaryItem}>
+          <AppText style={styles.summaryLabel}>Total Budget</AppText>
+          <AppText style={styles.summaryValue}>
+            Rs {totalBudget.toLocaleString()}
+          </AppText>
+        </View>
+        <View style={styles.summaryItem}>
+          <AppText style={styles.summaryLabel}>Total Expenses</AppText>
+          <AppText style={styles.summaryValue}>
+            {/* Rs {totalExpenses.toLocaleString()} */}
+          </AppText>
+        </View>
+        <View style={styles.summaryItem}>
+          <AppText style={styles.summaryLabel}>Remaining Balance</AppText>
+          <AppText
+            style={[
+              styles.summaryValue,
+              // {
+              //   color: remainingBalance < 0 ? colors.expense : colors.income,
+              // },
+            ]}
+          >
+            {/* Rs {remainingBalance.toLocaleString()} */}
+          </AppText>
+        </View>
+      </View>
       <ScrollView style={styles.container}>
         <View style={styles.filterContainer}>
           <AppText style={styles.filterText}>Apply filter</AppText>
@@ -117,9 +134,9 @@ function ExpenseScreen(props) {
             alignItems: "center",
           }}
         >
-          <AppText style={styles.subHeader}>Expenses</AppText>
+          <AppText style={styles.subHeader}>Utilities</AppText>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <AppText style={styles.links}>Add Expense</AppText>
+            <AppText style={styles.links}>Add Utility</AppText>
             <TouchableOpacity onPress={handleModal}>
               <Icon
                 name={"circle-edit-outline"}
@@ -131,16 +148,16 @@ function ExpenseScreen(props) {
           </View>
         </View>
 
-        {filteredExpenseData.length > 0 ? (
-          <ExpenseTable assets={filteredExpenseData} />
+        {filteredData.length > 0 ? (
+          <CategoryTable assets={filteredData} />
         ) : (
           <AppText>No data for the selected month</AppText>
         )}
       </ScrollView>
 
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <AddExpense
-          onClick={(newData) => addExpense(newData)}
+        <AddBudget
+          onClick={(newData) => addBudget(newData)}
           closeModal={toggleModal}
         />
       </Modal>
@@ -208,4 +225,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExpenseScreen;
+export default BudgetScreenNew;

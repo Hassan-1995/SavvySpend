@@ -30,7 +30,7 @@ function BudgetTable({ assets, onClick }) {
             {/* <AppText style={styles.cell}>Rs {item.expense}</AppText> */}
             <TouchableOpacity
               style={styles.cell}
-              onPress={() => handleEdit(item.utility_id)}
+              onPress={() => handleEdit(item)}
             >
               <Icon
                 name={"circle-edit-outline"}

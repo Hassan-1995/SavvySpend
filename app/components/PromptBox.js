@@ -8,17 +8,36 @@ import defaultStyles from "../config/styles";
 import AppTextInput from "./AppTextInput";
 import DropdownComponent from "./DropdownComponent";
 
-function PromptBox({ onClick, label, dropdownOptions }) {
+function PromptBox({ onClick, label, dropdownOptions, closeModal }) {
+  console.log(label);
+
+  const determineInitialDropdownLabel = () => {
+    if (typeof label === "object") {
+      return label.utility_name;
+    } else if (typeof label === "string" && label === "Add new utility.") {
+      return dropdownOptions[0].label;
+    } else if (typeof label === "string") {
+      return label;
+    }
+    return dropdownOptions[0].label; // Default case
+  };
+
   const [inputValue, setInputValue] = useState(
     label.amount !== undefined ? label.amount : ""
   );
-  const [utilityDescription, setUtilityDescription] = useState("");
+  const [utilityDescription, setUtilityDescription] = useState(
+    label.description !== undefined ? label.description : ""
+  );
   const [isInputEmpty, setIsInputEmpty] = useState(false);
   const [selectedDropdownValue, setSelectedDropdownValue] = useState(
     dropdownOptions[0].value
   );
+  // const [selectedDropdownLabel, setSelectedDropdownLabel] = useState(
+  //   dropdownOptions[0].label
+  // );
+
   const [selectedDropdownLabel, setSelectedDropdownLabel] = useState(
-    dropdownOptions[0].label
+    determineInitialDropdownLabel()
   );
 
   useEffect(() => {
@@ -38,15 +57,9 @@ function PromptBox({ onClick, label, dropdownOptions }) {
   const handleEdit = () => {
     if (!isInputEmpty) {
       const data = {
-        // utilityAmount: inputValue,
-        // utilityName: selectedDropdownLabel,
-        // utilityDescription: utilityDescription || "", // If utilityDescription is empty, set it to an empty string
         utility_name: selectedDropdownLabel,
         amount: inputValue,
         description: utilityDescription || "", // If utilityDescription is empty, set it to an empty string
-        // utility_name: "Water",
-        // amount: 123,
-        // description: "hello world" || "", // If utilityDescription is empty, set it to an empty string
       };
       onClick(data); // Pass the data object to the parent
     }
@@ -56,12 +69,18 @@ function PromptBox({ onClick, label, dropdownOptions }) {
     <View style={styles.container}>
       <View style={styles.promptContainer}>
         <View style={styles.titleContainer}>
-          {label === "Add new utility." ? (
+          {typeof label === "object" ? (
+            <AppText style={styles.title}>{label.utility_name}</AppText>
+          ) : (
+            <AppText style={styles.title}>{label}</AppText>
+          )}
+          {/* {label === "Add new utility." ? (
             <AppText style={styles.title}>{label}</AppText>
           ) : (
             <AppText style={styles.title}>{label.utility_name}</AppText>
-          )}
-          <TouchableOpacity onPress={handleEdit}>
+          )} */}
+
+          <TouchableOpacity onPress={() => closeModal()}>
             <Icon
               name={"close"}
               size={30}
@@ -98,7 +117,7 @@ function PromptBox({ onClick, label, dropdownOptions }) {
             <AppTextInput
               value={utilityDescription}
               onChangeText={(text) => setUtilityDescription(text)}
-              placeholder={"Please add a description (optional)."}
+              placeholder={"Description (optional)."}
             />
           </View>
         </View>

@@ -6,7 +6,7 @@ import AppText from "./AppText";
 
 function ItemCard({ name, onClick }) {
   const handleAdd = (value) => {
-    onClick("Add "+value);
+    onClick("Add "+ value);
   };
 
   return (

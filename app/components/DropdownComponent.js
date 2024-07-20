@@ -30,7 +30,7 @@ function DropdownComponent({ dropdownOptions, onValueChange, initialValue }) {
 
   return (
     <View style={styles.container}>
-      <AppText style={styles.label}>Select source of:</AppText>
+      {/* <AppText style={styles.label}>Select source of:</AppText> */}
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={selectedValue}
@@ -54,6 +54,7 @@ function DropdownComponent({ dropdownOptions, onValueChange, initialValue }) {
 const styles = StyleSheet.create({
   container: {
     // padding: 20,
+    marginVertical: 10,
   },
   label: {
     fontSize: 18,

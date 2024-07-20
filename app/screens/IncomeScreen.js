@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import expensesApi from "../api/expenses";
+import incomesApi from "../api/incomes";
 import budgetsApi from "../api/budgets";
 
 import {
@@ -15,18 +15,16 @@ import Screen from "../components/Screen";
 import LogoContainer from "../components/LogoContainer";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
-import AddBudget from "../components/AddBudget";
-import CategoryTable from "../components/CategoryTable";
 import MonthPicker from "../components/MonthPicker";
-import ExpenseTable from "../components/ExpenseTable";
+import IncomeTable from "../components/IncomeTable";
 import AddExpense from "../components/AddExpense";
 import SummaryHeader from "../components/SummaryHeader";
 
 const user_id = 1;
 
-function ExpenseScreen(props) {
-  const [expenses, setExpenses] = useState([]);
-  const [filteredExpenseData, setFilteredExpenseData] = useState([]);
+function IncomeScreen(props) {
+  const [incomes, setIncomes] = useState([]);
+  const [filteredIncomeData, setFilteredIncomeData] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -36,20 +34,20 @@ function ExpenseScreen(props) {
   }, [refresh]);
 
   const loadData = async () => {
-    const response = await expensesApi.getAllExpenses(user_id);
-    setExpenses(response.data);
-    setFilteredExpenseData(response.data);
+    const response = await incomesApi.getAllIncomes(user_id);
+    setIncomes(response.data);
+    setFilteredIncomeData(response.data);
   };
   const refreshScreen = () => {
     setRefresh(!refresh);
   };
 
-  const calculateTotalAmount = (expenses) => {
-    return expenses.reduce((total, item) => {
+  const calculateTotalAmount = (incomes) => {
+    return incomes.reduce((total, item) => {
       return total + parseFloat(item.amount);
     }, 0);
   };
-  const totalExpenses = calculateTotalAmount(expenses);
+  const totalIncomes = calculateTotalAmount(incomes);
 
   const filterByMonth = (data, month) => {
     return data.filter((item) => {
@@ -61,16 +59,16 @@ function ExpenseScreen(props) {
 
   const handleMonthSelect = (month) => {
     if (month !== null) {
-      const filtered = filterByMonth(expenses, month - 1);
-      setFilteredExpenseData(filtered);
+      const filtered = filterByMonth(incomes, month - 1);
+      setFilteredIncomeData(filtered);
       if (month === 12) {
-        const filtered = filterByMonth(expenses, 11);
-        setFilteredExpenseData(filtered);
+        const filtered = filterByMonth(incomes, 11);
+        setFilteredIncomeData(filtered);
       }
     }
     if (month === "null") {
       loadData();
-      setFilteredExpenseData(expenses);
+      setFilteredIncomeData(incomes);
     }
   };
 
@@ -82,13 +80,12 @@ function ExpenseScreen(props) {
   };
 
   const addExpense = async (data) => {
-
     toggleModal();
     try {
-      const response = await expensesApi.addNewRowInExpenses(1, data);
-      console.log("Budget added successfully", response);
+      const response = await incomesApi.addNewRowInIncomes(1, data);
+      console.log("Income added successfully", response);
     } catch (error) {
-      console.error("Error adding budget", error);
+      console.error("Error adding expense", error);
     }
     refreshScreen();
   };
@@ -97,10 +94,10 @@ function ExpenseScreen(props) {
     <Screen>
       <LogoContainer />
       <View style={styles.labelContainer}>
-        <AppText style={styles.label}>Expenses</AppText>
+        <AppText style={styles.label}>Incomes</AppText>
       </View>
 
-      <SummaryHeader totalExpenses={totalExpenses} totalBudget={2000} />
+      <SummaryHeader totalExpenses={totalIncomes} totalBudget={2000} />
 
       <ScrollView style={styles.container}>
         <View style={styles.filterContainer}>
@@ -117,9 +114,9 @@ function ExpenseScreen(props) {
             alignItems: "center",
           }}
         >
-          <AppText style={styles.subHeader}>Expenses</AppText>
+          <AppText style={styles.subHeader}>Incomes</AppText>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <AppText style={styles.links}>Add Expense</AppText>
+            <AppText style={styles.links}>Add Income</AppText>
             <TouchableOpacity onPress={handleModal}>
               <Icon
                 name={"circle-edit-outline"}
@@ -131,8 +128,8 @@ function ExpenseScreen(props) {
           </View>
         </View>
 
-        {filteredExpenseData.length > 0 ? (
-          <ExpenseTable assets={filteredExpenseData} />
+        {filteredIncomeData.length > 0 ? (
+          <IncomeTable assets={filteredIncomeData} />
         ) : (
           <AppText>No data for the selected month</AppText>
         )}
@@ -208,4 +205,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExpenseScreen;
+export default IncomeScreen;

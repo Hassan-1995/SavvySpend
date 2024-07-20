@@ -221,15 +221,17 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
   const handleModal = (value) => {
     console.log(typeof value);
 
-    if (typeof value === "number") {
-      getSingleData(value)
-        .then((singleData) => {
-          setLabel(singleData);
-          toggleUpdateModal();
-        })
-        .catch((error) => {
-          console.error("Error fetching single data:", error);
-        });
+    if (typeof value === "object") {
+      console.log(value);
+      // getSingleData(value)
+      //   .then((singleData) => {
+      //     setLabel(singleData);
+      setLabel(value);
+      toggleUpdateModal();
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error fetching single data:", error);
+      //   });
     } else {
       setLabel(value);
       toggleAddModal();
@@ -250,15 +252,26 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
     setRefresh(!refresh);
   };
 
-  const updateBudget = async (old_data, new_amount) => {
+  const updateBudget = async (new_amount) => {
+    console.log("fom update budget", new_amount);
     toggleUpdateModal();
     const updated_data = {
-      ...old_data,
-      amount: new_amount,
+      ...label,
+      amount: new_amount.amount,
+      description: new_amount.description,
     };
-    const res = await budgetApi.updateBudget(old_data.utility_id, updated_data);
+    const res = await budgetApi.updateBudget(label.utility_id, updated_data);
     refreshScreen();
   };
+  // const updateBudget = async (old_data, new_amount) => {
+  //   toggleUpdateModal();
+  //   const updated_data = {
+  //     ...old_data,
+  //     amount: new_amount,
+  //   };
+  //   const res = await budgetApi.updateBudget(old_data.utility_id, updated_data);
+  //   refreshScreen();
+  // };
 
   const addBudget = async (newData) => {
     toggleAddModal();
@@ -334,7 +347,8 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
             <ItemCard
               key={item.id}
               name={item.name}
-              onClick={(value) => addBudget(value)}
+              // onClick={(value) => addBudget(value)}
+              onClick={(value) => handleModal(value)}
             />
           ))}
         </ScrollView>
@@ -381,12 +395,19 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
           transparent={true}
           visible={modalUpdateVisible}
         >
-          <PromptBox
+          {/* <PromptBox
             onClick={(old_data, new_amount) =>
               updateBudget(old_data, new_amount)
             }
             label={label}
             dropdownOptions={utilityOptions}
+            // closeModal={toggleUpdateModal}
+          /> */}
+          <PromptBox
+            onClick={(new_amount) => updateBudget(new_amount)}
+            label={label}
+            dropdownOptions={utilityOptions}
+            closeModal={toggleUpdateModal}
           />
         </Modal>
 
@@ -396,11 +417,10 @@ function BudgetScreen({ totalBudget, totalExpenses, categories }) {
           visible={modalAddVisible}
         >
           <PromptBox
-            // onClick={(old_data, new_amount) => updateBudget(old_data, new_amount)}
-            // onClick={() => addBudget("hello from add budget")}
             onClick={(newData) => addBudget(newData)}
             label={label}
             dropdownOptions={utilityOptions}
+            closeModal={toggleAddModal}
           />
         </Modal>
       </>

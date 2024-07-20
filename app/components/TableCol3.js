@@ -4,51 +4,53 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import AppText from "./AppText";
 
 function TableCol3({ assets }) {
+  // console.log(assets[0]);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.tableHeader}>
-        <AppText style={[styles.cell, styles.headerCell]}>Date</AppText>
-        <AppText style={[styles.cell, styles.headerCell]}>Particulars</AppText>
-        <AppText style={[styles.cell, styles.headerCell]}>Expenses</AppText>
+    <ScrollView style={styles.container}>
+      <View style={styles.headerRow}>
+        <AppText style={styles.headerCell}>Name</AppText>
+        <AppText style={styles.headerCell}>Description</AppText>
+        <AppText style={styles.headerCell}>Type</AppText>
       </View>
-      <ScrollView>
-        {assets.map((item) => (
-          <View key={item.id} style={styles.row}>
-            <AppText style={styles.cell}>{item.date}</AppText>
-            <AppText style={styles.cell}>{item.particulars}</AppText>
-            <AppText style={styles.cell}>Rs {item.expenses}</AppText>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+      {assets.map((item) => (
+        <View key={item.category_id} style={styles.row}>
+          <AppText style={styles.cell}>{item.name}</AppText>
+          <AppText style={styles.cell}>{item.description}</AppText>
+          <AppText style={styles.cell}>{item.updated_at}</AppText>
+        </View>
+      ))}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "transparent",
+    padding: 16,
+    backgroundColor: '#fff',
   },
-  tableHeader: {
-    flexDirection: "row",
+  headerRow: {
+    flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    paddingBottom: 10,
-    marginBottom: 10,
+    borderBottomColor: '#ccc',
+    paddingBottom: 8,
+    marginBottom: 8,
+  },
+  headerCell: {
+    flex: 1,
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   row: {
-    flexDirection: "row",
-    paddingVertical: 10,
+    flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderBottomColor: '#eee',
+    paddingVertical: 8,
   },
   cell: {
     flex: 1,
-    fontSize: 16,
-  },
-  headerCell: {
-    fontWeight: "bold",
+    fontSize: 14,
   },
 });
 
