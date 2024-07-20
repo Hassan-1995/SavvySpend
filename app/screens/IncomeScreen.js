@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import incomesApi from "../api/incomes";
-import budgetsApi from "../api/budgets";
 
 import {
   View,
@@ -17,8 +16,8 @@ import colors from "../config/colors";
 import Icon from "../components/Icon";
 import MonthPicker from "../components/MonthPicker";
 import IncomeTable from "../components/IncomeTable";
-import AddExpense from "../components/AddExpense";
 import SummaryHeader from "../components/SummaryHeader";
+import EntryRow from "../components/EntryRow";
 
 const user_id = 1;
 
@@ -79,16 +78,16 @@ function IncomeScreen(props) {
     toggleModal();
   };
 
-  const addExpense = async (data) => {
-    toggleModal();
-    try {
-      const response = await incomesApi.addNewRowInIncomes(1, data);
-      console.log("Income added successfully", response);
-    } catch (error) {
-      console.error("Error adding expense", error);
-    }
-    refreshScreen();
-  };
+  // const addIncome = async (data) => {
+  //   toggleModal();
+  //   try {
+  //     const response = await incomesApi.addNewRowInIncomes(1, data);
+  //     console.log("Income added successfully", response);
+  //   } catch (error) {
+  //     console.error("Error adding expense", error);
+  //   }
+  //   refreshScreen();
+  // };
 
   return (
     <Screen>
@@ -136,9 +135,11 @@ function IncomeScreen(props) {
       </ScrollView>
 
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <AddExpense
-          onClick={(newData) => addExpense(newData)}
+        <EntryRow
+          // onClick={(newData) => addIncome(newData)}
+          onClick={(newData) => console.log(newData)}
           closeModal={toggleModal}
+          title="Add Income"
         />
       </Modal>
     </Screen>

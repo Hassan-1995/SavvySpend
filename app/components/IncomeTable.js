@@ -3,10 +3,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function IncomeTable({ assets, id }) {
-  console.log(id);
-  // console.log(assets);
-
+function IncomeTable({ assets }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerRow}>

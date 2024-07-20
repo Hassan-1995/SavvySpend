@@ -28,7 +28,7 @@ const budgetOptions = [
   { label: "Groceries", value: 16 },
 ];
 
-function EntryRow({ closeModal, onClick }) {
+function EntryRow({ closeModal, onClick, title = "Add somthing" }) {
   const [budgetItem, setBudgetItem] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [period, setPeriod] = useState("");
@@ -89,7 +89,7 @@ function EntryRow({ closeModal, onClick }) {
     <View style={styles.container}>
       <View style={styles.promptBox}>
         <View style={styles.titleContainer}>
-          <AppText style={styles.title}>Add Budget</AppText>
+          <AppText style={styles.title}>{title}</AppText>
           <TouchableOpacity onPress={() => closeModal()}>
             <Icon
               name={"close"}
