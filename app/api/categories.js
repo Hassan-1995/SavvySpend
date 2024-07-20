@@ -4,9 +4,9 @@ const endPoint = "/categories";
 
 // const getAllContentFromCategories = () => client.get(endPoint);
 
-const getAllContentFromCategories = async (id) => {
+const getAllContentFromCategories = async () => {
   try {
-    const result = await client.get(endPoint + "/" + id);
+    const result = await client.get(endPoint);
     return result;
   } catch (error) {
     console.error("Error getting data:", error);
@@ -36,9 +36,7 @@ const getSingleContentFromCategories = async (category_id, user_id) => {
 
 const addNewRowInCategories = async (newData) => {
   const data = {
-    user_id: newData.id,
     name: newData.name,
-    description: newData.description,
     type: newData.type,
   };
   try {

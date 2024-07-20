@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import AppText from "./AppText";
 import Icon from "./Icon";
 import colors from "../config/colors";
-import DropdownComponent from "./DropdownComponent";
 import MonthPicker from "./MonthPicker";
 import AppTextInput from "./AppTextInput";
 import AppButton from "./AppButton";
@@ -28,11 +26,18 @@ const budgetOptions = [
   { label: "Groceries", value: 16 },
 ];
 
-function EntryRow({ closeModal, onClick, title = "Add somthing" }) {
+function EntryRow({
+  closeModal,
+  onClick,
+  title = "Add something",
+  categoryOptions,
+}) {
   const [budgetItem, setBudgetItem] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [period, setPeriod] = useState("");
   const [utilityDescription, setUtilityDescription] = useState(null);
+
+  const [categoryID, setCategoryID] = useState();
 
   const [isInputEmpty, setIsInputEmpty] = useState(false);
 
@@ -42,7 +47,16 @@ function EntryRow({ closeModal, onClick, title = "Add somthing" }) {
     } else {
       setIsInputEmpty(false);
     }
+    CategoryOptions();
   }, [inputValue, period]);
+
+  const CategoryOptions = () => {
+    const numberOfCategories = Math.max(
+      ...categoryOptions.map((item) => item.category_id)
+    );
+    console.log(numberOfCategories);
+    setCategoryID(numberOfCategories);
+  };
 
   const handleMonthSelect = (month, year = 2024) => {
     const date = new Date(year, month, 0);
@@ -52,21 +66,15 @@ function EntryRow({ closeModal, onClick, title = "Add somthing" }) {
   };
 
   function getLabelValue(label) {
-    // Check if the label exists in the budgetOptions array
-    const existingItem = budgetOptions.find((item) => item.label === label);
+    const existingItem = categoryOptions.find((item) => item.name === label);
 
     if (existingItem) {
-      // If it exists, return the value
-      return existingItem.value;
+      return existingItem.category_id;
     } else {
-      // If it doesn't exist, find the next incremental value
-      const maxValue = Math.max(...budgetOptions.map((item) => item.value));
+      const maxValue = Math.max(
+        ...categoryOptions.map((item) => item.category_id)
+      );
       const newValue = maxValue + 1;
-
-      // Add the new label-value pair to the array
-      budgetOptions.push({ label: label, value: newValue });
-
-      // Return the new value
       return newValue;
     }
   }
@@ -80,8 +88,14 @@ function EntryRow({ closeModal, onClick, title = "Add somthing" }) {
         amount: inputValue,
         description: utilityDescription,
       };
+      if (labelValue >= categoryID) {
+        onClick(data, budgetItem);
+        console.log("hello: ", labelValue, "  ", categoryID);
+      } else {
+        onClick(data, labelValue);
+        console.log("world: ", labelValue, "  ", categoryID);
+      }
       console.log(data);
-      onClick(data);
     }
   };
 

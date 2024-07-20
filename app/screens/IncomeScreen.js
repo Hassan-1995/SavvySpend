@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import incomesApi from "../api/incomes";
+import categoriesApi from "../api/categories";
 
 import {
   View,
@@ -22,6 +23,8 @@ import EntryRow from "../components/EntryRow";
 const user_id = 1;
 
 function IncomeScreen(props) {
+  const [categories, setCategories] = useState([]);
+
   const [incomes, setIncomes] = useState([]);
   const [filteredIncomeData, setFilteredIncomeData] = useState([]);
 
@@ -29,13 +32,18 @@ function IncomeScreen(props) {
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    loadData();
+    loadIncomeTable();
+    loadCategoriesTable();
   }, [refresh]);
 
-  const loadData = async () => {
+  const loadIncomeTable = async () => {
     const response = await incomesApi.getAllIncomes(user_id);
     setIncomes(response.data);
     setFilteredIncomeData(response.data);
+  };
+  const loadCategoriesTable = async () => {
+    const response = await categoriesApi.getAllContentFromCategories();
+    setCategories(response.data);
   };
   const refreshScreen = () => {
     setRefresh(!refresh);
@@ -66,7 +74,7 @@ function IncomeScreen(props) {
       }
     }
     if (month === "null") {
-      loadData();
+      loadIncomeTable();
       setFilteredIncomeData(incomes);
     }
   };
@@ -78,16 +86,35 @@ function IncomeScreen(props) {
     toggleModal();
   };
 
-  // const addIncome = async (data) => {
-  //   toggleModal();
-  //   try {
-  //     const response = await incomesApi.addNewRowInIncomes(1, data);
-  //     console.log("Income added successfully", response);
-  //   } catch (error) {
-  //     console.error("Error adding expense", error);
-  //   }
-  //   refreshScreen();
-  // };
+  const addIncome = async (data, value) => {
+    console.log(
+      "before function: ",
+      value,
+      "and type of value is :",
+      typeof value
+    );
+    toggleModal();
+    if (typeof value === "string") {
+      try {
+        const categoryData = {
+          name: value,
+          type: "Income",
+        };
+        const response = await categoriesApi.addNewRowInCategories(categoryData);
+        console.log("Category added successfully", response);
+      } catch (error) {
+        console.error("Error adding expense", error);
+      }
+    }
+
+    try {
+      const response = await incomesApi.addNewRowInIncomes(1, data);
+      console.log("Income added successfully", response);
+    } catch (error) {
+      console.error("Error adding expense", error);
+    }
+    refreshScreen();
+  };
 
   return (
     <Screen>
@@ -136,8 +163,9 @@ function IncomeScreen(props) {
 
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <EntryRow
-          // onClick={(newData) => addIncome(newData)}
-          onClick={(newData) => console.log(newData)}
+          onClick={(newData, categoryID) => addIncome(newData, categoryID)}
+          // onClick={(newData) => console.log(newData)}
+          categoryOptions={categories}
           closeModal={toggleModal}
           title="Add Income"
         />
