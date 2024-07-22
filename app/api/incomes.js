@@ -12,6 +12,16 @@ const getAllIncomes = async (id) => {
   }
 };
 
+const getAllIncomesInCurrentMonth = async (id) => {
+  try {
+    const result = await client.get(endPoint + "/userId_by_month/" + id);
+    return result;
+  } catch (error) {
+    console.error("Error getting data:", error);
+    throw error;
+  }
+};
+
 const addNewRowInIncomes = async (user_id, newData) => {
   const data = {
     category_id: newData.nameValue,
@@ -19,8 +29,11 @@ const addNewRowInIncomes = async (user_id, newData) => {
     amount: newData.amount,
     description: newData.description,
   };
+
+  
+
   try {
-    // const response = await client.post(endPoint +"/"+ user_id +"/"+ data);
+    // const response = await client.post(endPoint + "/" + user_id + "/" + data);
     const response = await client.post(`${endPoint}/${user_id}`, data);
     return response.data;
   } catch (error) {
@@ -31,6 +44,7 @@ const addNewRowInIncomes = async (user_id, newData) => {
 
 export default {
   getAllIncomes,
+  getAllIncomesInCurrentMonth,
   addNewRowInIncomes,
   // getSingleContentFromBudgets,
   // addNewRowInBudgets,

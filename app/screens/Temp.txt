@@ -20,23 +20,6 @@ import IncomeTable from "../components/IncomeTable";
 import SummaryHeader from "../components/SummaryHeader";
 import EntryRow from "../components/EntryRow";
 
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-const currentMonth = new Date().getMonth();
-const currentMonthName = monthNames[currentMonth];
-
 const user_id = 1;
 
 function IncomeScreen(props) {
@@ -54,7 +37,7 @@ function IncomeScreen(props) {
   }, [refresh]);
 
   const loadIncomeTable = async () => {
-    const response = await incomesApi.getAllIncomesInCurrentMonth(user_id);
+    const response = await incomesApi.getAllIncomes(user_id);
     setIncomes(response.data);
     setFilteredIncomeData(response.data);
   };
@@ -73,6 +56,29 @@ function IncomeScreen(props) {
   };
   const totalIncomes = calculateTotalAmount(incomes);
 
+  const filterByMonth = (data, month) => {
+    return data.filter((item) => {
+      const itemDate = new Date(item.date);
+      const itemMonth = itemDate.getMonth();
+      return itemMonth === month;
+    });
+  };
+
+  const handleMonthSelect = (month) => {
+    if (month !== null) {
+      const filtered = filterByMonth(incomes, month - 1);
+      setFilteredIncomeData(filtered);
+      if (month === 12) {
+        const filtered = filterByMonth(incomes, 11);
+        setFilteredIncomeData(filtered);
+      }
+    }
+    if (month === "null") {
+      loadIncomeTable();
+      setFilteredIncomeData(incomes);
+    }
+  };
+
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
@@ -81,6 +87,12 @@ function IncomeScreen(props) {
   };
 
   const addIncome = async (data, value) => {
+    console.log(
+      "before function: ",
+      value,
+      "and type of value is :",
+      typeof value
+    );
     toggleModal();
     if (typeof value === "string") {
       try {
@@ -88,9 +100,7 @@ function IncomeScreen(props) {
           name: value,
           type: "Income",
         };
-        const response = await categoriesApi.addNewRowInCategories(
-          categoryData
-        );
+        const response = await categoriesApi.addNewRowInCategories(categoryData);
         console.log("Category added successfully", response);
       } catch (error) {
         console.error("Error adding expense", error);
@@ -117,19 +127,10 @@ function IncomeScreen(props) {
 
       <ScrollView style={styles.container}>
         <View style={styles.filterContainer}>
-          <AppText style={styles.filterText}>
-            For the month of:{" "}
-            <AppText
-              style={[
-                styles.filterText,
-                {
-                  color: colors.primary,
-                },
-              ]}
-            >
-              {currentMonthName} {new Date().getFullYear()}
-            </AppText>
-          </AppText>
+          <AppText style={styles.filterText}>Apply filter</AppText>
+          <View style={{ flex: 1 }}>
+            <MonthPicker onMonthSelect={handleMonthSelect} />
+          </View>
         </View>
 
         <View
@@ -163,6 +164,7 @@ function IncomeScreen(props) {
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <EntryRow
           onClick={(newData, categoryID) => addIncome(newData, categoryID)}
+          // onClick={(newData) => console.log(newData)}
           categoryOptions={categories}
           closeModal={toggleModal}
           title="Add Income"
