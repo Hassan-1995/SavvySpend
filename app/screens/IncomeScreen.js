@@ -15,10 +15,10 @@ import Screen from "../components/Screen";
 import LogoContainer from "../components/LogoContainer";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
-import MonthPicker from "../components/MonthPicker";
 import IncomeTable from "../components/IncomeTable";
 import SummaryHeader from "../components/SummaryHeader";
 import EntryRow from "../components/EntryRow";
+import EditDetailsScreen from "./EditDetailsScreen";
 
 const monthNames = [
   "January",
@@ -44,8 +44,10 @@ function IncomeScreen(props) {
 
   const [incomes, setIncomes] = useState([]);
   const [filteredIncomeData, setFilteredIncomeData] = useState([]);
+  const [editItem, setEditItem] = useState([]);
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalAddVisible, setModalAddVisible] = useState(false);
+  const [modalEditVisible, setModalEditVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
@@ -55,8 +57,13 @@ function IncomeScreen(props) {
 
   const loadIncomeTable = async () => {
     const response = await incomesApi.getAllIncomesInCurrentMonth(user_id);
-    setIncomes(response.data);
-    setFilteredIncomeData(response.data);
+    if (response.data.length > 0) {
+      setIncomes(response.data);
+      setFilteredIncomeData(response.data);
+    } else {
+      setIncomes([]);
+      setFilteredIncomeData([]);
+    }
   };
   const loadCategoriesTable = async () => {
     const response = await categoriesApi.getAllContentFromCategories();
@@ -73,15 +80,18 @@ function IncomeScreen(props) {
   };
   const totalIncomes = calculateTotalAmount(incomes);
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
+  const toogleAddModal = () => {
+    setModalAddVisible(!modalAddVisible);
   };
-  const handleModal = () => {
-    toggleModal();
+  const toogleEditModal = () => {
+    setModalEditVisible(!modalEditVisible);
+  };
+  const handleAddModal = () => {
+    toogleAddModal();
   };
 
   const addIncome = async (data, value) => {
-    toggleModal();
+    toogleAddModal();
     if (typeof value === "string") {
       try {
         const categoryData = {
@@ -103,6 +113,34 @@ function IncomeScreen(props) {
     } catch (error) {
       console.error("Error adding expense", error);
     }
+    refreshScreen();
+  };
+
+  const pressedRow = (rowItems) => {
+    toogleEditModal();
+    setEditItem(rowItems);
+  };
+  const editIncome = async (updatedData) => {
+    const data = {
+      ...editItem,
+      amount: updatedData.amount,
+      description: updatedData.description,
+    };
+    try {
+      const response = await incomesApi.updateRowInIncome(
+        editItem.income_id,
+        data
+      );
+      console.log("Income added successfully", response);
+    } catch (error) {
+      console.error("Error adding expense", error);
+    }
+    refreshScreen();
+  };
+
+  const deleteIncome = async (income_id) => {
+    console.log(income_id);
+    const response = await incomesApi.deleteRowFromIncome(income_id);
     refreshScreen();
   };
 
@@ -142,7 +180,7 @@ function IncomeScreen(props) {
           <AppText style={styles.subHeader}>Incomes</AppText>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <AppText style={styles.links}>Add Income</AppText>
-            <TouchableOpacity onPress={handleModal}>
+            <TouchableOpacity onPress={handleAddModal}>
               <Icon
                 name={"circle-edit-outline"}
                 iconColor={colors.primary}
@@ -154,18 +192,33 @@ function IncomeScreen(props) {
         </View>
 
         {filteredIncomeData.length > 0 ? (
-          <IncomeTable assets={filteredIncomeData} />
+          <IncomeTable
+            assets={filteredIncomeData}
+            onPressingEachRow={pressedRow}
+          />
         ) : (
           <AppText>No data for the selected month</AppText>
         )}
       </ScrollView>
 
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+      <Modal animationType="slide" transparent={true} visible={modalAddVisible}>
         <EntryRow
           onClick={(newData, categoryID) => addIncome(newData, categoryID)}
           categoryOptions={categories}
-          closeModal={toggleModal}
-          title="Add Income"
+          closeModal={toogleAddModal}
+          title="Income"
+        />
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalEditVisible}
+      >
+        <EditDetailsScreen
+          assets={editItem}
+          closeModal={toogleEditModal}
+          onEdit={(updatedData) => editIncome(updatedData)}
+          onDelete={deleteIncome}
         />
       </Modal>
     </Screen>

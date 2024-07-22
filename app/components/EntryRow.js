@@ -38,7 +38,6 @@ function EntryRow({
   const [utilityDescription, setUtilityDescription] = useState(null);
 
   const [categoryID, setCategoryID] = useState();
-
   const [isInputEmpty, setIsInputEmpty] = useState(false);
 
   useEffect(() => {
@@ -54,7 +53,6 @@ function EntryRow({
     const numberOfCategories = Math.max(
       ...categoryOptions.map((item) => item.category_id)
     );
-    console.log(numberOfCategories);
     setCategoryID(numberOfCategories);
   };
 
@@ -67,7 +65,6 @@ function EntryRow({
 
   function getLabelValue(label) {
     const existingItem = categoryOptions.find((item) => item.name === label);
-
     if (existingItem) {
       return existingItem.category_id;
     } else {
@@ -90,12 +87,9 @@ function EntryRow({
       };
       if (labelValue >= categoryID) {
         onClick(data, budgetItem);
-        console.log("hello: ", labelValue, "  ", categoryID);
       } else {
         onClick(data, labelValue);
-        console.log("world: ", labelValue, "  ", categoryID);
       }
-      console.log(data);
     }
   };
 
@@ -103,7 +97,7 @@ function EntryRow({
     <View style={styles.container}>
       <View style={styles.promptBox}>
         <View style={styles.titleContainer}>
-          <AppText style={styles.title}>{title}</AppText>
+          <AppText style={styles.title}>Add {title}</AppText>
           <TouchableOpacity onPress={() => closeModal()}>
             <Icon
               name={"close"}

@@ -1,9 +1,9 @@
 import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function IncomeTable({ assets }) {
+function IncomeTable({ assets, onPressingEachRow }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerRow}>
@@ -11,12 +11,18 @@ function IncomeTable({ assets }) {
         <AppText style={styles.headerCell}>Amount</AppText>
       </View>
       {assets.map((item) => (
-        // <View key={item.budget_id} style={styles.row}>
-        <View key={item.income_id} style={styles.row}>
-          <AppText style={[styles.cell, styles.nameCell]}>{item.name}</AppText>
-          <AppText style={[styles.cell, styles.descriptionCell]}>
-            Rs {item.amount}
-          </AppText>
+        <View key={item.income_id}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => onPressingEachRow(item)}
+          >
+            <AppText style={[styles.cell, styles.nameCell]}>
+              {item.name}
+            </AppText>
+            <AppText style={[styles.cell, styles.descriptionCell]}>
+              Rs {item.amount}
+            </AppText>
+          </TouchableOpacity>
         </View>
       ))}
     </ScrollView>
@@ -26,7 +32,6 @@ function IncomeTable({ assets }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // padding: 16,
     backgroundColor: "transparent",
   },
   headerRow: {
