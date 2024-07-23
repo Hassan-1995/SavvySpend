@@ -4,28 +4,32 @@ import { Picker } from "@react-native-picker/picker";
 import AppText from "./AppText";
 import defaultStyles from "../config/styles";
 
-function DropdownComponent({ dropdownOptions, onValueChange, initialValue }) {
+function DropdownComponentNew({
+  dropdownOptions,
+  onValueChange,
+  initialValue,
+}) {
   const [selectedValue, setSelectedValue] = useState(
-    initialValue || dropdownOptions[0].value
+    initialValue || dropdownOptions[0].category_id
   );
   const [selectedLabel, setSelectedLabel] = useState("");
 
   useEffect(() => {
     const initialOption = dropdownOptions.find(
-      (option) => option.value === selectedValue
+      (option) => option.category_id === selectedValue
     );
     setSelectedLabel(
-      initialOption ? initialOption.label : dropdownOptions[0].label
+      initialOption ? initialOption.label : dropdownOptions[0].name
     );
   }, [selectedValue, dropdownOptions]);
 
   const handleValueChange = (itemValue) => {
     const selectedOption = dropdownOptions.find(
-      (option) => option.value === itemValue
+      (option) => option.category_id === itemValue
     );
     setSelectedValue(itemValue);
-    setSelectedLabel(selectedOption.label);
-    onValueChange(itemValue, selectedOption.label); // Notify the parent component of the change
+    setSelectedLabel(selectedOption.name);
+    onValueChange(itemValue, selectedOption.name); // Notify the parent component of the change
   };
 
   return (
@@ -41,10 +45,7 @@ function DropdownComponent({ dropdownOptions, onValueChange, initialValue }) {
             <Picker.Item
               key={option.category_id}
               label={option.name}
-              value={option.value}
-              // key={option.value}
-              // label={option.label}
-              // value={option.value}
+              value={option.category_id}
               style={{ fontSize: 18 }}
             />
           ))}
@@ -75,4 +76,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DropdownComponent;
+export default DropdownComponentNew;

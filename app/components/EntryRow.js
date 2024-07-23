@@ -6,6 +6,8 @@ import colors from "../config/colors";
 import MonthPicker from "./MonthPicker";
 import AppTextInput from "./AppTextInput";
 import AppButton from "./AppButton";
+import DropdownComponent from "./DropdownComponent";
+import DropdownComponentNew from "./DropdownComponentNew";
 
 const budgetOptions = [
   { label: "Electricity", value: 1 },
@@ -56,6 +58,8 @@ function EntryRow({
     setCategoryID(numberOfCategories);
   };
 
+  const incomeData = categoryOptions.filter((item) => item.type === "Income");
+
   const handleMonthSelect = (month, year = 2024) => {
     const date = new Date(year, month, 0);
     const day = date.getDate();
@@ -75,6 +79,12 @@ function EntryRow({
       return newValue;
     }
   }
+
+  const handleValueChange = (id, name) => {
+    console.log("ID: ", id);
+    console.log("Name: ", name);
+    setBudgetItem(name);
+  };
 
   const handleEdit = () => {
     if (!isInputEmpty) {
@@ -108,11 +118,19 @@ function EntryRow({
           </TouchableOpacity>
         </View>
 
-        <AppTextInput
-          value={budgetItem}
-          onChangeText={(text) => setBudgetItem(text)}
-          placeholder={"Add utility name."}
-        />
+        {title === "Income" ? (
+          <DropdownComponentNew
+            dropdownOptions={incomeData}
+            // onValueChange={(value1, value2) => console.log(value1, value2)}
+            onValueChange={handleValueChange}
+          />
+        ) : (
+          <AppTextInput
+            value={budgetItem}
+            onChangeText={(text) => setBudgetItem(text)}
+            placeholder={"Add utility name."}
+          />
+        )}
 
         <MonthPicker onMonthSelect={handleMonthSelect} />
         <AppTextInput

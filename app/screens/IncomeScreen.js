@@ -206,7 +206,8 @@ function IncomeScreen(props) {
           onClick={(newData, categoryID) => addIncome(newData, categoryID)}
           categoryOptions={categories}
           closeModal={toogleAddModal}
-          title="Income"
+          // title="Income"
+          title="Expense"
         />
       </Modal>
       <Modal
