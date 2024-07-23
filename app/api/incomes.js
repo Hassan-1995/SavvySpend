@@ -55,7 +55,6 @@ const updateRowInIncome = async (income_id, updatedData) => {
     throw error;
   }
 };
-
 const deleteRowFromIncome = async (id) => {
   try {
     const result = await client.delete(endPoint + "/" + id);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import expensesApi from "../api/expenses";
-import budgetsApi from "../api/budgets";
+import categoriesApi from "../api/categories";
 
 import {
   View,
@@ -15,30 +15,59 @@ import Screen from "../components/Screen";
 import LogoContainer from "../components/LogoContainer";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
-import AddBudget from "../components/AddBudget";
-import CategoryTable from "../components/CategoryTable";
-import MonthPicker from "../components/MonthPicker";
 import ExpenseTable from "../components/ExpenseTable";
-import AddExpense from "../components/AddExpense";
 import SummaryHeader from "../components/SummaryHeader";
+import EntryRow from "../components/EntryRow";
+import ExpenseEditDetailsScreen from "./ExpenseEditDetailsScreen";
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const currentMonth = new Date().getMonth();
+const currentMonthName = monthNames[currentMonth];
 
 const user_id = 1;
 
 function ExpenseScreen(props) {
+  const [categories, setCategories] = useState([]);
+
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenseData, setFilteredExpenseData] = useState([]);
+  const [editItem, setEditItem] = useState([]);
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalAddVisible, setModalAddVisible] = useState(false);
+  const [modalEditVisible, setModalEditVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    loadData();
+    loadExpenseTable();
+    loadCategoriesTable();
   }, [refresh]);
 
-  const loadData = async () => {
-    const response = await expensesApi.getAllExpenses(user_id);
-    setExpenses(response.data);
-    setFilteredExpenseData(response.data);
+  const loadExpenseTable = async () => {
+    const response = await expensesApi.getAllExpensesInCurrentMonth(user_id);
+    if (response.data.length > 0) {
+      setExpenses(response.data);
+      setFilteredExpenseData(response.data);
+    } else {
+      setExpenses([]);
+      setFilteredExpenseData([]);
+    }
+  };
+  const loadCategoriesTable = async () => {
+    const response = await categoriesApi.getAllContentFromCategories();
+    setCategories(response.data);
   };
   const refreshScreen = () => {
     setRefresh(!refresh);
@@ -51,45 +80,67 @@ function ExpenseScreen(props) {
   };
   const totalExpenses = calculateTotalAmount(expenses);
 
-  const filterByMonth = (data, month) => {
-    return data.filter((item) => {
-      const itemDate = new Date(item.date);
-      const itemMonth = itemDate.getMonth();
-      return itemMonth === month;
-    });
+  const toogleAddModal = () => {
+    setModalAddVisible(!modalAddVisible);
+  };
+  const toogleEditModal = () => {
+    setModalEditVisible(!modalEditVisible);
+  };
+  const handleAddModal = () => {
+    toogleAddModal();
   };
 
-  const handleMonthSelect = (month) => {
-    if (month !== null) {
-      const filtered = filterByMonth(expenses, month - 1);
-      setFilteredExpenseData(filtered);
-      if (month === 12) {
-        const filtered = filterByMonth(expenses, 11);
-        setFilteredExpenseData(filtered);
+  const addExpense = async (data, value) => {
+    toogleAddModal();
+    if (typeof value === "string") {
+      try {
+        const categoryData = {
+          name: value,
+          type: "Expense",
+        };
+        const response = await categoriesApi.addNewRowInCategories(
+          categoryData
+        );
+        console.log("Category added successfully", response);
+      } catch (error) {
+        console.error("Error adding expense", error);
       }
     }
-    if (month === "null") {
-      loadData();
-      setFilteredExpenseData(expenses);
-    }
-  };
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
-  const handleModal = () => {
-    toggleModal();
-  };
-
-  const addExpense = async (data) => {
-
-    toggleModal();
     try {
       const response = await expensesApi.addNewRowInExpenses(1, data);
-      console.log("Budget added successfully", response);
+      console.log("Expense added successfully", response);
     } catch (error) {
-      console.error("Error adding budget", error);
+      console.error("Error adding expense", error);
     }
+    refreshScreen();
+  };
+
+  const pressedRow = (rowItems) => {
+    toogleEditModal();
+    setEditItem(rowItems);
+  };
+  const editExpense = async (updatedData) => {
+    const data = {
+      ...editItem,
+      amount: updatedData.amount,
+      description: updatedData.description,
+    };
+    try {
+      const response = await expensesApi.updateRowInExpense(
+        editItem.expense_id,
+        data
+      );
+      console.log("Expense added successfully", response);
+    } catch (error) {
+      console.error("Error adding expense", error);
+    }
+    refreshScreen();
+  };
+
+  const deleteExpense = async (expense_id) => {
+    console.log(expense_id);
+    const response = await expensesApi.deleteRowFromExpense(expense_id);
     refreshScreen();
   };
 
@@ -104,10 +155,19 @@ function ExpenseScreen(props) {
 
       <ScrollView style={styles.container}>
         <View style={styles.filterContainer}>
-          <AppText style={styles.filterText}>Apply filter</AppText>
-          <View style={{ flex: 1 }}>
-            <MonthPicker onMonthSelect={handleMonthSelect} />
-          </View>
+          <AppText style={styles.filterText}>
+            For the month of:{" "}
+            <AppText
+              style={[
+                styles.filterText,
+                {
+                  color: colors.primary,
+                },
+              ]}
+            >
+              {currentMonthName} {new Date().getFullYear()}
+            </AppText>
+          </AppText>
         </View>
 
         <View
@@ -120,7 +180,7 @@ function ExpenseScreen(props) {
           <AppText style={styles.subHeader}>Expenses</AppText>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <AppText style={styles.links}>Add Expense</AppText>
-            <TouchableOpacity onPress={handleModal}>
+            <TouchableOpacity onPress={handleAddModal}>
               <Icon
                 name={"circle-edit-outline"}
                 iconColor={colors.primary}
@@ -132,16 +192,34 @@ function ExpenseScreen(props) {
         </View>
 
         {filteredExpenseData.length > 0 ? (
-          <ExpenseTable assets={filteredExpenseData} />
+          <ExpenseTable
+            assets={filteredExpenseData}
+            onPressingEachRow={pressedRow}
+          />
         ) : (
           <AppText>No data for the selected month</AppText>
         )}
       </ScrollView>
 
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <AddExpense
-          onClick={(newData) => addExpense(newData)}
-          closeModal={toggleModal}
+      <Modal animationType="slide" transparent={true} visible={modalAddVisible}>
+        <EntryRow
+          onClick={(newData, categoryID) => addExpense(newData, categoryID)}
+          categoryOptions={categories}
+          closeModal={toogleAddModal}
+          // title="Expense"
+          title="Expense"
+        />
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalEditVisible}
+      >
+        <ExpenseEditDetailsScreen
+          assets={editItem}
+          closeModal={toogleEditModal}
+          onEdit={(updatedData) => editExpense(updatedData)}
+          onDelete={deleteExpense}
         />
       </Modal>
     </Screen>

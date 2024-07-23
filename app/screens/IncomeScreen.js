@@ -15,10 +15,10 @@ import Screen from "../components/Screen";
 import LogoContainer from "../components/LogoContainer";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
-import IncomeTable from "../components/IncomeTable";
 import SummaryHeader from "../components/SummaryHeader";
+import IncomeTable from "../components/IncomeTable";
 import EntryRow from "../components/EntryRow";
-import EditDetailsScreen from "./EditDetailsScreen";
+import IncomeEditDetailsScreen from "./IncomeEditDetailsScreen";
 
 const monthNames = [
   "January",
@@ -206,8 +206,8 @@ function IncomeScreen(props) {
           onClick={(newData, categoryID) => addIncome(newData, categoryID)}
           categoryOptions={categories}
           closeModal={toogleAddModal}
-          // title="Income"
           title="Income"
+          // title="Income"
         />
       </Modal>
       <Modal
@@ -215,7 +215,7 @@ function IncomeScreen(props) {
         transparent={true}
         visible={modalEditVisible}
       >
-        <EditDetailsScreen
+        <IncomeEditDetailsScreen
           assets={editItem}
           closeModal={toogleEditModal}
           onEdit={(updatedData) => editIncome(updatedData)}

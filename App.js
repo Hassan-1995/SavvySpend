@@ -12,7 +12,7 @@ import CategoryScreen from "./app/screens/CategoryScreen";
 import AddBudget from "./app/components/AddBudget";
 import ExpenseScreen from "./app/screens/ExpenseScreen";
 import IncomeScreen from "./app/screens/IncomeScreen";
-import EditDetailsScreen from "./app/screens/EditDetailsScreen";
+import EditDetailsScreen from "./app/screens/IncomeEditDetailsScreen";
 
 const mockData = {
   totalBudget: 100000,
@@ -38,8 +38,8 @@ export default function App() {
     // <BudgetScreenNew />
     // <AddBudget />
 
-    // <ExpenseScreen />
-    <IncomeScreen/>
+    <ExpenseScreen />
+    // <IncomeScreen />
 
     // <EditDetailsScreen />
   );

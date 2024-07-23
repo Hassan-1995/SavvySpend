@@ -59,7 +59,7 @@ function EntryRow({
     setCategoryID(numberOfCategories);
   };
 
-  const incomeData = categoryOptions.filter((item) => item.type === "Income");
+  const categoryData = categoryOptions.filter((item) => item.type === "Expense");
 
   const handleMonthSelect = (month, year = 2024) => {
     const date = new Date(year, month, 0);
@@ -123,7 +123,7 @@ function EntryRow({
         <AppText>Particulars</AppText>
         {title === "Income" ? (
           <DropdownComponentNew
-            dropdownOptions={incomeData}
+            dropdownOptions={categoryData}
             // onValueChange={(value1, value2) => console.log(value1, value2)}
             onValueChange={handleValueChange}
           />
@@ -135,7 +135,7 @@ function EntryRow({
           />
         ) : (
           <DropdownComponentNew
-            dropdownOptions={incomeData}
+            dropdownOptions={categoryData}
             // onValueChange={(value1, value2) => console.log(value1, value2)}
             onValueChange={handleValueChange}
           />
@@ -144,8 +144,8 @@ function EntryRow({
         <MonthPicker onMonthSelect={handleMonthSelect} />
         <AppTextInput
           value={inputValue}
-          keyboardType="numeric"
           onChangeText={(text) => setInputValue(text)}
+          keyboardType="numeric"
           placeholder={"Please add expected finance."}
         />
         <AppTextInput

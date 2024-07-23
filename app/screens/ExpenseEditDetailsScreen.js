@@ -6,7 +6,7 @@ import AppButton from "../components/AppButton";
 import Icon from "../components/Icon";
 import AppTextInput from "../components/AppTextInput";
 
-function EditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
+function ExpenseEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
   console.log(assets);
   const [editAmount, setEditAmount] = useState(assets.amount);
   const [editDescription, setEditDescription] = useState(assets.description);
@@ -38,7 +38,7 @@ function EditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
 
   const handleDelete = () => {
     handleModal();
-    onDelete(assets.income_id);
+    onDelete(assets.expense_id);
   };
 
   return (
@@ -60,6 +60,7 @@ function EditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
           <AppTextInput
             value={editAmount}
             onChangeText={(text) => setEditAmount(text)}
+            keyboardType="numeric"
             placeholder={"Add utility amount."}
             style={styles.subHeader}
           />
@@ -126,6 +127,7 @@ const styles = StyleSheet.create({
   subHeader: {
     fontSize: 20,
     fontWeight: "600",
+    flex: 1,
   },
   description: {
     fontSize: 16,
@@ -155,4 +157,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditDetailsScreen;
+export default ExpenseEditDetailsScreen;
