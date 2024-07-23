@@ -41,6 +41,7 @@ function EntryRow({
 
   const [categoryID, setCategoryID] = useState();
   const [isInputEmpty, setIsInputEmpty] = useState(false);
+  const [others, setOthers] = useState();
 
   useEffect(() => {
     if (!inputValue || !period) {
@@ -84,6 +85,8 @@ function EntryRow({
     console.log("ID: ", id);
     console.log("Name: ", name);
     setBudgetItem(name);
+    console.log(budgetItem);
+    setOthers(name);
   };
 
   const handleEdit = () => {
@@ -117,21 +120,27 @@ function EntryRow({
             />
           </TouchableOpacity>
         </View>
-
+        <AppText>Particulars</AppText>
         {title === "Income" ? (
           <DropdownComponentNew
             dropdownOptions={incomeData}
             // onValueChange={(value1, value2) => console.log(value1, value2)}
             onValueChange={handleValueChange}
           />
-        ) : (
+        ) : others === "Others" ? (
           <AppTextInput
-            value={budgetItem}
+            // value={budgetItem}
             onChangeText={(text) => setBudgetItem(text)}
             placeholder={"Add utility name."}
           />
+        ) : (
+          <DropdownComponentNew
+            dropdownOptions={incomeData}
+            // onValueChange={(value1, value2) => console.log(value1, value2)}
+            onValueChange={handleValueChange}
+          />
         )}
-
+        <AppText>Particulars</AppText>
         <MonthPicker onMonthSelect={handleMonthSelect} />
         <AppTextInput
           value={inputValue}

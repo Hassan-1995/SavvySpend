@@ -207,7 +207,7 @@ function IncomeScreen(props) {
           categoryOptions={categories}
           closeModal={toogleAddModal}
           // title="Income"
-          title="Expense"
+          title="Income"
         />
       </Modal>
       <Modal
