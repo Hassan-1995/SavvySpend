@@ -59,7 +59,7 @@ function EntryRow({
     setCategoryID(numberOfCategories);
   };
 
-  const categoryData = categoryOptions.filter((item) => item.type === "Expense");
+  const categoryData = categoryOptions.filter((item) => item.type === title);
 
   const handleMonthSelect = (month, year = 2024) => {
     const date = new Date(year, month, 0);
@@ -124,19 +124,16 @@ function EntryRow({
         {title === "Income" ? (
           <DropdownComponentNew
             dropdownOptions={categoryData}
-            // onValueChange={(value1, value2) => console.log(value1, value2)}
             onValueChange={handleValueChange}
           />
         ) : others === "Others" ? (
           <AppTextInput
-            // value={budgetItem}
             onChangeText={(text) => setBudgetItem(text)}
             placeholder={"Add utility name."}
           />
         ) : (
           <DropdownComponentNew
             dropdownOptions={categoryData}
-            // onValueChange={(value1, value2) => console.log(value1, value2)}
             onValueChange={handleValueChange}
           />
         )}

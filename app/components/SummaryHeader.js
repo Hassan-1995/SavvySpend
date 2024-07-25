@@ -1,24 +1,23 @@
 import React from "react";
-import expensesApi from "../api/expenses";
 
 import { View, StyleSheet } from "react-native";
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function SummaryHeader({ totalExpenses, totalBudget }) {
-  const remainingBalance = totalBudget - totalExpenses;
+function SummaryHeader({ labelOne, labelTwo, totalLabelOne, totalLabelTwo }) {
+  const remainingBalance = totalLabelOne - totalLabelTwo;
   return (
     <View style={styles.summaryContainer}>
       <View style={styles.summaryItem}>
-        <AppText style={styles.summaryLabel}>Total Budget</AppText>
+        <AppText style={styles.summaryLabel}>Total {labelOne}</AppText>
         <AppText style={styles.summaryValue}>
-          Rs {totalBudget.toLocaleString()}
+          Rs {totalLabelOne.toLocaleString()}
         </AppText>
       </View>
       <View style={styles.summaryItem}>
-        <AppText style={styles.summaryLabel}>Total Expenses</AppText>
+        <AppText style={styles.summaryLabel}>Total {labelTwo}</AppText>
         <AppText style={styles.summaryValue}>
-          Rs {totalExpenses.toLocaleString()}
+          Rs {totalLabelTwo.toLocaleString()}
         </AppText>
       </View>
       <View style={styles.summaryItem}>

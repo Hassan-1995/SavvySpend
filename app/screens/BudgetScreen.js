@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import budgetsApi from "../api/budgets";
-import categoriesApi from "../api/categories";
-
 import expensesApi from "../api/expenses";
+import categoriesApi from "../api/categories";
 
 import {
   View,
@@ -195,7 +194,12 @@ function BudgetScreen(props) {
         <AppText style={styles.label}>Budgets</AppText>
       </View>
 
-      <SummaryHeader totalBudget={totalBudgets} totalExpenses={totalExpenses} />
+      <SummaryHeader
+        labelOne={"Budget"}
+        totalLabelOne={totalBudgets}
+        labelTwo={"Expense"}
+        totalLabelTwo={totalExpenses}
+      />
       <View style={styles.summaryItem}>
         <AppText style={styles.summaryLabel}>UnAllocated Budget: </AppText>
         <AppText style={styles.summaryValue}>

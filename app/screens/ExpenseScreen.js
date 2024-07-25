@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import expensesApi from "../api/expenses";
+import incomesApi from "../api/incomes";
 import categoriesApi from "../api/categories";
 
 import {
@@ -40,11 +41,12 @@ const currentMonthName = monthNames[currentMonth];
 const user_id = 1;
 
 function ExpenseScreen(props) {
-  const [categories, setCategories] = useState([]);
-
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenseData, setFilteredExpenseData] = useState([]);
   const [editItem, setEditItem] = useState([]);
+
+  const [incomes, setIncomes] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [modalEditVisible, setModalEditVisible] = useState(false);
@@ -52,6 +54,7 @@ function ExpenseScreen(props) {
 
   useEffect(() => {
     loadExpenseTable();
+    loadIncomeTable();
     loadCategoriesTable();
   }, [refresh]);
 
@@ -69,6 +72,15 @@ function ExpenseScreen(props) {
     const response = await categoriesApi.getAllContentFromCategories();
     setCategories(response.data);
   };
+
+  const loadIncomeTable = async () => {
+    const response = await incomesApi.getAllIncomesInCurrentMonth(user_id);
+    if (response.data.length > 0) {
+      setIncomes(response.data);
+    } else {
+      setIncomes([]);
+    }
+  };
   const refreshScreen = () => {
     setRefresh(!refresh);
   };
@@ -79,6 +91,7 @@ function ExpenseScreen(props) {
     }, 0);
   };
   const totalExpenses = calculateTotalAmount(expenses);
+  const totalIncomes = calculateTotalAmount(incomes);
 
   const toogleAddModal = () => {
     setModalAddVisible(!modalAddVisible);
@@ -151,7 +164,12 @@ function ExpenseScreen(props) {
         <AppText style={styles.label}>Expenses</AppText>
       </View>
 
-      <SummaryHeader totalExpenses={totalExpenses} totalBudget={2000} />
+      <SummaryHeader
+        labelOne={"Income"}
+        totalLabelOne={totalIncomes}
+        labelTwo={"Expense"}
+        totalLabelTwo={totalExpenses}
+      />
 
       <ScrollView style={styles.container}>
         <View style={styles.filterContainer}>
