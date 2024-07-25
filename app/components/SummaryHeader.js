@@ -6,7 +6,7 @@ import AppText from "./AppText";
 import colors from "../config/colors";
 
 function SummaryHeader({ totalExpenses, totalBudget }) {
-  const remainingBalance = totalExpenses - totalBudget;
+  const remainingBalance = totalBudget - totalExpenses;
   return (
     <View style={styles.summaryContainer}>
       <View style={styles.summaryItem}>
@@ -31,7 +31,7 @@ function SummaryHeader({ totalExpenses, totalBudget }) {
             },
           ]}
         >
-          Rs {remainingBalance.toLocaleString()}
+          Rs {Math.abs(remainingBalance).toLocaleString()}
         </AppText>
       </View>
     </View>

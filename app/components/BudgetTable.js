@@ -1,80 +1,85 @@
 import React from "react";
-
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import AppText from "./AppText";
-import Icon from "./Icon";
 import colors from "../config/colors";
 
-function BudgetTable({ assets, onClick }) {
-  // console.log(assets);
-  const handleEdit = (value) => {
-    onClick(value);
-  };
-
+function BudgetTable({ assets, onPressingEachRow }) {
   return (
-    <View style={styles.container}>
-      <View style={styles.tableHeader}>
-        <AppText style={[styles.cell, styles.headerCell]}>Particulars</AppText>
-        <AppText style={[styles.cell, styles.headerCell]}>Budget</AppText>
-        <AppText style={[styles.cell, styles.headerCell]}>Edit</AppText>
+    <ScrollView style={styles.container}>
+      <View style={styles.headerRow}>
+        <AppText style={styles.headerCell}>Name</AppText>
+        <AppText style={styles.headerCell}>Amount</AppText>
       </View>
-      <ScrollView>
-        {assets.map((item) => (
-          <View key={item.utility_id} style={styles.row}>
-            <AppText style={[styles.cell, { textAlign: "left" }]}>
-              {item.utility_name}
+      {assets.map((item) => (
+        <View key={item.budget_id}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => onPressingEachRow(item)}
+          >
+            <AppText style={[styles.cell, styles.nameCell]}>
+              {item.name}
             </AppText>
-            <AppText style={[styles.cell, { textAlign: "right" }]}>
+            <AppText style={[styles.cell, styles.descriptionCell]}>
               Rs {item.amount}
             </AppText>
-            {/* <AppText style={styles.cell}>Rs {item.expense}</AppText> */}
-            <TouchableOpacity
-              style={styles.cell}
-              onPress={() => handleEdit(item)}
-            >
-              <Icon
-                name={"circle-edit-outline"}
-                iconColor={colors.primary}
-                backgroundColor="transparent"
-                size={30}
-              />
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: "transparent",
   },
-  tableHeader: {
+  headerRow: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    // borderBottomColor: "#ddd",
-    borderBottomColor: colors.dark,
-    paddingBottom: 10,
-    marginBottom: 10,
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    marginBottom: 8,
+    borderRadius: 8,
+  },
+  headerCell: {
+    flex: 1,
+    fontWeight: "bold",
+    fontSize: 16,
+    color: colors.white,
   },
   row: {
     flexDirection: "row",
-    paddingVertical: 10,
+    backgroundColor: colors.tertiary,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    marginBottom: 8,
+    borderRadius: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    borderBottomColor: "#ccc",
   },
   cell: {
-    flex: 1,
     fontSize: 14,
-    alignSelf: "center",
-    alignItems: "flex-end",
-  },
-  headerCell: {
     fontWeight: "bold",
-    textAlign: "center",
+    textAlignVertical: "center",
+  },
+  nameCell: {
+    flex: 1,
+    backgroundColor: colors.secondary,
+    color: colors.white,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  descriptionCell: {
+    flex: 2,
+    backgroundColor: colors.primary,
+    color: colors.white,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
   },
 });
 

@@ -21,12 +21,21 @@ const getAllBudgetsInCurrentMonth = async (id) => {
     throw error;
   }
 };
+const getAllExpensesByCurrentMonthNotIncludedInBudgets = async (id) => {
+  try {
+    const result = await client.get(endPoint + "/nonAssignedBudget/" + id);
+    return result;
+  } catch (error) {
+    console.error("Error gettig data:", error);
+    throw error;
+  }
+};
 const addNewRowInBudgets = async (user_id, newData) => {
   const data = {
     category_id: newData.nameValue,
-    date: newData.month,
+    type: "Expense",
+    period: newData.month,
     amount: newData.amount,
-    description: newData.description,
   };
   try {
     const response = await client.post(`${endPoint}/${user_id}`, data);
@@ -43,9 +52,9 @@ const updateRowInBudget = async (budget_id, updatedData) => {
   const data = {
     user_id: updatedData.user_id,
     category_id: updatedData.category_id,
+    type: updatedData.type,
     amount: updatedData.amount,
-    date: formatDate(updatedData.date),
-    description: updatedData.description,
+    period: formatDate(updatedData.period),
   };
   try {
     const result = await client.put(`${endPoint}/${budget_id}`, data);
@@ -68,6 +77,7 @@ const deleteRowFromBudget = async (id) => {
 export default {
   getAllBudgets,
   getAllBudgetsInCurrentMonth,
+  getAllExpensesByCurrentMonthNotIncludedInBudgets,
   addNewRowInBudgets,
   updateRowInBudget,
   deleteRowFromBudget,

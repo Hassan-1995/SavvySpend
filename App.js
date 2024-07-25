@@ -38,8 +38,9 @@ export default function App() {
     // <BudgetScreenNew />
     // <AddBudget />
 
-    <ExpenseScreen />
+    // <ExpenseScreen />
     // <IncomeScreen />
+    <BudgetScreen />
 
     // <EditDetailsScreen />
   );
