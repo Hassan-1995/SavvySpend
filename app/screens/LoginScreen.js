@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Image, StyleSheet, Text } from "react-native";
 import * as Yup from "yup";
+import usersApi from "../api/users";
+import { jwtDecode } from "jwt-decode";
 
 import Screen from "../components/Screen";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
-import usersApi from "../api/users";
+import LogoContainer from "../components/LogoContainer";
+import AuthContext from "../auth/context";
+import authStorage from "../auth/storage";
 
 const validationSchema = Yup.object().shape({
   user_email: Yup.string().required().email().label("Email"),
@@ -12,43 +16,40 @@ const validationSchema = Yup.object().shape({
 });
 
 function LoginScreen(props) {
+  const authContext = useContext(AuthContext);
+
   const [userData, setUserData] = useState([]);
   const [loginID, setLoginID] = useState(true);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    const response = await usersApi.getAllContentFromUsers();
-    console.log(response.data);
-    setUserData(response.data);
-  };
-
   const handleSubmit = async (values) => {
-    console.log(values.user_email)
-    const email = userData.find(
-      (user) => user.email === values.user_email
+    try {
+      const { user, token } = await usersApi.authenticateUser(
+        values.user_email,
+        values.user_password
+      );
 
-    );
-    if (email) {
-      if (email.password === values.user_password) {
-        setLoginID(true);
-      } else {
+      if (!user || !token) {
         setLoginID(false);
+        return;
       }
-    } else {
+
+      setLoginID(true);
+
+      const auth = jwtDecode(token);
+      authContext.setUser(user);
+      authStorage.storeToken(token);
+    } catch (error) {
+      console.error("Error authenticating user:", error.message);
       setLoginID(false);
     }
   };
 
   return (
     <Screen style={styles.container}>
-      <Image style={styles.logo} source={require("../assets/Logo.png")} />
+      <LogoContainer />
       {loginID ? <Text></Text> : <Text>User ID or Password is incorrect</Text>}
       <AppForm
         initialValues={{ user_email: "", user_password: "" }}
-        // onSubmit={(values) => console.log(values)}
         onSubmit={(values) => handleSubmit(values)}
         validationSchema={validationSchema}
       >

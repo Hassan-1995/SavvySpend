@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import incomesApi from "../api/incomes";
 import expensesApi from "../api/expenses";
 
@@ -21,6 +21,7 @@ import SummaryHeader from "../components/SummaryHeader";
 import IncomeTable from "../components/IncomeTable";
 import EntryRow from "../components/EntryRow";
 import IncomeEditDetailsScreen from "./IncomeEditDetailsScreen";
+import AuthContext from "../auth/context";
 
 const monthNames = [
   "January",
@@ -53,6 +54,8 @@ function IncomeScreen(props) {
   const [modalEditVisible, setModalEditVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
+  const { user } = useContext(AuthContext);
+
   useEffect(() => {
     loadIncomeTable();
     loadExpenseTable();
@@ -60,7 +63,7 @@ function IncomeScreen(props) {
   }, [refresh]);
 
   const loadIncomeTable = async () => {
-    const response = await incomesApi.getAllIncomesInCurrentMonth(user_id);
+    const response = await incomesApi.getAllIncomesInCurrentMonth(user.user_id);
     if (response.data.length > 0) {
       setIncomes(response.data);
       setFilteredIncomeData(response.data);
@@ -68,9 +71,12 @@ function IncomeScreen(props) {
       setIncomes([]);
       setFilteredIncomeData([]);
     }
+    refreshScreen();
   };
   const loadExpenseTable = async () => {
-    const response = await expensesApi.getAllExpensesInCurrentMonth(user_id);
+    const response = await expensesApi.getAllExpensesInCurrentMonth(
+      user.user_id
+    );
     if (response.data.length > 0) {
       setExpenses(response.data);
       // setFilteredIncomeData(response.data);
@@ -123,7 +129,7 @@ function IncomeScreen(props) {
     }
 
     try {
-      const response = await incomesApi.addNewRowInIncomes(1, data);
+      const response = await incomesApi.addNewRowInIncomes(user.user_id, data);
       console.log("Income added successfully", response);
     } catch (error) {
       console.error("Error adding expense", error);
@@ -154,7 +160,6 @@ function IncomeScreen(props) {
   };
 
   const deleteIncome = async (income_id) => {
-    console.log(income_id);
     const response = await incomesApi.deleteRowFromIncome(income_id);
     refreshScreen();
   };
@@ -226,8 +231,8 @@ function IncomeScreen(props) {
           onClick={(newData, categoryID) => addIncome(newData, categoryID)}
           categoryOptions={categories}
           closeModal={toogleAddModal}
+          compare="Income"
           title="Income"
-          // title="Income"
         />
       </Modal>
       <Modal

@@ -28,8 +28,6 @@ function BudgetEditDetailsScreen({
   };
   const formattedDate = formatDate(assets.period);
 
-  console.log(budgetExpenses);
-
   const handleModal = () => {
     closeModal();
   };
@@ -42,7 +40,6 @@ function BudgetEditDetailsScreen({
       description: editDescription,
     };
     handleModal();
-    console.log("Edited: ", editData);
     onEdit(editData);
   };
 

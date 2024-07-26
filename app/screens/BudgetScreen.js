@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import budgetsApi from "../api/budgets";
 import expensesApi from "../api/expenses";
 import categoriesApi from "../api/categories";
@@ -20,6 +20,9 @@ import BudgetTable from "../components/BudgetTable";
 import SummaryHeader from "../components/SummaryHeader";
 import EntryRow from "../components/EntryRow";
 import BudgetEditDetailsScreen from "./BudgetEditDetailsScreen";
+import AuthContext from "../auth/context";
+import AppButton from "../components/AppButton";
+import authStorage from "../auth/storage";
 
 const monthNames = [
   "January",
@@ -58,6 +61,8 @@ function BudgetScreen(props) {
   const [modalEditVisible, setModalEditVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
+  const { user, setUser } = useContext(AuthContext);
+
   useEffect(() => {
     loadBudgetTable();
     loadExpenseTable();
@@ -66,7 +71,7 @@ function BudgetScreen(props) {
   }, [refresh]);
 
   const loadBudgetTable = async () => {
-    const response = await budgetsApi.getAllBudgetsInCurrentMonth(user_id);
+    const response = await budgetsApi.getAllBudgetsInCurrentMonth(user.user_id);
     if (response.data.length > 0) {
       setBudgets(response.data);
       setFilteredBudgetData(response.data);
@@ -80,7 +85,9 @@ function BudgetScreen(props) {
     setCategories(response.data);
   };
   const loadExpenseTable = async () => {
-    const response = await expensesApi.getAllExpensesInCurrentMonth(user_id);
+    const response = await expensesApi.getAllExpensesInCurrentMonth(
+      user.user_id
+    );
     if (response.data.length > 0) {
       setExpenses(response.data);
       setFilteredExpenseData(response.data);
@@ -92,7 +99,7 @@ function BudgetScreen(props) {
   const loadBudgetNotIncludedInExpenseTable = async () => {
     const response =
       await budgetsApi.getAllExpensesByCurrentMonthNotIncludedInBudgets(
-        user_id
+        user.user_id
       );
     if (response.data.length > 0) {
       setUnAllocatedBudgets(response.data);
@@ -127,9 +134,6 @@ function BudgetScreen(props) {
   };
 
   const addBudget = async (data, value) => {
-    console.log("Data: ", data);
-    console.log("Value: ", value);
-
     toogleAddModal();
     if (typeof value === "string") {
       try {
@@ -147,7 +151,7 @@ function BudgetScreen(props) {
     }
 
     try {
-      const response = await budgetsApi.addNewRowInBudgets(1, data);
+      const response = await budgetsApi.addNewRowInBudgets(user.user_id, data);
       console.log("Budget added successfully", response);
     } catch (error) {
       console.error("Error adding budget", error);
@@ -168,7 +172,6 @@ function BudgetScreen(props) {
       ...editItem,
       amount: updatedData.amount,
     };
-    console.log(data);
     try {
       const response = await budgetsApi.updateRowInBudget(
         editItem.budget_id,
@@ -182,9 +185,13 @@ function BudgetScreen(props) {
   };
 
   const deleteBudget = async (budget) => {
-    console.log(budget);
     const response = await budgetsApi.deleteRowFromBudget(budget.budget_id);
     refreshScreen();
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    authStorage.removeToken();
   };
 
   return (
@@ -208,6 +215,11 @@ function BudgetScreen(props) {
       </View>
 
       <ScrollView style={styles.container}>
+        <AppButton
+          title={"Temp for Logout"}
+          color="dark"
+          onPress={handleLogout}
+        />
         <View style={styles.filterContainer}>
           <AppText style={styles.filterText}>
             For the month of:{" "}
@@ -260,7 +272,7 @@ function BudgetScreen(props) {
           onClick={(newData, categoryID) => addBudget(newData, categoryID)}
           categoryOptions={categories}
           closeModal={toogleAddModal}
-          // title="Budget"
+          compare="Expense"
           title="Budget"
         />
       </Modal>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import expensesApi from "../api/expenses";
 import incomesApi from "../api/incomes";
 import categoriesApi from "../api/categories";
@@ -20,6 +20,7 @@ import ExpenseTable from "../components/ExpenseTable";
 import SummaryHeader from "../components/SummaryHeader";
 import EntryRow from "../components/EntryRow";
 import ExpenseEditDetailsScreen from "./ExpenseEditDetailsScreen";
+import AuthContext from "../auth/context";
 
 const monthNames = [
   "January",
@@ -52,6 +53,8 @@ function ExpenseScreen(props) {
   const [modalEditVisible, setModalEditVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
+  const { user } = useContext(AuthContext);
+
   useEffect(() => {
     loadExpenseTable();
     loadIncomeTable();
@@ -59,7 +62,9 @@ function ExpenseScreen(props) {
   }, [refresh]);
 
   const loadExpenseTable = async () => {
-    const response = await expensesApi.getAllExpensesInCurrentMonth(user_id);
+    const response = await expensesApi.getAllExpensesInCurrentMonth(
+      user.user_id
+    );
     if (response.data.length > 0) {
       setExpenses(response.data);
       setFilteredExpenseData(response.data);
@@ -74,7 +79,7 @@ function ExpenseScreen(props) {
   };
 
   const loadIncomeTable = async () => {
-    const response = await incomesApi.getAllIncomesInCurrentMonth(user_id);
+    const response = await incomesApi.getAllIncomesInCurrentMonth(user.user_id);
     if (response.data.length > 0) {
       setIncomes(response.data);
     } else {
@@ -121,7 +126,10 @@ function ExpenseScreen(props) {
     }
 
     try {
-      const response = await expensesApi.addNewRowInExpenses(1, data);
+      const response = await expensesApi.addNewRowInExpenses(
+        user.user_id,
+        data
+      );
       console.log("Expense added successfully", response);
     } catch (error) {
       console.error("Error adding expense", error);
@@ -152,7 +160,6 @@ function ExpenseScreen(props) {
   };
 
   const deleteExpense = async (expense_id) => {
-    console.log(expense_id);
     const response = await expensesApi.deleteRowFromExpense(expense_id);
     refreshScreen();
   };
@@ -224,7 +231,7 @@ function ExpenseScreen(props) {
           onClick={(newData, categoryID) => addExpense(newData, categoryID)}
           categoryOptions={categories}
           closeModal={toogleAddModal}
-          // title="Expense"
+          compare="Expense"
           title="Expense"
         />
       </Modal>

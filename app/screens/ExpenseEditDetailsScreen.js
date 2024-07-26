@@ -7,7 +7,6 @@ import Icon from "../components/Icon";
 import AppTextInput from "../components/AppTextInput";
 
 function ExpenseEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
-  console.log(assets);
   const [editAmount, setEditAmount] = useState(assets.amount);
   const [editDescription, setEditDescription] = useState(assets.description);
 
@@ -32,7 +31,6 @@ function ExpenseEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
       description: editDescription,
     };
     handleModal();
-    console.log("Edited: ", editData);
     onEdit(editData);
   };
 

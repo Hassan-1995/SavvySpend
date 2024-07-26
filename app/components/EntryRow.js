@@ -32,6 +32,7 @@ function EntryRow({
   closeModal,
   onClick,
   title = "Add something",
+  compare,
   categoryOptions,
 }) {
   const [budgetItem, setBudgetItem] = useState("");
@@ -59,7 +60,7 @@ function EntryRow({
     setCategoryID(numberOfCategories);
   };
 
-  const categoryData = categoryOptions.filter((item) => item.type === title);
+  const categoryData = categoryOptions.filter((item) => item.type === compare);
 
   const handleMonthSelect = (month, year = 2024) => {
     const date = new Date(year, month, 0);

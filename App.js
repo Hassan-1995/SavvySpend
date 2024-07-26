@@ -1,56 +1,45 @@
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import DashboardScreen from "./app/screens/DashboardScreen";
-import BudgetScreen from "./app/screens/BudgetScreen";
-import BudgetScreenNew from "./app/screens/BudgetScreenNew";
-import PromptBox from "./app/components/PromptBox";
-import CreateBudgetScreen from "./app/screens/CreateBudgetScreen";
-import ItemCard from "./app/components/ItemCard";
-import LoginScreen from "./app/screens/LoginScreen";
-import TestingScreen from "./app/screens/TestingScreen";
-import CategoryScreen from "./app/screens/CategoryScreen";
-import AddBudget from "./app/components/AddBudget";
-import ExpenseScreen from "./app/screens/ExpenseScreen";
-import IncomeScreen from "./app/screens/IncomeScreen";
-import EditDetailsScreen from "./app/screens/IncomeEditDetailsScreen";
+import { jwtDecode } from "jwt-decode";
 
-const mockData = {
-  totalBudget: 100000,
-  totalExpenses: 75000,
-  categories: [
-    { name: "Food", amount: 20000 },
-    { name: "Transport", amount: 15000 },
-    { name: "Utilities", amount: 10000 },
-    { name: "Entertainment", amount: 30000 },
-  ],
-};
+import myTheme from "./app/navigation/navigationTheme";
+import LoginScreen from "./app/screens/LoginScreen";
+import WelcomeScreen from "./app/screens/WelcomeScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import AuthNavigator from "./app/navigation/AuthNavigator";
+import AuthContext from "./app/auth/context";
+import AppNavigator from "./app/navigation/AppNavigator";
+import authStorage from "./app/auth/storage";
 
 export default function App() {
+  const [user, setUser] = useState();
+
+  const restoreToken = async () => {
+    const token = await authStorage.getToken();
+    if (!token) return;
+    setUser(jwtDecode(token));
+  };
+
+  useEffect(() => {
+    restoreToken();
+  }, []);
+
   return (
-    // <TestingScreen />
+    // <LoginScreen />
 
-    // <LoginScreen/>
-    // <DashboardScreen/>
-    // <ItemCard/>
-    // <BudgetScreen {...mockData}/>
-    // <CreateBudgetScreen/>
-    // <CategoryScreen />
-    // <BudgetScreenNew />
-    // <AddBudget />
+    // <NavigationContainer theme={myTheme}>
+    //   <AuthNavigator />
+    // </NavigationContainer>
 
-    // <ExpenseScreen />
-    // <IncomeScreen />
-    <BudgetScreen />
+    <AuthContext.Provider value={{ user, setUser }}>
+      <NavigationContainer theme={myTheme}>
+        {user ? <AppNavigator /> : <AuthNavigator />}
+      </NavigationContainer>
+    </AuthContext.Provider>
 
-    // <EditDetailsScreen />
+    // <NavigationContainer theme={myTheme}>
+    //   <AppNavigator />
+    // </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
