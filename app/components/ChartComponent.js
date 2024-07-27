@@ -1,70 +1,89 @@
 import React from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
-
-import { StyleSheet, Dimensions } from "react-native";
 import colors from "../config/colors";
+import AppText from "./AppText";
 
-const { width, height } = Dimensions.get("window");
+function ChartComponent({ data, title }) {
+  const screenWidth = Dimensions.get("window").width;
 
-const chartConfig = {
-  // backgroundGradientFrom: "#1E2923",
-  backgroundGradientFrom: "transparent",
-  backgroundGradientFromOpacity: 0,
-  // backgroundGradientTo: "#08130D",
-  backgroundGradientTo: "transparent",
-  backgroundGradientToOpacity: 0,
-  color: (opacity = 1) => `rgba(255, 82, 82, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(16, 75, 125, ${opacity})`,
-  decimalPlaces: 0,
-  strokeWidth: 5, // optional, default 3
-  barPercentage: 1,
-  strokeWidth: 5,
-};
+  // Define the correct order of months
+  const monthOrder = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-function ChartComponent({ assets }) {
-  const chartData = {
-    labels: assets.map((item) => item.particulars),
-    datasets: [
-      {
-        data: assets.map((item) => item.expenses),
-      },
-    ],
-  };
+  // Sort the data based on the month order
+  const sortedData = data.sort(
+    (a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month)
+  );
+
+  // Extract month names and amounts from the sorted data
+  const labels = sortedData.map((item) => item.month);
+  const amounts = sortedData.map((item) => parseFloat(item.amount));
 
   return (
-    <BarChart
-      data={chartData}
-      width={width - 20}
-      height={height * 0.3}
-      yAxisLabel="Rs "
-      // chartConfig={{
-      //   backgroundColor: "transparent",
-      //   backgroundGradientFrom: "transparent",
-      //   backgroundGradientTo: "transparent",
-      //   decimalPlaces: 0,
-      //   color: (opacity = 0) => `rgba(0, 255, 000, ${opacity})`,
-      //   labelColor: (opacity = 0) => `rgba(255, 0, 255, ${opacity})`,
-      //   style: {
-      //     borderRadius: 0,
-      //   },
-      //   propsForDots: {
-      //     r: "0",
-      //     strokeWidth: "0",
-      //     // stroke: "#ffa726",
-      //     stroke: "black",
-      //   },
-      // }}
-      chartConfig={chartConfig}
-      style={styles.container}
-    />
+    <View style={styles.container}>
+      <AppText style={styles.title}>Monthly {title} Data</AppText>
+      <BarChart
+        data={{
+          labels: labels,
+          datasets: [
+            {
+              data: amounts,
+            },
+          ],
+        }}
+        width={screenWidth - 20} // from react-native
+        height={220}
+        yAxisLabel=""
+        yAxisSuffix=""
+        yAxisInterval={1} // optional, defaults to 1
+        fromZero={true}
+        chartConfig={{
+          backgroundColor: colors.primary,
+          backgroundGradientFrom: colors.white,
+          backgroundGradientTo: colors.white,
+          decimalPlaces: 2, // optional, defaults to 2dp
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          style: {
+            borderRadius: 16,
+          },
+          barPercentage: 0.5, // Adjust this value to make bars thinner or thicker
+          barRadius: 0, // Optionally, you can also round the bars
+          fillShadowGradient:
+            title === "Income" ? colors.income : colors.expense, // Color for bars
+          fillShadowGradientOpacity: 1,
+        }}
+        style={{
+          marginVertical: 8,
+          borderRadius: 5,
+        }}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
-    borderRadius: 16,
     alignItems: "center",
+    marginTop: 20,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.primary,
   },
 });
 

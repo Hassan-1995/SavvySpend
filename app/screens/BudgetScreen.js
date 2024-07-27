@@ -41,8 +41,6 @@ const monthNames = [
 const currentMonth = new Date().getMonth();
 const currentMonthName = monthNames[currentMonth];
 
-const user_id = 1;
-
 function BudgetScreen(props) {
   const [budgets, setBudgets] = useState([]);
   const [filteredBudgetData, setFilteredBudgetData] = useState([]);
@@ -105,8 +103,8 @@ function BudgetScreen(props) {
       setUnAllocatedBudgets(response.data);
       setFilteredUnAllocatedBudgetData(response.data);
     } else {
-      setExpenses([]);
-      setFilteredExpenseData([]);
+      setUnAllocatedBudgets([]);
+      setFilteredUnAllocatedBudgetData([]);
     }
   };
 

@@ -124,17 +124,16 @@ function ExpenseScreen(props) {
         console.error("Error adding expense", error);
       }
     }
-
     try {
       const response = await expensesApi.addNewRowInExpenses(
         user.user_id,
         data
       );
       console.log("Expense added successfully", response);
+      refreshScreen();
     } catch (error) {
       console.error("Error adding expense", error);
     }
-    refreshScreen();
   };
 
   const pressedRow = (rowItems) => {

@@ -43,6 +43,8 @@ const currentMonthName = monthNames[currentMonth];
 const user_id = 1;
 
 function IncomeScreen(props) {
+  const { user } = useContext(AuthContext);
+
   const [incomes, setIncomes] = useState([]);
   const [filteredIncomeData, setFilteredIncomeData] = useState([]);
   const [editItem, setEditItem] = useState([]);
@@ -54,7 +56,6 @@ function IncomeScreen(props) {
   const [modalEditVisible, setModalEditVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
-  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     loadIncomeTable();

@@ -1,26 +1,40 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from "react-native";
 import AppText from "../components/AppText";
 import AppButton from "../components/AppButton";
-import LogoContainer from "../components/LogoContainer";
+import Screen from "../components/Screen";
+
+const { width, height } = Dimensions.get("window");
 
 function WelcomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <LogoContainer />
-      <AppText style={styles.title}>Welcome to Our App</AppText>
-      <View style={styles.buttonContainer}>
-        <AppButton
-          title={"Login"}
-          onPress={() => navigation.navigate("Login")}
+    <Screen>
+      <View style={styles.container}>
+        <AppText style={styles.title}>Welcome to Our App</AppText>
+        <Image
+          style={{ width: width, height: height * 0.5 }}
+          source={require("../assets/splash.png")}
         />
-        <AppButton
-          title={"Register"}
-          color="secondary"
-          onPress={() => navigation.navigate("Register")}
-        />
+        <View style={styles.buttonContainer}>
+          <AppButton
+            title={"Login"}
+            onPress={() => navigation.navigate("Login")}
+          />
+          <AppButton
+            title={"Register"}
+            color="secondary"
+            onPress={() => navigation.navigate("Register")}
+          />
+        </View>
       </View>
-    </View>
+    </Screen>
   );
 }
 
@@ -30,7 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#f8f9fa",
+    // backgroundColor: "#f8f9fa",
   },
   title: {
     fontSize: 30,

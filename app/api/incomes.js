@@ -5,7 +5,7 @@ const endPoint = "/incomes";
 
 const getAllIncomes = async (id) => {
   try {
-    const result = await client.get(endPoint + "/" + id);
+    const result = await client.get(endPoint + "/user_id/" + id);
     return result;
   } catch (error) {
     console.error("Error getting data:", error);

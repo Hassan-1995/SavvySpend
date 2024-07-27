@@ -19,14 +19,21 @@ function BudgetEditDetailsScreen({
 
   const allocatedBudget = editAmount;
 
+  const calculateTotalAmount = (budgets) => {
+    return budgets.reduce((total, item) => {
+      return total + parseFloat(item.amount);
+    }, 0);
+  };
+  const totalExpenses = calculateTotalAmount(budgetExpenses);
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${day}-${month}-${year}`;
   };
-  const formattedDate = formatDate(assets.period);
+  const formattedDate = formatDate(assets.updated_at);
 
   const handleModal = () => {
     closeModal();
@@ -81,7 +88,7 @@ function BudgetEditDetailsScreen({
               Allocated Budget: {parseFloat(allocatedBudget).toLocaleString()}
             </AppText>
             <AppText>
-              Spend Budget: {parseFloat(allocatedBudget).toLocaleString()}
+              Spend Budget: {parseFloat(totalExpenses).toLocaleString()}
             </AppText>
           </View>
 

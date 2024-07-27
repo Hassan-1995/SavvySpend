@@ -7,18 +7,20 @@ import Icon from "../components/Icon";
 import AppTextInput from "../components/AppTextInput";
 
 function IncomeEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
-  
   const [editAmount, setEditAmount] = useState(assets.amount);
   const [editDescription, setEditDescription] = useState(assets.description);
+
+  // console.log(assets);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth()).padStart(2, "0");
+    const month = String(date.getMonth()+1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${day}-${month}-${year}`;
   };
-  const formattedDate = formatDate(assets.date);
+  // const formattedDate = formatDate(assets.date);
+  const formattedDate = formatDate(assets.updated_at);
 
   const handleModal = () => {
     closeModal();

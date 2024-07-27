@@ -10,14 +10,36 @@ import DashboardScreen from "../screens/DashboardScreen";
 const Tab = createBottomTabNavigator();
 
 const AppNavigator = () => (
-  <Tab.Navigator>
+  <Tab.Navigator
+    options={{
+      headerShown: false,
+    }}
+  >
+    <Tab.Screen
+      name="Dashboard"
+      component={DashboardScreen}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons
+            name="chart-areaspline"
+            color={color}
+            size={size}
+          />
+        ),
+      }}
+    />
     <Tab.Screen
       name="Income"
       component={IncomeScreen}
       options={{
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="arrow-down-bold-circle" color={color} size={size} />
+          <MaterialCommunityIcons
+            name="arrow-down-bold-circle"
+            color={color}
+            size={size}
+          />
         ),
       }}
     />
@@ -27,7 +49,11 @@ const AppNavigator = () => (
       options={{
         headerShown: false,
         tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="arrow-up-bold-circle" color={color} size={size} />
+          <MaterialCommunityIcons
+            name="arrow-up-bold-circle"
+            color={color}
+            size={size}
+          />
         ),
       }}
     />
@@ -39,20 +65,6 @@ const AppNavigator = () => (
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons
             name="clipboard-text"
-            color={color}
-            size={size}
-          />
-        ),
-      }}
-    />
-    <Tab.Screen
-      name="Dashboard"
-      component={DashboardScreen}
-      options={{
-        headerShown: false,
-        tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons
-            name="chart-areaspline"
             color={color}
             size={size}
           />

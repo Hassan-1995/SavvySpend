@@ -3,7 +3,10 @@ import { View, StyleSheet } from "react-native";
 import colors from "../config/colors";
 import AppText from "./AppText";
 
-function BankCard({ balance, cardHolder, status  }) {
+function BankCard({ balance, cardHolder, status }) {
+  const textColor =
+    balance > 0 ? colors.income : balance < 0 ? colors.expense : colors.white;
+
   return (
     <View style={styles.cardContainer}>
       <View style={styles.bankNameContainer}>
@@ -11,10 +14,15 @@ function BankCard({ balance, cardHolder, status  }) {
       </View>
       <View style={styles.cardTypeContainer}>
         <AppText style={styles.subTitle}>Account Balance</AppText>
-        <AppText style={styles.accountBalance}>{balance.toLocaleString(Math.floor(balance))}</AppText>
+        <AppText style={[styles.accountBalance, { color: textColor }]}>
+          {balance.toLocaleString(Math.floor(balance))}
+        </AppText>
       </View>
       <View style={styles.statusContainer}>
-        <AppText style={styles.status}>{status}</AppText>
+        <AppText style={styles.status}>
+          {/* Expense to Income ratio is {parseFloat(status.toFixed(3))} */}
+          {status}
+        </AppText>
       </View>
       <View style={styles.footerContainer}>
         <View style={styles.cardHolderContainer}>
@@ -70,9 +78,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   status: {
-    fontSize: 18,
-    color: "#fff",
-    letterSpacing: 2,
+    fontSize: 16,
+    color: colors.white,
+    letterSpacing: 1,
+    marginVertical: 10,
   },
   footerContainer: {
     flexDirection: "row",
