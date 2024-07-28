@@ -5,7 +5,12 @@ import usersApi from "../api/users";
 import { jwtDecode } from "jwt-decode";
 
 import Screen from "../components/Screen";
-import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import {
+  AppForm,
+  AppFormField,
+  AppFormPassword,
+  SubmitButton,
+} from "../components/forms";
 import LogoContainer from "../components/LogoContainer";
 import AuthContext from "../auth/context";
 import authStorage from "../auth/storage";
@@ -62,14 +67,14 @@ function LoginScreen(props) {
           placeholder="Email"
           textContentType="emailAddress"
         />
-        <AppFormField
+        <AppFormPassword
           autoCapitalize="none"
           autoCorrect={false}
-          icon={"lock"}
+          icon={"lock-outline"}
           name={"user_password"}
           placeholder="Password"
           secureTextEntry={true}
-          textContentType="emailAddress"
+          textContentType="password"
         />
         <SubmitButton title={"Login"} />
       </AppForm>
