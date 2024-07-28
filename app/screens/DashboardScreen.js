@@ -8,10 +8,11 @@ import AppText from "../components/AppText";
 import colors from "../config/colors";
 import ChartComponent from "../components/ChartComponent";
 import AuthContext from "../auth/context";
+import authStorage from "../auth/storage";
 import BankCard from "../components/BankCard";
 
 function DashboardScreen(props) {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
 
   const [incomesMonthly, setIncomesMonthly] = useState([]);
   const [incomesCurrent, setIncomesCurrent] = useState([]);
@@ -147,18 +148,24 @@ function DashboardScreen(props) {
     return msg;
   };
 
+  const handleLogout = () => {
+    setUser(null);
+    authStorage.removeToken();
+  };
+
   return (
     <Screen>
       <LogoContainer />
       <View style={styles.labelContainer}>
         <AppText style={styles.label}>Dashboard</AppText>
       </View>
+      <ScrollView>
       <BankCard
         balance={remainingBalance}
         cardHolder={[user.firstName, " ", user.lastName]}
         status={status}
+        onClick={handleLogout}
       />
-      <ScrollView>
         <ChartComponent data={incomeData} title="Income" />
         <View style={{ borderBottomWidth: 2, borderStyle: "dashed" }} />
         <ChartComponent data={expenseData} title="Expense" />

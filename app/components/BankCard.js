@@ -1,11 +1,15 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import colors from "../config/colors";
 import AppText from "./AppText";
 
-function BankCard({ balance, cardHolder, status }) {
+function BankCard({ balance, cardHolder, status, onClick }) {
   const textColor =
     balance > 0 ? colors.income : balance < 0 ? colors.expense : colors.white;
+
+  const handleLogout = () => {
+    onClick();
+  };
 
   return (
     <View style={styles.cardContainer}>
@@ -30,7 +34,9 @@ function BankCard({ balance, cardHolder, status }) {
           <AppText style={styles.cardHolder}>{cardHolder}</AppText>
         </View>
         <View style={styles.expiryDateContainer}>
-          <AppText style={styles.expiryDate}>VISA</AppText>
+          <TouchableOpacity onPress={handleLogout}>
+            <AppText style={styles.expiryDate}>Logout</AppText>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

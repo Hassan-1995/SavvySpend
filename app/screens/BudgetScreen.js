@@ -22,7 +22,6 @@ import EntryRow from "../components/EntryRow";
 import BudgetEditDetailsScreen from "./BudgetEditDetailsScreen";
 import AuthContext from "../auth/context";
 import AppButton from "../components/AppButton";
-import authStorage from "../auth/storage";
 
 const monthNames = [
   "January",
@@ -42,6 +41,8 @@ const currentMonth = new Date().getMonth();
 const currentMonthName = monthNames[currentMonth];
 
 function BudgetScreen(props) {
+  const { user } = useContext(AuthContext);
+
   const [budgets, setBudgets] = useState([]);
   const [filteredBudgetData, setFilteredBudgetData] = useState([]);
   const [editItem, setEditItem] = useState([]);
@@ -58,8 +59,6 @@ function BudgetScreen(props) {
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [modalEditVisible, setModalEditVisible] = useState(false);
   const [refresh, setRefresh] = useState(false);
-
-  const { user, setUser } = useContext(AuthContext);
 
   useEffect(() => {
     loadBudgetTable();
@@ -187,11 +186,6 @@ function BudgetScreen(props) {
     refreshScreen();
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    authStorage.removeToken();
-  };
-
   return (
     <Screen>
       <LogoContainer />
@@ -213,11 +207,6 @@ function BudgetScreen(props) {
       </View>
 
       <ScrollView style={styles.container}>
-        <AppButton
-          title={"Temp for Logout"}
-          color="dark"
-          onPress={handleLogout}
-        />
         <View style={styles.filterContainer}>
           <AppText style={styles.filterText}>
             For the month of:{" "}
