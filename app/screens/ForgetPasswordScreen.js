@@ -6,8 +6,9 @@ import usersApi from "../api/users";
 import colors from "../config/colors";
 import AppTextInput from "../components/AppTextInput";
 import AppButton from "../components/AppButton";
+import LogoContainer from "../components/LogoContainer";
 
-function TestingScreen(props) {
+function ForgetPasswordScreen({ navigation }) {
   const [step, setStep] = useState(1);
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +22,7 @@ function TestingScreen(props) {
       if (response) {
         setStep(2);
       } else {
-        Alert.alert(
-          "Error",
-          "The email or phone number does not match our records."
-        );
+        Alert.alert("Error", "The email does not match our records.");
       }
     } catch (error) {
       console.log("Error verifying email or phone:", error);
@@ -41,13 +39,11 @@ function TestingScreen(props) {
       ...user,
       password_hash: password,
     };
-    console.log("Data: ", data);
-    console.log("User ID: ", user.user_id);
     try {
       const response = await usersApi.updateUser(user.user_id, data);
       if (response) {
         Alert.alert("Success", "Password has been reset.");
-        // props.navigation.navigate("Login");
+        navigation.navigate("Login");
       } else {
         Alert.alert("Error", "Failed to reset password.");
       }
@@ -57,49 +53,42 @@ function TestingScreen(props) {
     }
   };
 
-  const handleEmail = (value) => {
-    setEmailOrPhone(value);
-    // console.log(emailOrPhone);
-  };
-
   return (
     <Screen>
       <View style={styles.container}>
+        <LogoContainer />
         <AppText style={styles.label}>Forget Password</AppText>
         {step === 1 ? (
           <>
-            <TextInput
-              style={styles.input}
-              placeholder="Email or Phone Number"
+            <AppTextInput
+              placeholder="Email"
               value={emailOrPhone}
               onChangeText={setEmailOrPhone}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
             />
-            <Button title="Next" onPress={handleVerification} />
+            <AppButton title="Next" onPress={handleVerification} />
           </>
         ) : (
           <>
-            <TextInput
-              style={styles.input}
+            <AppTextInput
               placeholder="New Password"
-              secureTextEntry
+              secureTextEntry={true}
               value={password}
               onChangeText={setPassword}
               autoCapitalize="none"
               autoCorrect={false}
             />
-            <TextInput
-              style={styles.input}
+            <AppTextInput
               placeholder="Confirm New Password"
-              secureTextEntry
+              secureTextEntry={true}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               autoCapitalize="none"
               autoCorrect={false}
             />
-            <Button title="Reset Password" onPress={handlePasswordReset} />
+            <AppButton title="Reset Password" onPress={handlePasswordReset} />
           </>
         )}
       </View>
@@ -128,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TestingScreen;
+export default ForgetPasswordScreen;

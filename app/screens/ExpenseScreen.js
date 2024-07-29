@@ -9,6 +9,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 
 import AppText from "../components/AppText";
@@ -39,8 +41,6 @@ const monthNames = [
 const currentMonth = new Date().getMonth();
 const currentMonthName = monthNames[currentMonth];
 
-const user_id = 1;
-
 function ExpenseScreen(props) {
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenseData, setFilteredExpenseData] = useState([]);
@@ -51,6 +51,7 @@ function ExpenseScreen(props) {
 
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [modalEditVisible, setModalEditVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
 
   const { user } = useContext(AuthContext);
@@ -62,30 +63,48 @@ function ExpenseScreen(props) {
   }, [refresh]);
 
   const loadExpenseTable = async () => {
-    const response = await expensesApi.getAllExpensesInCurrentMonth(
-      user.user_id
-    );
-    if (response.data.length > 0) {
-      setExpenses(response.data);
-      setFilteredExpenseData(response.data);
-    } else {
-      setExpenses([]);
-      setFilteredExpenseData([]);
+    try {
+      const response = await expensesApi.getAllExpensesInCurrentMonth(
+        user.user_id
+      );
+      if (response.data.length > 0) {
+        setExpenses(response.data);
+        setFilteredExpenseData(response.data);
+      } else {
+        setExpenses([]);
+        setFilteredExpenseData([]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to load expenses");
+    } finally {
+      setLoading(false);
     }
   };
+
   const loadCategoriesTable = async () => {
-    const response = await categoriesApi.getAllContentFromCategories();
-    setCategories(response.data);
+    try {
+      const response = await categoriesApi.getAllContentFromCategories();
+      setCategories(response.data);
+    } catch (error) {
+      Alert.alert("Error", "Failed to load categories");
+    }
   };
 
   const loadIncomeTable = async () => {
-    const response = await incomesApi.getAllIncomesInCurrentMonth(user.user_id);
-    if (response.data.length > 0) {
-      setIncomes(response.data);
-    } else {
-      setIncomes([]);
+    try {
+      const response = await incomesApi.getAllIncomesInCurrentMonth(
+        user.user_id
+      );
+      if (response.data.length > 0) {
+        setIncomes(response.data);
+      } else {
+        setIncomes([]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to load incomes");
     }
   };
+
   const refreshScreen = () => {
     setRefresh(!refresh);
   };
@@ -95,17 +114,16 @@ function ExpenseScreen(props) {
       return total + parseFloat(item.amount);
     }, 0);
   };
+
   const totalExpenses = calculateTotalAmount(expenses);
   const totalIncomes = calculateTotalAmount(incomes);
 
   const toogleAddModal = () => {
     setModalAddVisible(!modalAddVisible);
   };
+
   const toogleEditModal = () => {
     setModalEditVisible(!modalEditVisible);
-  };
-  const handleAddModal = () => {
-    toogleAddModal();
   };
 
   const addExpense = async (data, value) => {
@@ -116,23 +134,16 @@ function ExpenseScreen(props) {
           name: value,
           type: "Expense",
         };
-        const response = await categoriesApi.addNewRowInCategories(
-          categoryData
-        );
-        console.log("Category added successfully", response);
+        await categoriesApi.addNewRowInCategories(categoryData);
       } catch (error) {
-        console.error("Error adding expense", error);
+        Alert.alert("Error", "Failed to add category");
       }
     }
     try {
-      const response = await expensesApi.addNewRowInExpenses(
-        user.user_id,
-        data
-      );
-      console.log("Expense added successfully", response);
+      await expensesApi.addNewRowInExpenses(user.user_id, data);
       refreshScreen();
     } catch (error) {
-      console.error("Error adding expense", error);
+      Alert.alert("Error", "Failed to add expense");
     }
   };
 
@@ -140,6 +151,7 @@ function ExpenseScreen(props) {
     toogleEditModal();
     setEditItem(rowItems);
   };
+
   const editExpense = async (updatedData) => {
     const data = {
       ...editItem,
@@ -147,20 +159,20 @@ function ExpenseScreen(props) {
       description: updatedData.description,
     };
     try {
-      const response = await expensesApi.updateRowInExpense(
-        editItem.expense_id,
-        data
-      );
-      console.log("Expense added successfully", response);
+      await expensesApi.updateRowInExpense(editItem.expense_id, data);
     } catch (error) {
-      console.error("Error adding expense", error);
+      Alert.alert("Error", "Failed to update expense");
     }
     refreshScreen();
   };
 
   const deleteExpense = async (expense_id) => {
-    const response = await expensesApi.deleteRowFromExpense(expense_id);
-    refreshScreen();
+    try {
+      await expensesApi.deleteRowFromExpense(expense_id);
+      refreshScreen();
+    } catch (error) {
+      Alert.alert("Error", "Failed to delete expense");
+    }
   };
 
   return (
@@ -178,50 +190,56 @@ function ExpenseScreen(props) {
       />
 
       <ScrollView style={styles.container}>
-        <View style={styles.filterContainer}>
-          <AppText style={styles.filterText}>
-            For the month of:{" "}
-            <AppText
-              style={[
-                styles.filterText,
-                {
-                  color: colors.primary,
-                },
-              ]}
-            >
-              {currentMonthName} {new Date().getFullYear()}
-            </AppText>
-          </AppText>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <AppText style={styles.subHeader}>Expenses</AppText>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <AppText style={styles.links}>Add Expense</AppText>
-            <TouchableOpacity onPress={handleAddModal}>
-              <Icon
-                name={"circle-edit-outline"}
-                iconColor={colors.primary}
-                backgroundColor="transparent"
-                size={50}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {filteredExpenseData.length > 0 ? (
-          <ExpenseTable
-            assets={filteredExpenseData}
-            onPressingEachRow={pressedRow}
-          />
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <AppText>No data for the selected month</AppText>
+          <>
+            <View style={styles.filterContainer}>
+              <AppText style={styles.filterText}>
+                For the month of:{" "}
+                <AppText
+                  style={[
+                    styles.filterText,
+                    {
+                      color: colors.primary,
+                    },
+                  ]}
+                >
+                  {currentMonthName} {new Date().getFullYear()}
+                </AppText>
+              </AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <AppText style={styles.subHeader}>Expenses</AppText>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <AppText style={styles.links}>Add Expense</AppText>
+                <TouchableOpacity onPress={toogleAddModal}>
+                  <Icon
+                    name={"circle-edit-outline"}
+                    iconColor={colors.primary}
+                    backgroundColor="transparent"
+                    size={50}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {filteredExpenseData.length > 0 ? (
+              <ExpenseTable
+                assets={filteredExpenseData}
+                onPressingEachRow={pressedRow}
+              />
+            ) : (
+              <AppText>No data for the selected month</AppText>
+            )}
+          </>
         )}
       </ScrollView>
 
@@ -269,25 +287,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.secondary,
   },
-  summaryContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  summaryItem: {
-    alignItems: "center",
-  },
-  summaryLabel: {
-    fontSize: 14,
-    color: "#888",
-  },
-  summaryValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
   filterContainer: {
     flexDirection: "row",
-    alignItems: "center", // Ensure items are aligned vertically center
+    alignItems: "center",
     padding: 10,
     borderRadius: 10,
   },

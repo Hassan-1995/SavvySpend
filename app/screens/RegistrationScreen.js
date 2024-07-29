@@ -1,10 +1,8 @@
 import React from "react";
 import * as Yup from "yup";
-
 import usersApi from "../api/users";
 
-import { StyleSheet, Image, ScrollView } from "react-native";
-
+import { StyleSheet, ScrollView } from "react-native";
 import {
   AppForm,
   AppFormDate,
@@ -12,7 +10,6 @@ import {
   AppFormPassword,
   SubmitButton,
 } from "../components/forms";
-
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import LogoContainer from "../components/LogoContainer";
@@ -20,29 +17,30 @@ import LogoContainer from "../components/LogoContainer";
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required().label("First Name"),
   lastName: Yup.string().required().label("Last Name"),
-  password: Yup.string().required().min(4).label("Password"),
+  password: Yup.string().required().min(5).label("Password"),
   email: Yup.string().required().email().label("Email"),
   number: Yup.string().required().label("Number"),
   dob: Yup.string().required().label("Date of Birth"),
 });
 
-function RegisterationScreen(props) {
+function RegistrationScreen(props) {
   const Register = async (data) => {
     console.log(data);
     try {
       const response = await usersApi.addNewUser(data);
       console.log("User added successfully", response);
+      // Provide user feedback on successful registration
     } catch (error) {
       console.error("Error adding user", error);
+      // Provide user feedback on error
     }
   };
 
   return (
     <Screen>
-      <LogoContainer/>
+      <LogoContainer />
       <ScrollView style={styles.container}>
         <AppText style={styles.header}>Registration Form</AppText>
-
         <AppForm
           initialValues={{
             firstName: "",
@@ -52,26 +50,24 @@ function RegisterationScreen(props) {
             number: "",
             dob: "",
           }}
-          onSubmit={(values) => Register(values)}
+          onSubmit={Register}
           validationSchema={validationSchema}
         >
           <AppFormField
             autoCapitalize="words"
             autoCorrect={false}
             icon="account-circle-outline"
-            keyboardType="email-address"
             name="firstName"
             placeholder="First Name"
-            textContentType="emailAddress"
+            textContentType="name"
           />
           <AppFormField
             autoCapitalize="words"
             autoCorrect={false}
             icon="account-box-outline"
-            keyboardType="email-address"
             name="lastName"
             placeholder="Last Name"
-            textContentType="emailAddress"
+            textContentType="name"
           />
           <AppFormPassword
             autoCapitalize="none"
@@ -88,7 +84,7 @@ function RegisterationScreen(props) {
             icon="email-outline"
             name="email"
             placeholder="Email"
-            textContentType="password"
+            textContentType="emailAddress"
           />
           <AppFormField
             autoCapitalize="none"
@@ -97,10 +93,9 @@ function RegisterationScreen(props) {
             keyboardType="numeric"
             name="number"
             placeholder="Number"
-            textContentType="emailAddress"
+            textContentType="telephoneNumber"
           />
-          <AppFormDate name="dob" placeholder={"Date of Birth"} />
-
+          <AppFormDate name="dob" placeholder="Date of Birth" />
           <SubmitButton title="Register" />
         </AppForm>
       </ScrollView>
@@ -111,14 +106,6 @@ function RegisterationScreen(props) {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    // marginBottom: 20,
-  },
-  logo: {
-    width: 300,
-    height: 200,
-    alignSelf: "center",
-    marginTop: 30,
-    marginBottom: 20,
   },
   header: {
     textAlign: "center",
@@ -127,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterationScreen;
+export default RegistrationScreen;

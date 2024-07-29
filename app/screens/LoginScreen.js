@@ -1,8 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Image, StyleSheet, Text } from "react-native";
+import React, { useContext, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  ActivityIndicator,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import * as Yup from "yup";
 import usersApi from "../api/users";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Ensure correct import
 
 import Screen from "../components/Screen";
 import {
@@ -14,19 +20,21 @@ import {
 import LogoContainer from "../components/LogoContainer";
 import AuthContext from "../auth/context";
 import authStorage from "../auth/storage";
+import colors from "../config/colors";
+import AppText from "../components/AppText";
 
 const validationSchema = Yup.object().shape({
   user_email: Yup.string().required().email().label("Email"),
   user_password: Yup.string().required().min(4).label("Password"),
 });
 
-function LoginScreen(props) {
+function LoginScreen({ navigation }) {
   const authContext = useContext(AuthContext);
-
-  const [userData, setUserData] = useState([]);
   const [loginID, setLoginID] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
+    setLoading(true);
     try {
       const { user, token } = await usersApi.authenticateUser(
         values.user_email,
@@ -35,6 +43,7 @@ function LoginScreen(props) {
 
       if (!user || !token) {
         setLoginID(false);
+        setLoading(false);
         return;
       }
 
@@ -46,16 +55,23 @@ function LoginScreen(props) {
     } catch (error) {
       console.error("Error authenticating user:", error.message);
       setLoginID(false);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Screen style={styles.container}>
       <LogoContainer />
-      {loginID ? <Text></Text> : <Text>User ID or Password is incorrect</Text>}
+      {loginID ? null : (
+        <Text style={styles.errorText}>
+          User Email or Password is incorrect
+        </Text>
+      )}
+      {loading && <ActivityIndicator size="large" color={colors.primary} />}
       <AppForm
         initialValues={{ user_email: "", user_password: "" }}
-        onSubmit={(values) => handleSubmit(values)}
+        onSubmit={handleSubmit}
         validationSchema={validationSchema}
       >
         <AppFormField
@@ -76,6 +92,12 @@ function LoginScreen(props) {
           secureTextEntry={true}
           textContentType="password"
         />
+        <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center" }}
+          onPress={() => navigation.navigate("Forget Password")}
+        >
+          <AppText style={styles.links}>Forget password?</AppText>
+        </TouchableOpacity>
         <SubmitButton title={"Login"} />
       </AppForm>
     </Screen>
@@ -86,12 +108,17 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
   },
-  logo: {
-    width: 80,
-    height: 80,
-    alignSelf: "center",
-    marginTop: 50,
-    marginBottom: 20,
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  links: {
+    fontStyle: "italic",
+    fontSize: 14,
+    color: colors.secondary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondary,
   },
 });
 

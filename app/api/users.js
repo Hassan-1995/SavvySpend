@@ -6,17 +6,12 @@ const getAllContentFromUsers = () => client.get(endPoint);
 
 const getSingleUserByEmail = async (email) => {
   try {
-    const result = await client.get(endPoint + email);
+    const result = await client.get(endPoint + "/" + email);
     if (result.length === 0) {
       throw new Error(`User with email ${email} not found`);
     }
 
-    const user = result[0];
-    const passwordMatch = await bcrypt.compare(password, user.password_hash);
-
-    if (!passwordMatch) {
-      throw new Error("Incorrect password");
-    }
+    const user = result.data;
 
     return user;
   } catch (error) {
@@ -34,7 +29,6 @@ const authenticateUser = async (email, password) => {
     throw error;
   }
 };
-
 const addNewUser = async (newData) => {
   // Ensure `newData` has the expected structure
   const formatDate = (date) => {
@@ -63,9 +57,33 @@ const addNewUser = async (newData) => {
   }
 };
 
+const updateUser = async (user_id, updatedData) => {
+  console.log("Updated Data: ", updatedData);
+
+  const data = {
+    user_id: updatedData.user_id,
+    password_hash: updatedData.password_hash,
+    email: updatedData.email,
+    first_name: updatedData.first_name,
+    last_name: updatedData.last_name,
+    phone_number: updatedData.phone_number,
+    date_of_birth: updatedData.date_of_birth,
+    role: "user",
+  };
+  try {
+    const result = await client.put(`${endPoint}/${user_id}`, data);
+    console.log("Result: ", result);
+    return result;
+  } catch (error) {
+    console.error("Error updating data:", error);
+    throw error;
+  }
+};
+
 export default {
   getAllContentFromUsers, //getListings,
   getSingleUserByEmail,
   authenticateUser,
   addNewUser,
+  updateUser,
 };

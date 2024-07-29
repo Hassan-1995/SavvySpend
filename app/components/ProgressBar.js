@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import colors from "../config/colors";
 
 function ProgressBar({ asset1, asset2 }) {
+  const percentage = useMemo(() => {
+    if (asset2 === 0) return 0;
+    const value = (asset1 / asset2) * 100;
+    return Math.min(Math.max(value, 0), 100);
+  }, [asset1, asset2]);
+
   return (
-    <View style={styles.goalInformationBar}>
-      <View
-        style={[styles.overlay, { width: `${(asset1 / asset2) * 100}%` }]}
-      />
+    <View
+      style={styles.goalInformationBar}
+      accessibilityLabel={`Progress: ${percentage}%`}
+    >
+      <View style={[styles.overlay, { width: `${percentage}%` }]} />
       <View style={styles.textContainer}>
-        <Text style={styles.text}>
-          {(asset1 / asset2) * 100}%
-        </Text>
+        <Text style={styles.text}>{percentage.toFixed(2)}%</Text>
       </View>
     </View>
   );
@@ -27,9 +32,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderStyle: "dashed",
     overflow: "hidden",
-    position: "relative", // Ensure the text container is positioned correctly
-    justifyContent: "center",
-    alignItems: "center",
+    position: "relative",
   },
   overlay: {
     position: "absolute",
@@ -48,7 +51,7 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     textAlign: "center",
-    color: colors.primary
+    color: colors.primary,
   },
 });
 

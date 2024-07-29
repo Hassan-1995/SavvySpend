@@ -6,6 +6,7 @@ import AppButton from "../components/AppButton";
 import Icon from "../components/Icon";
 import AppTextInput from "../components/AppTextInput";
 import BudgetExpenseTable from "../components/BudgetExpenseTable";
+import ProgressBar from "../components/ProgressBar";
 
 function BudgetEditDetailsScreen({
   assets,
@@ -57,6 +58,14 @@ function BudgetEditDetailsScreen({
 
   return (
     <View style={styles.container}>
+      <View style={{position: 'relative', top: 25}}>
+        <Icon
+          name={"basket-fill"}
+          size={200}
+          backgroundColor={colors.primary}
+          iconColor={colors.white}
+        />
+      </View>
       <View style={styles.promptBox}>
         <ScrollView style={styles.scrollView}>
           <TouchableOpacity
@@ -92,6 +101,8 @@ function BudgetEditDetailsScreen({
             </AppText>
           </View>
 
+          <ProgressBar asset1={totalExpenses} asset2={allocatedBudget} />
+
           <View style={styles.buttonContainer}>
             <AppText style={styles.links}>Delete this entry.</AppText>
             <TouchableOpacity onPress={handleDelete}>
@@ -125,7 +136,7 @@ const styles = StyleSheet.create({
   promptBox: {
     padding: 20,
     width: "90%",
-    height: "80%",
+    height: "75%",
     backgroundColor: "#fff",
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,

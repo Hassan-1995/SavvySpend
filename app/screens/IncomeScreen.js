@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import incomesApi from "../api/incomes";
 import expensesApi from "../api/expenses";
-
 import categoriesApi from "../api/categories";
 
 import {
@@ -10,6 +9,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 
 import AppText from "../components/AppText";
@@ -40,108 +40,100 @@ const monthNames = [
 const currentMonth = new Date().getMonth();
 const currentMonthName = monthNames[currentMonth];
 
-const user_id = 1;
-
 function IncomeScreen(props) {
   const { user } = useContext(AuthContext);
 
   const [incomes, setIncomes] = useState([]);
   const [filteredIncomeData, setFilteredIncomeData] = useState([]);
-  const [editItem, setEditItem] = useState([]);
+  const [editItem, setEditItem] = useState(null);
 
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [modalEditVisible, setModalEditVisible] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadIncomeTable();
     loadExpenseTable();
     loadCategoriesTable();
-  }, [refresh]);
+  }, []);
 
   const loadIncomeTable = async () => {
-    const response = await incomesApi.getAllIncomesInCurrentMonth(user.user_id);
-    if (response.data.length > 0) {
+    setLoading(true);
+    try {
+      const response = await incomesApi.getAllIncomesInCurrentMonth(
+        user.user_id
+      );
       setIncomes(response.data);
       setFilteredIncomeData(response.data);
-    } else {
-      setIncomes([]);
-      setFilteredIncomeData([]);
+    } catch (error) {
+      console.error("Error loading income data:", error);
+    } finally {
+      setLoading(false);
     }
-    refreshScreen();
-  };
-  const loadExpenseTable = async () => {
-    const response = await expensesApi.getAllExpensesInCurrentMonth(
-      user.user_id
-    );
-    if (response.data.length > 0) {
-      setExpenses(response.data);
-      // setFilteredIncomeData(response.data);
-    } else {
-      setExpenses([]);
-      // setFilteredIncomeData([]);
-    }
-  };
-  const loadCategoriesTable = async () => {
-    const response = await categoriesApi.getAllContentFromCategories();
-    setCategories(response.data);
-  };
-  const refreshScreen = () => {
-    setRefresh(!refresh);
   };
 
-  const calculateTotalAmount = (incomes) => {
-    return incomes.reduce((total, item) => {
-      return total + parseFloat(item.amount);
-    }, 0);
+  const loadExpenseTable = async () => {
+    try {
+      const response = await expensesApi.getAllExpensesInCurrentMonth(
+        user.user_id
+      );
+      setExpenses(response.data);
+    } catch (error) {
+      console.error("Error loading expense data:", error);
+    }
   };
+
+  const loadCategoriesTable = async () => {
+    try {
+      const response = await categoriesApi.getAllContentFromCategories();
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error loading category data:", error);
+    }
+  };
+
+  const calculateTotalAmount = (data) => {
+    return data.reduce((total, item) => total + parseFloat(item.amount), 0);
+  };
+
   const totalIncomes = calculateTotalAmount(incomes);
   const totalExpenses = calculateTotalAmount(expenses);
 
-  const toogleAddModal = () => {
+  const toggleAddModal = () => {
     setModalAddVisible(!modalAddVisible);
   };
-  const toogleEditModal = () => {
+
+  const toggleEditModal = () => {
     setModalEditVisible(!modalEditVisible);
-  };
-  const handleAddModal = () => {
-    toogleAddModal();
   };
 
   const addIncome = async (data, value) => {
-    toogleAddModal();
+    toggleAddModal();
     if (typeof value === "string") {
       try {
-        const categoryData = {
-          name: value,
-          type: "Income",
-        };
-        const response = await categoriesApi.addNewRowInCategories(
-          categoryData
-        );
-        console.log("Category added successfully", response);
+        const categoryData = { name: value, type: "Income" };
+        await categoriesApi.addNewRowInCategories(categoryData);
       } catch (error) {
-        console.error("Error adding expense", error);
+        console.error("Error adding category", error);
       }
     }
 
     try {
-      const response = await incomesApi.addNewRowInIncomes(user.user_id, data);
-      console.log("Income added successfully", response);
+      await incomesApi.addNewRowInIncomes(user.user_id, data);
+      loadIncomeTable();
     } catch (error) {
-      console.error("Error adding expense", error);
+      console.error("Error adding income", error);
     }
-    refreshScreen();
   };
 
   const pressedRow = (rowItems) => {
-    toogleEditModal();
+    toggleEditModal();
     setEditItem(rowItems);
   };
+
   const editIncome = async (updatedData) => {
     const data = {
       ...editItem,
@@ -149,20 +141,21 @@ function IncomeScreen(props) {
       description: updatedData.description,
     };
     try {
-      const response = await incomesApi.updateRowInIncome(
-        editItem.income_id,
-        data
-      );
-      console.log("Income added successfully", response);
+      await incomesApi.updateRowInIncome(editItem.income_id, data);
+      loadIncomeTable();
     } catch (error) {
-      console.error("Error adding expense", error);
+      console.error("Error editing income", error);
     }
-    refreshScreen();
+    toggleEditModal();
   };
 
   const deleteIncome = async (income_id) => {
-    const response = await incomesApi.deleteRowFromIncome(income_id);
-    refreshScreen();
+    try {
+      await incomesApi.deleteRowFromIncome(income_id);
+      loadIncomeTable();
+    } catch (error) {
+      console.error("Error deleting income", error);
+    }
   };
 
   return (
@@ -183,30 +176,17 @@ function IncomeScreen(props) {
         <View style={styles.filterContainer}>
           <AppText style={styles.filterText}>
             For the month of:{" "}
-            <AppText
-              style={[
-                styles.filterText,
-                {
-                  color: colors.primary,
-                },
-              ]}
-            >
+            <AppText style={[styles.filterText, { color: colors.primary }]}>
               {currentMonthName} {new Date().getFullYear()}
             </AppText>
           </AppText>
         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.subHeaderContainer}>
           <AppText style={styles.subHeader}>Incomes</AppText>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={styles.addIncomeContainer}>
             <AppText style={styles.links}>Add Income</AppText>
-            <TouchableOpacity onPress={handleAddModal}>
+            <TouchableOpacity onPress={toggleAddModal}>
               <Icon
                 name={"circle-edit-outline"}
                 iconColor={colors.primary}
@@ -217,7 +197,9 @@ function IncomeScreen(props) {
           </View>
         </View>
 
-        {filteredIncomeData.length > 0 ? (
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.primary} />
+        ) : filteredIncomeData.length > 0 ? (
           <IncomeTable
             assets={filteredIncomeData}
             onPressingEachRow={pressedRow}
@@ -231,7 +213,7 @@ function IncomeScreen(props) {
         <EntryRow
           onClick={(newData, categoryID) => addIncome(newData, categoryID)}
           categoryOptions={categories}
-          closeModal={toogleAddModal}
+          closeModal={toggleAddModal}
           compare="Income"
           title="Income"
         />
@@ -243,8 +225,8 @@ function IncomeScreen(props) {
       >
         <IncomeEditDetailsScreen
           assets={editItem}
-          closeModal={toogleEditModal}
-          onEdit={(updatedData) => editIncome(updatedData)}
+          closeModal={toggleEditModal}
+          onEdit={editIncome}
           onDelete={deleteIncome}
         />
       </Modal>
@@ -271,25 +253,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.secondary,
   },
-  summaryContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  summaryItem: {
-    alignItems: "center",
-  },
-  summaryLabel: {
-    fontSize: 14,
-    color: "#888",
-  },
-  summaryValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
   filterContainer: {
     flexDirection: "row",
-    alignItems: "center", // Ensure items are aligned vertically center
+    alignItems: "center",
     padding: 10,
     borderRadius: 10,
   },
@@ -298,10 +264,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginRight: 10,
   },
+  subHeaderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   subHeader: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  addIncomeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   links: {
     fontStyle: "italic",

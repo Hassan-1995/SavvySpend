@@ -11,6 +11,8 @@ import AuthNavigator from "./app/navigation/AuthNavigator";
 import AuthContext from "./app/auth/context";
 import AppNavigator from "./app/navigation/AppNavigator";
 import authStorage from "./app/auth/storage";
+import TestingScreen from "./app/screens/TestingScreen";
+import ForgetPasswordScreen from "./app/screens/ForgetPasswordScreen";
 
 export default function App() {
   const [user, setUser] = useState();
@@ -26,7 +28,8 @@ export default function App() {
   }, []);
 
   return (
-    // <LoginScreen />
+    // <ForgetPasswordScreen/>
+    // <WelcomeScreen/>
 
     // <NavigationContainer theme={myTheme}>
     //   <AuthNavigator />

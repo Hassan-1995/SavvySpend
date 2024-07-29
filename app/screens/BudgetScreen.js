@@ -9,6 +9,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Modal,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 
 import AppText from "../components/AppText";
@@ -58,6 +60,7 @@ function BudgetScreen(props) {
 
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [modalEditVisible, setModalEditVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
@@ -68,13 +71,21 @@ function BudgetScreen(props) {
   }, [refresh]);
 
   const loadBudgetTable = async () => {
-    const response = await budgetsApi.getAllBudgetsInCurrentMonth(user.user_id);
-    if (response.data.length > 0) {
-      setBudgets(response.data);
-      setFilteredBudgetData(response.data);
-    } else {
-      setBudgets([]);
-      setFilteredBudgetData([]);
+    try {
+      const response = await budgetsApi.getAllBudgetsInCurrentMonth(
+        user.user_id
+      );
+      if (response.data.length > 0) {
+        setBudgets(response.data);
+        setFilteredBudgetData(response.data);
+      } else {
+        setBudgets([]);
+        setFilteredBudgetData([]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to load expenses");
+    } finally {
+      setLoading(false);
     }
   };
   const loadCategoriesTable = async () => {
@@ -207,50 +218,56 @@ function BudgetScreen(props) {
       </View>
 
       <ScrollView style={styles.container}>
-        <View style={styles.filterContainer}>
-          <AppText style={styles.filterText}>
-            For the month of:{" "}
-            <AppText
-              style={[
-                styles.filterText,
-                {
-                  color: colors.primary,
-                },
-              ]}
-            >
-              {currentMonthName} {new Date().getFullYear()}
-            </AppText>
-          </AppText>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <AppText style={styles.subHeader}>Budgets</AppText>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <AppText style={styles.links}>Add Budget</AppText>
-            <TouchableOpacity onPress={handleAddModal}>
-              <Icon
-                name={"circle-edit-outline"}
-                iconColor={colors.primary}
-                backgroundColor="transparent"
-                size={50}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {filteredBudgetData.length > 0 ? (
-          <BudgetTable
-            assets={filteredBudgetData}
-            onPressingEachRow={pressedRow}
-          />
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <AppText>No data for the selected month</AppText>
+          <>
+            <View style={styles.filterContainer}>
+              <AppText style={styles.filterText}>
+                For the month of:{" "}
+                <AppText
+                  style={[
+                    styles.filterText,
+                    {
+                      color: colors.primary,
+                    },
+                  ]}
+                >
+                  {currentMonthName} {new Date().getFullYear()}
+                </AppText>
+              </AppText>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <AppText style={styles.subHeader}>Budgets</AppText>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <AppText style={styles.links}>Add Budget</AppText>
+                <TouchableOpacity onPress={handleAddModal}>
+                  <Icon
+                    name={"circle-edit-outline"}
+                    iconColor={colors.primary}
+                    backgroundColor="transparent"
+                    size={50}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {filteredBudgetData.length > 0 ? (
+              <BudgetTable
+                assets={filteredBudgetData}
+                onPressingEachRow={pressedRow}
+              />
+            ) : (
+              <AppText>No data for the selected month</AppText>
+            )}
+          </>
         )}
       </ScrollView>
 
