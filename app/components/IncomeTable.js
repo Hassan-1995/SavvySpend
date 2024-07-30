@@ -20,7 +20,7 @@ function IncomeTable({ assets, onPressingEachRow }) {
               {item.name}
             </AppText>
             <AppText style={[styles.cell, styles.descriptionCell]}>
-              Rs {item.amount}
+              Rs {(item.amount).toLocaleString()}
             </AppText>
           </TouchableOpacity>
         </View>

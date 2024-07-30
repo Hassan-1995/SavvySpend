@@ -112,14 +112,17 @@ function IncomeScreen(props) {
 
   const addIncome = async (data, value) => {
     toggleAddModal();
-    if (typeof value === "string") {
-      try {
-        const categoryData = { name: value, type: "Income" };
-        await categoriesApi.addNewRowInCategories(categoryData);
-      } catch (error) {
-        console.error("Error adding category", error);
-      }
-    }
+
+    // console.log("Data: ", data);
+    // console.log("Value: ", value);
+    // if (typeof value === "string") {
+    //   try {
+    //     const categoryData = { name: value, type: "Income" };
+    //     await categoriesApi.addNewRowInCategories(categoryData);
+    //   } catch (error) {
+    //     console.error("Error adding category", error);
+    //   }
+    // }
 
     try {
       await incomesApi.addNewRowInIncomes(user.user_id, data);

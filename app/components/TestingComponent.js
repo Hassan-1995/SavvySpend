@@ -29,8 +29,8 @@ const months = [
 
 function TestingComponent({ onMonthSelect }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [particular, setParticular] = useState("Pick a month");
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [particular, setParticular] = useState();
+  const [selectedValue, setSelectedValue] = useState(months[0].label);
 
   const handleModal = () => {
     setModalVisible(!modalVisible);
@@ -61,6 +61,7 @@ function TestingComponent({ onMonthSelect }) {
       </View>
 
       <Modal animationType="slide" transparent={false} visible={modalVisible}>
+        <AppButton title={"Close"} onPress={handleModal} />
         <TouchableOpacity style={styles.modalOverlay} onPress={handleModal}>
           <View style={styles.modalContent}>
             <View style={{ alignItems: "flex-end" }}>
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     padding: 20,
     elevation: 5,
-    height: "80%",
+    height: "70%",
   },
   pickerItem: {
     flexDirection: "row",

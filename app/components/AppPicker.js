@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   View,
@@ -8,42 +8,30 @@ import {
   FlatList,
 } from "react-native";
 import AppText from "./AppText";
-import Icon from "./Icon";
 import colors from "../config/colors";
+import Icon from "./Icon";
 import AppButton from "./AppButton";
 
-const months = [
-  { label: "January", value: 1 },
-  { label: "February", value: 2 },
-  { label: "March", value: 3 },
-  { label: "April", value: 4 },
-  { label: "May", value: 5 },
-  { label: "June", value: 6 },
-  { label: "July", value: 7 },
-  { label: "August", value: 8 },
-  { label: "September", value: 9 },
-  { label: "October", value: 10 },
-  { label: "November", value: 11 },
-  { label: "December", value: 12 },
-];
-
-function TestingComponent({ onMonthSelect }) {
+function AppPicker({ dropdownOptions, onValueChange }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [particular, setParticular] = useState("Pick a month");
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [particular, setParticular] = useState(dropdownOptions[0].name);
 
   const handleModal = () => {
     setModalVisible(!modalVisible);
   };
 
   const handleValueChange = (itemID, itemName) => {
-    setSelectedValue(itemID);
+    console.log(itemID);
+    handleModal();
     setParticular(itemName);
 
-    console.log(itemID, itemName);
-    handleModal();
-    onMonthSelect(itemID);
+    onValueChange(itemID, itemName);
   };
+
+  useEffect(() => {
+    const initialItem = dropdownOptions[0];
+    onValueChange(initialItem.category_id, initialItem.name);
+  }, []);
 
   return (
     <>
@@ -60,7 +48,8 @@ function TestingComponent({ onMonthSelect }) {
         </View>
       </View>
 
-      <Modal animationType="slide" transparent={false} visible={modalVisible}>
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        {/* <AppButton title={"Close"} onPress={handleModal} /> */}
         <TouchableOpacity style={styles.modalOverlay} onPress={handleModal}>
           <View style={styles.modalContent}>
             <View style={{ alignItems: "flex-end" }}>
@@ -74,14 +63,20 @@ function TestingComponent({ onMonthSelect }) {
               </TouchableOpacity>
             </View>
             <FlatList
-              data={months}
-              keyExtractor={(item) => item.value.toString()}
+              data={dropdownOptions}
+              keyExtractor={(item) => item.category_id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.pickerItem}
-                  onPress={() => handleValueChange(item.value, item.label)}
+                  onPress={() => handleValueChange(item.category_id, item.name)}
                 >
-                  <AppText style={styles.itemText}>{item.label}</AppText>
+                  <Icon
+                    name={item.icon_name}
+                    size={30}
+                    iconColor={colors.white}
+                    backgroundColor={colors.secondary}
+                  />
+                  <AppText style={styles.itemText}>{item.name}</AppText>
                 </TouchableOpacity>
               )}
             />
@@ -129,10 +124,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   itemText: {
-    // marginLeft: 20,
+    marginLeft: 20,
     fontSize: 20,
     color: colors.primary,
   },
 });
 
-export default TestingComponent;
+export default AppPicker;

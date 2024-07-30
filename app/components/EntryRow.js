@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import AppText from "./AppText";
 import Icon from "./Icon";
 import colors from "../config/colors";
@@ -8,6 +8,8 @@ import AppTextInput from "./AppTextInput";
 import AppButton from "./AppButton";
 import DropdownComponent from "./DropdownComponent";
 import DropdownComponentNew from "./DropdownComponentNew";
+import TestingComponent from "./TestingComponent";
+import AppPicker from "./AppPicker";
 
 const budgetOptions = [
   { label: "Electricity", value: 1 },
@@ -109,54 +111,84 @@ function EntryRow({
 
   return (
     <View style={styles.container}>
-      <View style={styles.promptBox}>
-        <View style={styles.titleContainer}>
-          <AppText style={styles.title}>Add {title}</AppText>
-          <TouchableOpacity onPress={() => closeModal()}>
-            <Icon
-              name={"close"}
-              size={30}
-              backgroundColor="transparent"
-              iconColor={colors.danger}
-            />
-          </TouchableOpacity>
+      <ScrollView>
+        <View style={{ position: "relative", top: 50, alignItems: "center" }}>
+          <Icon
+            name={
+              title === "Income"
+                ? "arrow-down-bold-circle-outline"
+                : title === "Expense"
+                ? "arrow-up-bold-circle-outline"
+                : "clipboard-text-outline"
+            }
+            size={250}
+            backgroundColor="transparent"
+            iconColor={colors.primary}
+          />
         </View>
-        <AppText>Particulars</AppText>
-        {title === "Income" ? (
-          <DropdownComponentNew
-            dropdownOptions={categoryData}
-            onValueChange={handleValueChange}
-          />
-        ) : others === "Others" ? (
+        <View style={styles.promptBox}>
+          <View style={styles.titleContainer}>
+            <AppText style={styles.title}>Add {title}</AppText>
+            <TouchableOpacity onPress={() => closeModal()}>
+              <Icon
+                name={"close"}
+                size={30}
+                backgroundColor="transparent"
+                iconColor={colors.danger}
+              />
+            </TouchableOpacity>
+          </View>
+          <AppText>{title} options</AppText>
+          {title === "Income" ? (
+            <AppPicker
+              dropdownOptions={categoryData}
+              onValueChange={handleValueChange}
+            />
+          ) : others === "Others" ? (
+            <AppTextInput
+              onChangeText={(text) => setBudgetItem(text)}
+              placeholder={"Add utility name."}
+            />
+          ) : (
+            // <DropdownComponentNew
+            //   dropdownOptions={categoryData}
+            //   onValueChange={handleValueChange}
+            // />
+            <AppPicker
+              dropdownOptions={categoryData}
+              onValueChange={handleValueChange}
+            />
+          )}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <AppText>Month</AppText>
+            <View style={{ flex: 1, marginLeft: 20 }}>
+              <MonthPicker onMonthSelect={handleMonthSelect} />
+            </View>
+          </View>
           <AppTextInput
-            onChangeText={(text) => setBudgetItem(text)}
-            placeholder={"Add utility name."}
+            value={inputValue}
+            onChangeText={(text) => setInputValue(text)}
+            keyboardType="numeric"
+            placeholder={"Please add expected finance."}
           />
-        ) : (
-          <DropdownComponentNew
-            dropdownOptions={categoryData}
-            onValueChange={handleValueChange}
+          <AppTextInput
+            value={utilityDescription}
+            onChangeText={(text) => setUtilityDescription(text)}
+            placeholder={"Description (optional)."}
           />
-        )}
-        <AppText>Particulars</AppText>
-        <MonthPicker onMonthSelect={handleMonthSelect} />
-        <AppTextInput
-          value={inputValue}
-          onChangeText={(text) => setInputValue(text)}
-          keyboardType="numeric"
-          placeholder={"Please add expected finance."}
-        />
-        <AppTextInput
-          value={utilityDescription}
-          onChangeText={(text) => setUtilityDescription(text)}
-          placeholder={"Description (optional)."}
-        />
 
-        <AppButton title={"Confirm"} onPress={handleEdit} />
-        {isInputEmpty && (
-          <AppText style={styles.error}>Input cannot be empty</AppText>
-        )}
-      </View>
+          <AppButton title={"Confirm"} onPress={handleEdit} />
+          {isInputEmpty && (
+            <AppText style={styles.error}>Input cannot be empty</AppText>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -164,9 +196,10 @@ function EntryRow({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.light,
+    // backgroundColor: "transparent",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
   promptBox: {
     padding: 20,
