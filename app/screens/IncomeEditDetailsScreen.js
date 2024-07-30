@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+
 import AppText from "../components/AppText";
 import colors from "../config/colors";
 import AppButton from "../components/AppButton";
@@ -10,12 +12,12 @@ function IncomeEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
   const [editAmount, setEditAmount] = useState(assets.amount);
   const [editDescription, setEditDescription] = useState(assets.description);
 
-  // console.log(assets);
+  console.log("Assets: ", assets);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth()+1).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${day}-${month}-${year}`;
   };
@@ -43,7 +45,18 @@ function IncomeEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={["rgba(0,0,0,0.8)", "transparent"]}
+      style={styles.container}
+    >
+      <View style={{ position: "relative", top: 0, alignItems: "center" }}>
+        <Icon
+          name={assets.icon_name}
+          size={150}
+          backgroundColor="transparent"
+          iconColor={colors.tertiary}
+        />
+      </View>
       <View style={styles.promptBox}>
         <ScrollView style={styles.scrollView}>
           <TouchableOpacity
@@ -91,14 +104,14 @@ function IncomeEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
           </View>
         </ScrollView>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "flex-end",
   },
@@ -148,8 +161,6 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     justifyContent: "flex-end",
-    // flex: 1,
-    // marginTop: 20,
   },
   links: {
     fontStyle: "italic",

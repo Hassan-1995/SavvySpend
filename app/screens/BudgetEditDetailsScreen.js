@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+
 import AppText from "../components/AppText";
 import colors from "../config/colors";
 import AppButton from "../components/AppButton";
@@ -57,13 +59,16 @@ function BudgetEditDetailsScreen({
   };
 
   return (
-    <View style={styles.container}>
-      <View style={{position: 'relative', top: 25}}>
+    <LinearGradient
+      colors={["rgba(0,0,0,0.8)", "transparent"]}
+      style={styles.container}
+    >
+      <View style={{ position: "relative", top: 0, alignItems: "center" }}>
         <Icon
-          name={"basket-fill"}
-          size={200}
-          backgroundColor={colors.primary}
-          iconColor={colors.white}
+          name={assets.icon_name}
+          size={150}
+          backgroundColor="transparent"
+          iconColor={colors.tertiary}
         />
       </View>
       <View style={styles.promptBox}>
@@ -122,14 +127,14 @@ function BudgetEditDetailsScreen({
           </View>
         </ScrollView>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "flex-end",
   },

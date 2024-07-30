@@ -4,6 +4,7 @@ import AppText from "./AppText";
 import colors from "../config/colors";
 
 function IncomeTable({ assets, onPressingEachRow }) {
+  
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerRow}>
@@ -20,7 +21,7 @@ function IncomeTable({ assets, onPressingEachRow }) {
               {item.name}
             </AppText>
             <AppText style={[styles.cell, styles.descriptionCell]}>
-              Rs {(item.amount).toLocaleString()}
+              Rs {item.amount.toLocaleString()}
             </AppText>
           </TouchableOpacity>
         </View>
