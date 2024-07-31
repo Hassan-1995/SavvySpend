@@ -32,6 +32,8 @@ export default function App() {
     // <ForgetPasswordScreen/>
     // <WelcomeScreen/>
     // <TestingComponent />
+    <TestingScreen/>
+
 
     // ----------------------------------------------
 
@@ -39,11 +41,11 @@ export default function App() {
     //   <AuthNavigator />
     // </NavigationContainer>
 
-    <AuthContext.Provider value={{ user, setUser }}>
-      <NavigationContainer theme={myTheme}>
-        {user ? <AppNavigator /> : <AuthNavigator />}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    // <AuthContext.Provider value={{ user, setUser }}>
+    //   <NavigationContainer theme={myTheme}>
+    //     {user ? <AppNavigator /> : <AuthNavigator />}
+    //   </NavigationContainer>
+    // </AuthContext.Provider>
 
     // <NavigationContainer theme={myTheme}>
     //   <AppNavigator />

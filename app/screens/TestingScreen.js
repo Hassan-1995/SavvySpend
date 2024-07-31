@@ -1,107 +1,63 @@
-import React, { useState } from "react";
-import { View, StyleSheet, TextInput, Button, Alert } from "react-native";
-import Screen from "../components/Screen";
+import React from "react";
+
+import { View, StyleSheet, ScrollView } from "react-native";
 import AppText from "../components/AppText";
-import usersApi from "../api/users";
+import Screen from "../components/Screen";
 import colors from "../config/colors";
-import AppTextInput from "../components/AppTextInput";
-import AppButton from "../components/AppButton";
+import TestingComponent from "../components/TestingComponent";
 
 function TestingScreen(props) {
-  const [step, setStep] = useState(1);
-  const [emailOrPhone, setEmailOrPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [user, setUser] = useState(null);
-
-  const handleVerification = async () => {
-    try {
-      const response = await usersApi.getSingleUserByEmail(emailOrPhone);
-      setUser(response);
-      if (response) {
-        setStep(2);
-      } else {
-        Alert.alert(
-          "Error",
-          "The email or phone number does not match our records."
-        );
-      }
-    } catch (error) {
-      console.log("Error verifying email or phone:", error);
-      Alert.alert("Error", "Something went wrong. Please try again.");
-    }
-  };
-
-  const handlePasswordReset = async () => {
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match.");
-      return;
-    }
-    const data = {
-      ...user,
-      password_hash: password,
-    };
-    console.log("Data: ", data);
-    console.log("User ID: ", user.user_id);
-    try {
-      const response = await usersApi.updateUser(user.user_id, data);
-      if (response) {
-        Alert.alert("Success", "Password has been reset.");
-        // props.navigation.navigate("Login");
-      } else {
-        Alert.alert("Error", "Failed to reset password.");
-      }
-    } catch (error) {
-      console.log("Error resetting password:", error);
-      Alert.alert("Error", "Something went wrong. Please try again.");
-    }
-  };
-
-  const handleEmail = (value) => {
-    setEmailOrPhone(value);
-    // console.log(emailOrPhone);
-  };
-
   return (
     <Screen>
       <View style={styles.container}>
-        <AppText style={styles.label}>Forget Password</AppText>
-        {step === 1 ? (
-          <>
-            <TextInput
-              style={styles.input}
-              placeholder="Email or Phone Number"
-              value={emailOrPhone}
-              onChangeText={setEmailOrPhone}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <Button title="Next" onPress={handleVerification} />
-          </>
-        ) : (
-          <>
-            <TextInput
-              style={styles.input}
-              placeholder="New Password"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm New Password"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <Button title="Reset Password" onPress={handlePasswordReset} />
-          </>
-        )}
+        <AppText style={styles.screenName}>Budget</AppText>
+        <AppText style={styles.remainingAmount}>Rs 1,192 left</AppText>
+        <AppText style={styles.enteredAmount}>out of Rs 2,640 budgeted</AppText>
+        <TestingComponent
+          title={"Create New Budget"}
+          color="secondary"
+          onPress={() => console.log("Press")}
+        />
+      </View>
+      <View style={styles.content}>
+        <ScrollView>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+          <View style={styles.box}>
+            <AppText>TEMP</AppText>
+          </View>
+        </ScrollView>
       </View>
     </Screen>
   );
@@ -109,22 +65,38 @@ function TestingScreen(props) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15,
+    height: "50%",
+    backgroundColor: "blue",
+    alignItems: "center",
   },
-  label: {
-    fontSize: 24,
+  screenName: {
+    fontSize: 20,
+    color: colors.white,
+  },
+  remainingAmount: {
+    fontSize: 36,
     fontWeight: "bold",
-    color: colors.primary,
-    marginBottom: 20,
-    textAlign: "center",
+    color: colors.white,
+    marginTop: 50,
   },
-  input: {
-    backgroundColor: colors.light,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: colors.medium,
-    padding: 10,
-    marginBottom: 15,
+  enteredAmount: {
+    fontSize: 16,
+    color: colors.white,
+    marginTop: 16,
+  },
+  box: {
+    height: 50,
+    width: "100%",
+    backgroundColor: "pink",
+    marginVertical: 3,
+  },
+  content: {
+    height: "65%",
+    alignSelf: "center",
+    backgroundColor: "yellow",
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
   },
 });
 

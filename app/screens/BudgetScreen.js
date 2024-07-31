@@ -24,7 +24,6 @@ import EntryRow from "../components/EntryRow";
 import BudgetEditDetailsScreen from "./BudgetEditDetailsScreen";
 import AuthContext from "../auth/context";
 import AppButton from "../components/AppButton";
-import TestingComponent from "../components/TestingComponent";
 
 const monthNames = [
   "January",
@@ -261,17 +260,11 @@ function BudgetScreen(props) {
             </View>
 
             {filteredBudgetData.length > 0 ? (
-              <>
-                {/* <BudgetTable
-                  assets={filteredBudgetData}
-                  onPressingEachRow={pressedRow}
-                /> */}
-                <TestingComponent
-                  budgets={filteredBudgetData}
-                  expenses={expenses}
-                  onPressingEachRow={pressedRow}
-                />
-              </>
+              <BudgetTable
+                budgets={filteredBudgetData}
+                expenses={expenses}
+                onPressingEachRow={pressedRow}
+              />
             ) : (
               <AppText>No data for the selected month</AppText>
             )}

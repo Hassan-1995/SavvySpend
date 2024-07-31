@@ -27,7 +27,7 @@ const months = [
   { label: "December", value: 12 },
 ];
 
-function TestingComponent({ onMonthSelect }) {
+function MonthPicker({ onMonthSelect }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [particular, setParticular] = useState("Pick a month");
   const [selectedValue, setSelectedValue] = useState(null);
@@ -135,4 +135,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TestingComponent;
+export default MonthPicker;
