@@ -9,13 +9,13 @@ function SummaryHeader({ labelOne, labelTwo, totalLabelOne, totalLabelTwo }) {
   return (
     <View style={styles.summaryContainer}>
       <View style={styles.summaryItem}>
-        <AppText style={styles.summaryLabel}>Total {labelOne}</AppText>
+        <AppText style={styles.summaryLabel}> {labelOne}</AppText>
         <AppText style={styles.summaryValue}>
           Rs {totalLabelOne.toLocaleString()}
         </AppText>
       </View>
       <View style={styles.summaryItem}>
-        <AppText style={styles.summaryLabel}>Total {labelTwo}</AppText>
+        <AppText style={styles.summaryLabel}> {labelTwo}</AppText>
         <AppText style={styles.summaryValue}>
           Rs {totalLabelTwo.toLocaleString()}
         </AppText>

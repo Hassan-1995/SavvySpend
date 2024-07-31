@@ -108,7 +108,7 @@ function ExpenseEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: 'transparent',
     alignItems: "center",
     justifyContent: "flex-end",
   },

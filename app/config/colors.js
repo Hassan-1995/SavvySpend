@@ -7,7 +7,6 @@ export default {
   expense: "#dc3545",
   link: "#007bff",
 
-
   black: "#000",
   danger: "#ff5252",
   dark: "#0c0c0c",

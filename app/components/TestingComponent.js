@@ -1,137 +1,98 @@
-import React, { useState } from "react";
-
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  FlatList,
-} from "react-native";
+import React from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import colors from "../config/colors";
 import AppText from "./AppText";
 import Icon from "./Icon";
-import colors from "../config/colors";
-import AppButton from "./AppButton";
 
-const months = [
-  { label: "January", value: 1 },
-  { label: "February", value: 2 },
-  { label: "March", value: 3 },
-  { label: "April", value: 4 },
-  { label: "May", value: 5 },
-  { label: "June", value: 6 },
-  { label: "July", value: 7 },
-  { label: "August", value: 8 },
-  { label: "September", value: 9 },
-  { label: "October", value: 10 },
-  { label: "November", value: 11 },
-  { label: "December", value: 12 },
-];
-
-function TestingComponent({ onMonthSelect }) {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [particular, setParticular] = useState();
-  const [selectedValue, setSelectedValue] = useState(months[0].label);
-
-  const handleModal = () => {
-    setModalVisible(!modalVisible);
-  };
-
-  const handleValueChange = (itemID, itemName) => {
-    setSelectedValue(itemID);
-    setParticular(itemName);
-
-    console.log(itemID, itemName);
-    handleModal();
-    onMonthSelect(itemID);
-  };
-
+function TestingComponent(props) {
   return (
-    <>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <View style={styles.container}>
-        <View style={styles.pickerContainer}>
-          <AppText>{particular}</AppText>
-          <TouchableOpacity onPress={handleModal}>
+        <View style={styles.header}>
+          <View style={styles.row}>
+            <Icon name={"home-outline"} backgroundColor={colors.primary} />
+            <View style={styles.textContainer}>
+              <AppText style={styles.title}>Title</AppText>
+              <AppText style={styles.subtitle}>Subtitle</AppText>
+            </View>
+          </View>
+          <TouchableOpacity>
             <Icon
-              name={"chevron-down"}
-              backgroundColor="transparent"
-              iconColor={colors.medium}
+              name={"chevron-right"}
+              backgroundColor={colors.secondary}
+              iconColor={colors.white}
             />
           </TouchableOpacity>
         </View>
-      </View>
 
-      <Modal animationType="slide" transparent={false} visible={modalVisible}>
-        <AppButton title={"Close"} onPress={handleModal} />
-        <TouchableOpacity style={styles.modalOverlay} onPress={handleModal}>
-          <View style={styles.modalContent}>
-            <View style={{ alignItems: "flex-end" }}>
-              <TouchableOpacity onPress={handleModal}>
-                <Icon
-                  name={"close"}
-                  size={30}
-                  backgroundColor="transparent"
-                  iconColor={colors.danger}
-                />
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={months}
-              keyExtractor={(item) => item.value.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.pickerItem}
-                  onPress={() => handleValueChange(item.value, item.label)}
-                >
-                  <AppText style={styles.itemText}>{item.label}</AppText>
-                </TouchableOpacity>
-              )}
-            />
+        <View style={styles.subHeader}>
+          <View style={styles.summaryItem}>
+            <AppText style={styles.summaryLabel}>Spent</AppText>
+            <AppText style={styles.summaryValue}>Rs 1,000</AppText>
           </View>
-        </TouchableOpacity>
-      </Modal>
-    </>
+          <View style={styles.summaryItem}>
+            <AppText style={styles.summaryLabel}>Left to spend</AppText>
+            <AppText style={styles.summaryValue}>Rs 2,000</AppText>
+          </View>
+          <View style={styles.summaryItem}>
+            <AppText style={styles.summaryLabel}>Limit</AppText>
+            <AppText style={[styles.summaryValue, { color: colors.safe }]}>
+              Rs 1,000
+            </AppText>
+          </View>
+        </View>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
-  },
-  pickerContainer: {
+    width: "90%",
+    padding: 15,
+    borderRadius: 25,
     borderWidth: 1,
     borderColor: colors.primary,
     backgroundColor: colors.light,
-    borderRadius: 25,
-    width: "100%",
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    marginVertical: 10,
+  },
+  header: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "flex-end",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    marginHorizontal: 20,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    padding: 20,
-    elevation: 5,
-    height: "70%",
-  },
-  pickerItem: {
-    flexDirection: "row",
     alignItems: "center",
     padding: 10,
+    borderRadius: 15,
   },
-  itemText: {
-    // marginLeft: 20,
-    fontSize: 20,
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textContainer: {
+    marginLeft: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.primary,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: colors.dark,
+  },
+  subHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  summaryItem: {
+    alignItems: "center",
+  },
+  summaryLabel: {
+    fontSize: 14,
+    color: colors.medium,
+  },
+  summaryValue: {
+    fontSize: 18,
+    fontWeight: "bold",
     color: colors.primary,
   },
 });
