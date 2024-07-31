@@ -16,7 +16,7 @@ function ProgressBar({ asset1, asset2 }) {
     >
       <View style={[styles.overlay, { width: `${percentage}%` }]} />
       <View style={styles.textContainer}>
-        <Text style={styles.text}>{percentage.toFixed(2)}%</Text>
+        <Text style={styles.text}>{percentage.toFixed(1)}%</Text>
       </View>
     </View>
   );
