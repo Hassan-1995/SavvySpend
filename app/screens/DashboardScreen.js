@@ -196,9 +196,19 @@ function DashboardScreen(props) {
             <AppText style={styles.infoValue}>January 1, 1990</AppText>
           </View>
         </View> */}
-        <View style={{justifyContent: 'flex-start', width: '100%', marginLeft: 20, marginTop: 20,}}>
-          <AppText style={{fontWeight: 'bold', color: colors.white, fontSize: 20}}>Historical Data</AppText>
-
+        <View
+          style={{
+            justifyContent: "flex-start",
+            width: "100%",
+            marginLeft: 20,
+            marginTop: 20,
+          }}
+        >
+          <AppText
+            style={{ fontWeight: "bold", color: colors.white, fontSize: 20 }}
+          >
+            Historical Data
+          </AppText>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <ScrollView horizontal>

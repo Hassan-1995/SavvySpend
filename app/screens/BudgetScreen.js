@@ -19,7 +19,7 @@ import Screen from "../components/Screen";
 import LogoContainer from "../components/LogoContainer";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
-import BudgetTable from "../components/BudgetTable";
+import BudgetedExpenseTable from "../components/BudgetedExpenseTable";
 import SummaryHeader from "../components/SummaryHeader";
 import EntryRow from "../components/EntryRow";
 import BudgetEditDetailsScreen from "./BudgetEditDetailsScreen";
@@ -297,7 +297,7 @@ function BudgetScreen(props) {
               </View> */}
 
               {filteredBudgetData.length > 0 ? (
-                <BudgetTable
+                <BudgetedExpenseTable
                   budgets={filteredBudgetData}
                   expenses={expenses}
                   onPressingEachRow={pressedRow}

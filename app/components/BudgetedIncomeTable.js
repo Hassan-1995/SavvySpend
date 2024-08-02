@@ -7,8 +7,8 @@ import AppText from "./AppText";
 import Icon from "./Icon";
 import ProgressBar from "./ProgressBar";
 
-function BudgetTable({ budgets, expenses, onPressingEachRow }) {
-  const [filteredExpenses, setFilteredExpenses] = useState([]);
+function BudgetedIncomeTable({ budgets, incomes, onPressingEachRow }) {
+  const [filteredIncomes, setFilteredIncomes] = useState([]);
 
   const calculateTotalAmount = (budgets) => {
     return budgets.reduce((total, item) => {
@@ -16,8 +16,8 @@ function BudgetTable({ budgets, expenses, onPressingEachRow }) {
     }, 0);
   };
 
-  const totalExpenseOfEachBudget = (rowItems) => {
-    const categoryData = expenses.filter(
+  const totalIncomeOfEachBudget = (rowItems) => {
+    const categoryData = incomes.filter(
       (item) => item.category_id === rowItems.category_id
     );
     const amount = calculateTotalAmount(categoryData);
@@ -54,13 +54,13 @@ function BudgetTable({ budgets, expenses, onPressingEachRow }) {
               <View style={styles.summaryItem}>
                 <AppText style={styles.summaryLabel}>Spent</AppText>
                 <AppText style={styles.summaryValue}>
-                  Rs {totalExpenseOfEachBudget(item)}
+                  Rs {totalIncomeOfEachBudget(item)}
                 </AppText>
               </View>
               <View style={styles.summaryItem}>
                 <AppText style={styles.summaryLabel}>Left to spend</AppText>
                 <AppText style={styles.summaryValue}>
-                  Rs {item.amount - totalExpenseOfEachBudget(item)}
+                  Rs {item.amount - totalIncomeOfEachBudget(item)}
                 </AppText>
               </View>
               <View style={styles.summaryItem}>
@@ -74,7 +74,7 @@ function BudgetTable({ budgets, expenses, onPressingEachRow }) {
             </View>
 
             <ProgressBar
-              asset1={totalExpenseOfEachBudget(item)}
+              asset1={totalIncomeOfEachBudget(item)}
               asset2={item.amount}
             />
           </LinearGradient>
@@ -140,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BudgetTable;
+export default BudgetedIncomeTable;

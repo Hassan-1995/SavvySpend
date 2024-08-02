@@ -6,6 +6,7 @@ import IncomeScreen from "../screens/IncomeScreen";
 import ExpenseScreen from "../screens/ExpenseScreen";
 import BudgetScreen from "../screens/BudgetScreen";
 import DashboardScreen from "../screens/DashboardScreen";
+import AccountProfileScreen from "../screens/AccountProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -15,6 +16,16 @@ const AppNavigator = () => (
       headerShown: false,
     }}
   >
+    <Tab.Screen
+      name="Accout"
+      component={AccountProfileScreen}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="account" color={color} size={size} />
+        ),
+      }}
+    />
     <Tab.Screen
       name="Dashboard"
       component={DashboardScreen}
