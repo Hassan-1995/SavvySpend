@@ -76,7 +76,19 @@ function AppPicker({ dropdownOptions, onValueChange }) {
                     iconColor={colors.white}
                     backgroundColor={colors.secondary}
                   />
-                  <AppText style={styles.itemText}>{item.name}</AppText>
+                  <AppText
+                    style={[
+                      styles.itemText,
+                      {
+                        color:
+                          item.type == "Income"
+                            ? colors.income
+                            : colors.expense,
+                      },
+                    ]}
+                  >
+                    {item.name}
+                  </AppText>
                 </TouchableOpacity>
               )}
             />
@@ -126,7 +138,8 @@ const styles = StyleSheet.create({
   itemText: {
     marginLeft: 20,
     fontSize: 20,
-    color: colors.primary,
+    // fontWeight: "bold",
+    // color: colors.primary,
   },
 });
 

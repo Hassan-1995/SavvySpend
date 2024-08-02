@@ -64,7 +64,7 @@ function BudgetedExpenseTable({ budgets, expenses, onPressingEachRow }) {
                 </AppText>
               </View>
               <View style={styles.summaryItem}>
-                <AppText style={styles.summaryLabel}>Limit</AppText>
+                <AppText style={styles.summaryLabel}>Budgeted</AppText>
                 <AppText
                   style={[styles.summaryValue, { color: colors.income }]}
                 >

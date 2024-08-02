@@ -52,19 +52,19 @@ function BudgetedIncomeTable({ budgets, incomes, onPressingEachRow }) {
 
             <View style={styles.subHeader}>
               <View style={styles.summaryItem}>
-                <AppText style={styles.summaryLabel}>Spent</AppText>
+                <AppText style={styles.summaryLabel}>Earned</AppText>
                 <AppText style={styles.summaryValue}>
                   Rs {totalIncomeOfEachBudget(item)}
                 </AppText>
               </View>
               <View style={styles.summaryItem}>
-                <AppText style={styles.summaryLabel}>Left to spend</AppText>
+                <AppText style={styles.summaryLabel}>Left to earn</AppText>
                 <AppText style={styles.summaryValue}>
                   Rs {item.amount - totalIncomeOfEachBudget(item)}
                 </AppText>
               </View>
               <View style={styles.summaryItem}>
-                <AppText style={styles.summaryLabel}>Limit</AppText>
+                <AppText style={styles.summaryLabel}>Budgeted</AppText>
                 <AppText
                   style={[styles.summaryValue, { color: colors.income }]}
                 >

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import budgetsApi from "../api/budgets";
 import expensesApi from "../api/expenses";
+import incomesApi from "../api/incomes";
 import categoriesApi from "../api/categories";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -26,6 +27,7 @@ import BudgetEditDetailsScreen from "./BudgetEditDetailsScreen";
 import AuthContext from "../auth/context";
 import AppButton from "../components/AppButton";
 import SmallButtonWithIcon from "../components/SmallButtonWithIcon";
+import BudgetedIncomeTable from "../components/BudgetedIncomeTable";
 
 const monthNames = [
   "January",
@@ -48,11 +50,16 @@ function BudgetScreen(props) {
   const { user } = useContext(AuthContext);
 
   const [budgets, setBudgets] = useState([]);
-  const [filteredBudgetData, setFilteredBudgetData] = useState([]);
+  const [filteredBudgetExpenseData, setFilteredBudgetExpenseData] = useState(
+    []
+  );
+  const [filteredBudgetIncomeData, setFilteredBudgetIncomeData] = useState([]);
   const [editItem, setEditItem] = useState([]);
 
   const [expenses, setExpenses] = useState([]);
   const [filteredExpenseData, setFilteredExpenseData] = useState([]);
+  const [incomes, setIncomes] = useState([]);
+  const [filteredIncomeData, setFilteredIncomeData] = useState([]);
 
   const [unAllocatedBudgets, setUnAllocatedBudgets] = useState([]);
   const [filteredUnAllocatedBudgetData, setFilteredUnAllocatedBudgetData] =
@@ -63,11 +70,13 @@ function BudgetScreen(props) {
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [modalEditVisible, setModalEditVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [screen, setScreen] = useState("expense");
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     loadBudgetTable();
     loadExpenseTable();
+    loadIncomeTable();
     loadCategoriesTable();
     loadBudgetNotIncludedInExpenseTable();
   }, [refresh]);
@@ -79,10 +88,17 @@ function BudgetScreen(props) {
       );
       if (response.data.length > 0) {
         setBudgets(response.data);
-        setFilteredBudgetData(response.data);
+        // const [temp] = categoryOptions.filter((item) => item.category_id === id);
+        setFilteredBudgetExpenseData(
+          response.data.filter((item) => item.type === "Expense")
+        );
+        setFilteredBudgetIncomeData(
+          response.data.filter((item) => item.type === "Income")
+        );
       } else {
         setBudgets([]);
-        setFilteredBudgetData([]);
+        setFilteredBudgetExpenseData([]);
+        setFilteredBudgetIncomeData([]);
       }
     } catch (error) {
       Alert.alert("Error", "Failed to load expenses");
@@ -104,6 +120,16 @@ function BudgetScreen(props) {
     } else {
       setExpenses([]);
       setFilteredExpenseData([]);
+    }
+  };
+  const loadIncomeTable = async () => {
+    const response = await incomesApi.getAllIncomesInCurrentMonth(user.user_id);
+    if (response.data.length > 0) {
+      setIncomes(response.data);
+      setFilteredIncomeData(response.data);
+    } else {
+      setIncomes([]);
+      setFilteredIncomeData([]);
     }
   };
   const loadBudgetNotIncludedInExpenseTable = async () => {
@@ -199,6 +225,10 @@ function BudgetScreen(props) {
     refreshScreen();
   };
 
+  const handleContent = (value) => {
+    setScreen(value);
+  };
+
   return (
     <Screen>
       <LinearGradient
@@ -233,6 +263,20 @@ function BudgetScreen(props) {
             </AppText>
           </AppText>
         </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <SmallButtonWithIcon
+            name={"arrow-up-bold-circle-outline"}
+            title={"Budgeted Expenses"}
+            color={screen === "expense" ? "secondary" : "primary"}
+            onPress={() => handleContent("expense")}
+          />
+          <SmallButtonWithIcon
+            name={"arrow-down-bold-circle-outline"}
+            title={"Budgeted Incomes"}
+            color={screen === "income" ? "secondary" : "primary"}
+            onPress={() => handleContent("income")}
+          />
+        </View>
       </LinearGradient>
 
       {/* <LogoContainer />
@@ -255,11 +299,13 @@ function BudgetScreen(props) {
 
       <View style={styles.content}>
         <ScrollView style={styles.container}>
-          {loading ? (
-            <ActivityIndicator size="large" color={colors.primary} />
-          ) : (
+          {screen === "expense" ? (
             <>
-              {/* <View style={styles.filterContainer}>
+              {loading ? (
+                <ActivityIndicator size="large" color={colors.primary} />
+              ) : (
+                <>
+                  {/* <View style={styles.filterContainer}>
                 <AppText style={styles.filterText}>
                   For the month of:{" "}
                   <AppText
@@ -275,7 +321,7 @@ function BudgetScreen(props) {
                 </AppText>
               </View> */}
 
-              {/* <View
+                  {/* <View
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -296,14 +342,34 @@ function BudgetScreen(props) {
                 </View>
               </View> */}
 
-              {filteredBudgetData.length > 0 ? (
-                <BudgetedExpenseTable
-                  budgets={filteredBudgetData}
-                  expenses={expenses}
-                  onPressingEachRow={pressedRow}
-                />
+                  {filteredBudgetExpenseData.length > 0 ? (
+                    <BudgetedExpenseTable
+                      budgets={filteredBudgetExpenseData}
+                      expenses={expenses}
+                      onPressingEachRow={pressedRow}
+                    />
+                  ) : (
+                    <AppText>No data for the selected month</AppText>
+                  )}
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              {loading ? (
+                <ActivityIndicator size="large" color={colors.primary} />
               ) : (
-                <AppText>No data for the selected month</AppText>
+                <>
+                  {filteredBudgetIncomeData.length > 0 ? (
+                    <BudgetedIncomeTable
+                      budgets={filteredBudgetIncomeData}
+                      incomes={incomes}
+                      onPressingEachRow={pressedRow}
+                    />
+                  ) : (
+                    <AppText>No data for the selected month</AppText>
+                  )}
+                </>
               )}
             </>
           )}
@@ -314,7 +380,6 @@ function BudgetScreen(props) {
           onClick={(newData, categoryID) => addBudget(newData, categoryID)}
           categoryOptions={categories}
           closeModal={toogleAddModal}
-          compare="Expense"
           title="Budget"
         />
       </Modal>
@@ -400,23 +465,23 @@ const styles = StyleSheet.create({
   },
   screenName: {
     fontSize: 18,
-    marginTop: 10,
+    marginTop: 0,
     color: colors.white,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   remainingAmount: {
     fontSize: 36,
     fontWeight: "bold",
     color: colors.white,
-    marginTop: 25,
+    marginTop: 20,
   },
   enteredAmount: {
     fontSize: 16,
     color: colors.white,
-    marginTop: 16,
+    marginTop: 6,
   },
   content: {
-    height: "65%",
+    height: "60%",
     width: "100%",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,

@@ -25,6 +25,7 @@ function EntryRow({
   const [inputValue, setInputValue] = useState("");
   const [period, setPeriod] = useState("");
   const [utilityDescription, setUtilityDescription] = useState(null);
+  const [type, setType] = useState(); // can be Income or Expense
 
   const [categoryID, setCategoryID] = useState();
   const [isInputEmpty, setIsInputEmpty] = useState(false);
@@ -46,7 +47,12 @@ function EntryRow({
     setCategoryID(numberOfCategories);
   };
 
-  const categoryData = categoryOptions.filter((item) => item.type === compare);
+  const categoryData =
+    compare === "Expense"
+      ? categoryOptions.filter((item) => item.type === "Expense")
+      : compare === "Income"
+      ? categoryOptions.filter((item) => item.type === "Income")
+      : categoryOptions;
 
   const handleMonthSelect = (month, year = 2024) => {
     const date = new Date(year, month, 0);
@@ -70,9 +76,11 @@ function EntryRow({
 
   const handleValueChange = (id, name) => {
     console.log("ID: ", id);
+    const [temp] = categoryOptions.filter((item) => item.category_id === id);
+    setType(temp.type);
     console.log("Name: ", name);
     setBudgetItem(name);
-    console.log(budgetItem);
+    console.log("handleValueChange", temp.type);
     setOthers(name);
   };
 
@@ -84,12 +92,14 @@ function EntryRow({
         month: period,
         amount: inputValue,
         description: utilityDescription,
+        type: type,
       };
       if (labelValue >= categoryID) {
         onClick(data, budgetItem);
       } else {
         onClick(data, labelValue);
       }
+      console.log("From edit function: ", data);
     }
   };
 

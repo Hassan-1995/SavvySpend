@@ -34,7 +34,7 @@ const getAllExpensesByCurrentMonthNotIncludedInBudgets = async (id) => {
 const addNewRowInBudgets = async (user_id, newData) => {
   const data = {
     category_id: newData.nameValue,
-    type: "Expense",
+    type: newData.type,
     period: newData.month,
     amount: newData.amount,
   };
