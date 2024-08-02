@@ -21,6 +21,7 @@ const getAllBudgetsInCurrentMonth = async (id) => {
     throw error;
   }
 };
+
 const getAllExpensesByCurrentMonthNotIncludedInBudgets = async (id) => {
   try {
     const result = await client.get(endPoint + "/nonAssignedBudget/" + id);

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import expensesApi from "../api/expenses";
 import incomesApi from "../api/incomes";
 import categoriesApi from "../api/categories";
+import { LinearGradient } from "expo-linear-gradient";
 
 import {
   View,
@@ -23,6 +24,8 @@ import SummaryHeader from "../components/SummaryHeader";
 import EntryRow from "../components/EntryRow";
 import ExpenseEditDetailsScreen from "./ExpenseEditDetailsScreen";
 import AuthContext from "../auth/context";
+import SmallButtonWithIcon from "../components/SmallButtonWithIcon";
+import TestingComponent from "../components/TestingComponent";
 
 const monthNames = [
   "January",
@@ -118,7 +121,7 @@ function ExpenseScreen(props) {
   const totalExpenses = calculateTotalAmount(expenses);
   const totalIncomes = calculateTotalAmount(incomes);
 
-  const toogleAddModal = () => {
+  const toggleAddModal = () => {
     setModalAddVisible(!modalAddVisible);
   };
 
@@ -127,7 +130,7 @@ function ExpenseScreen(props) {
   };
 
   const addExpense = async (data, value) => {
-    toogleAddModal();
+    toggleAddModal();
     if (typeof value === "string") {
       try {
         const categoryData = {
@@ -177,7 +180,41 @@ function ExpenseScreen(props) {
 
   return (
     <Screen>
-      <LogoContainer />
+      <LinearGradient
+        colors={[colors.primary, colors.secondary, colors.tertiary]}
+        style={styles.banner}
+      >
+        <AppText style={styles.screenName}>Expense</AppText>
+        <AppText style={styles.remainingAmount}>
+          Rs {totalExpenses.toLocaleString()} spent
+        </AppText>
+        <AppText style={styles.enteredAmount}>
+          out of Rs {totalIncomes.toLocaleString()} income
+        </AppText>
+        <SmallButtonWithIcon
+          title={"Add New Expense"}
+          color="primary"
+          onPress={toggleAddModal}
+        />
+
+        <View style={styles.filterContainer}>
+          <AppText style={styles.filterText}>
+            For the month of:{" "}
+            <AppText
+              style={[
+                styles.filterText,
+                {
+                  color: colors.primary,
+                },
+              ]}
+            >
+              {currentMonthName} {new Date().getFullYear()}
+            </AppText>
+          </AppText>
+        </View>
+      </LinearGradient>
+
+      {/* <LogoContainer />
       <View style={styles.labelContainer}>
         <AppText style={styles.label}>Expenses</AppText>
       </View>
@@ -187,14 +224,15 @@ function ExpenseScreen(props) {
         totalLabelOne={totalIncomes}
         labelTwo={"Expense"}
         totalLabelTwo={totalExpenses}
-      />
+      /> */}
 
-      <ScrollView style={styles.container}>
-        {loading ? (
-          <ActivityIndicator size="large" color={colors.primary} />
-        ) : (
-          <>
-            <View style={styles.filterContainer}>
+      <View style={styles.content}>
+        <ScrollView style={styles.container}>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.primary} />
+          ) : (
+            <>
+              {/* <View style={styles.filterContainer}>
               <AppText style={styles.filterText}>
                 For the month of:{" "}
                 <AppText
@@ -220,7 +258,7 @@ function ExpenseScreen(props) {
               <AppText style={styles.subHeader}>Expenses</AppText>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <AppText style={styles.links}>Add Expense</AppText>
-                <TouchableOpacity onPress={toogleAddModal}>
+                <TouchableOpacity onPress={toggleAddModal}>
                   <Icon
                     name={"circle-edit-outline"}
                     iconColor={colors.primary}
@@ -229,25 +267,27 @@ function ExpenseScreen(props) {
                   />
                 </TouchableOpacity>
               </View>
-            </View>
+            </View> */}
 
-            {filteredExpenseData.length > 0 ? (
-              <ExpenseTable
-                assets={filteredExpenseData}
-                onPressingEachRow={pressedRow}
-              />
-            ) : (
-              <AppText>No data for the selected month</AppText>
-            )}
-          </>
-        )}
-      </ScrollView>
-
+              {filteredExpenseData.length > 0 ? (
+                <>
+                  <ExpenseTable
+                    expenses={filteredExpenseData}
+                    onPressingEachRow={pressedRow}
+                  />
+                </>
+              ) : (
+                <AppText>No data for the selected month</AppText>
+              )}
+            </>
+          )}
+        </ScrollView>
+      </View>
       <Modal animationType="slide" transparent={true} visible={modalAddVisible}>
         <EntryRow
           onClick={(newData, categoryID) => addExpense(newData, categoryID)}
           categoryOptions={categories}
-          closeModal={toogleAddModal}
+          closeModal={toggleAddModal}
           compare="Expense"
           title="Expense"
         />
@@ -288,10 +328,9 @@ const styles = StyleSheet.create({
     color: colors.secondary,
   },
   filterContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     padding: 10,
     borderRadius: 10,
+    width: "100%",
   },
   filterText: {
     fontSize: 18,
@@ -309,6 +348,41 @@ const styles = StyleSheet.create({
     color: colors.secondary,
     borderBottomWidth: 1,
     borderBottomColor: colors.secondary,
+  },
+  banner: {
+    height: "50%",
+    backgroundColor: "blue",
+    alignItems: "center",
+  },
+  screenName: {
+    fontSize: 18,
+    marginTop: 10,
+    color: colors.white,
+    fontWeight: "bold",
+  },
+  remainingAmount: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: colors.white,
+    marginTop: 25,
+  },
+  enteredAmount: {
+    fontSize: 16,
+    color: colors.white,
+    marginTop: 16,
+  },
+  content: {
+    height: "65%",
+    width: "100%",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    // borderWidth: 1,
+    overflow: "hidden",
+    alignSelf: "center",
+    backgroundColor: "transparent",
+    // paddingHorizontal: 10,
+    position: "absolute",
+    bottom: 0,
   },
 });
 

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import budgetsApi from "../api/budgets";
 import expensesApi from "../api/expenses";
 import categoriesApi from "../api/categories";
+import { LinearGradient } from "expo-linear-gradient";
 
 import {
   View,
@@ -24,6 +25,7 @@ import EntryRow from "../components/EntryRow";
 import BudgetEditDetailsScreen from "./BudgetEditDetailsScreen";
 import AuthContext from "../auth/context";
 import AppButton from "../components/AppButton";
+import SmallButtonWithIcon from "../components/SmallButtonWithIcon";
 
 const monthNames = [
   "January",
@@ -199,7 +201,41 @@ function BudgetScreen(props) {
 
   return (
     <Screen>
-      <LogoContainer />
+      <LinearGradient
+        colors={[colors.primary, colors.secondary, colors.tertiary]}
+        style={styles.banner}
+      >
+        <AppText style={styles.screenName}>Budget</AppText>
+        <AppText style={styles.remainingAmount}>
+          Rs {(totalBudgets - totalExpenses).toLocaleString()} left
+        </AppText>
+        <AppText style={styles.enteredAmount}>
+          out of Rs {totalBudgets.toLocaleString()} budgeted
+        </AppText>
+        <SmallButtonWithIcon
+          title={"Create New Budget"}
+          color="primary"
+          onPress={handleAddModal}
+        />
+
+        <View style={styles.filterContainer}>
+          <AppText style={styles.filterText}>
+            For the month of:{" "}
+            <AppText
+              style={[
+                styles.filterText,
+                {
+                  color: colors.primary,
+                },
+              ]}
+            >
+              {currentMonthName} {new Date().getFullYear()}
+            </AppText>
+          </AppText>
+        </View>
+      </LinearGradient>
+
+      {/* <LogoContainer />
       <View style={styles.labelContainer}>
         <AppText style={styles.label}>Budgets</AppText>
       </View>
@@ -215,63 +251,64 @@ function BudgetScreen(props) {
         <AppText style={styles.summaryValue}>
           Rs {totalUnAlllocatedBudget}
         </AppText>
-      </View>
+      </View> */}
 
-      <ScrollView style={styles.container}>
-        {loading ? (
-          <ActivityIndicator size="large" color={colors.primary} />
-        ) : (
-          <>
-            <View style={styles.filterContainer}>
-              <AppText style={styles.filterText}>
-                For the month of:{" "}
-                <AppText
-                  style={[
-                    styles.filterText,
-                    {
-                      color: colors.primary,
-                    },
-                  ]}
-                >
-                  {currentMonthName} {new Date().getFullYear()}
+      <View style={styles.content}>
+        <ScrollView style={styles.container}>
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.primary} />
+          ) : (
+            <>
+              {/* <View style={styles.filterContainer}>
+                <AppText style={styles.filterText}>
+                  For the month of:{" "}
+                  <AppText
+                    style={[
+                      styles.filterText,
+                      {
+                        color: colors.primary,
+                      },
+                    ]}
+                  >
+                    {currentMonthName} {new Date().getFullYear()}
+                  </AppText>
                 </AppText>
-              </AppText>
-            </View>
+              </View> */}
 
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <AppText style={styles.subHeader}>Budgets</AppText>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <AppText style={styles.links}>Add Budget</AppText>
-                <TouchableOpacity onPress={handleAddModal}>
-                  <Icon
-                    name={"circle-edit-outline"}
-                    iconColor={colors.primary}
-                    backgroundColor="transparent"
-                    size={50}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
+              {/* <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <AppText style={styles.subHeader}>Budgets</AppText>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <AppText style={styles.links}>Add Budget</AppText>
+                  <TouchableOpacity onPress={handleAddModal}>
+                    <Icon
+                      name={"circle-edit-outline"}
+                      iconColor={colors.primary}
+                      backgroundColor="transparent"
+                      size={50}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View> */}
 
-            {filteredBudgetData.length > 0 ? (
-              <BudgetTable
-                budgets={filteredBudgetData}
-                expenses={expenses}
-                onPressingEachRow={pressedRow}
-              />
-            ) : (
-              <AppText>No data for the selected month</AppText>
-            )}
-          </>
-        )}
-      </ScrollView>
-
+              {filteredBudgetData.length > 0 ? (
+                <BudgetTable
+                  budgets={filteredBudgetData}
+                  expenses={expenses}
+                  onPressingEachRow={pressedRow}
+                />
+              ) : (
+                <AppText>No data for the selected month</AppText>
+              )}
+            </>
+          )}
+        </ScrollView>
+      </View>
       <Modal animationType="slide" transparent={true} visible={modalAddVisible}>
         <EntryRow
           onClick={(newData, categoryID) => addBudget(newData, categoryID)}
@@ -335,10 +372,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   filterContainer: {
-    flexDirection: "row",
-    alignItems: "center", // Ensure items are aligned vertically center
     padding: 10,
     borderRadius: 10,
+    width: "100%",
   },
   filterText: {
     fontSize: 18,
@@ -356,6 +392,41 @@ const styles = StyleSheet.create({
     color: colors.secondary,
     borderBottomWidth: 1,
     borderBottomColor: colors.secondary,
+  },
+  banner: {
+    height: "50%",
+    backgroundColor: "blue",
+    alignItems: "center",
+  },
+  screenName: {
+    fontSize: 18,
+    marginTop: 10,
+    color: colors.white,
+    fontWeight: 'bold'
+  },
+  remainingAmount: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: colors.white,
+    marginTop: 25,
+  },
+  enteredAmount: {
+    fontSize: 16,
+    color: colors.white,
+    marginTop: 16,
+  },
+  content: {
+    height: "65%",
+    width: "100%",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    // borderWidth: 1,
+    overflow: "hidden",
+    alignSelf: "center",
+    backgroundColor: "transparent",
+    // paddingHorizontal: 10,
+    position: "absolute",
+    bottom: 0,
   },
 });
 

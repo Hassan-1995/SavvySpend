@@ -8,28 +8,10 @@ import colors from "../config/colors";
 import MonthPicker from "./MonthPicker";
 import AppTextInput from "./AppTextInput";
 import AppButton from "./AppButton";
-import DropdownComponent from "./DropdownComponent";
-import DropdownComponentNew from "./DropdownComponentNew";
-import TestingComponent from "./TestingComponent";
 import AppPicker from "./AppPicker";
 
 const budgetOptions = [
-  { label: "Electricity", value: 1 },
-  { label: "Water", value: 2 },
-  { label: "Rent", value: 3 },
-  { label: "Internet", value: 4 },
-  { label: "Gas", value: 5 },
-  { label: "Trash Collection", value: 6 },
-  { label: "Cable TV", value: 7 },
-  { label: "Mobile Phone", value: 8 },
-  { label: "Home Security", value: 9 },
-  { label: "Home Maintenance", value: 10 },
-  { label: "Insurance", value: 11 },
-  { label: "Sewer", value: 12 },
-  { label: "Heating", value: 13 },
-  { label: "Transport", value: 14 },
-  { label: "Dining Out", value: 15 },
-  { label: "Groceries", value: 16 },
+  // Your budget options here...
 ];
 
 function EntryRow({
@@ -112,14 +94,19 @@ function EntryRow({
   };
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        // Background Linear Gradient
-        colors={["rgba(0,0,0,0.8)", "transparent"]}
-        // style={styles.background}
-      >
-        <ScrollView>
-          <View style={{ position: "relative", top: 50, alignItems: "center" }}>
+    <LinearGradient
+      colors={
+        title === "Income"
+          ? ["#006400", "#32CD32", "#98FF98"]
+          : title === "Expense"
+          ? ["#8B0000", "#E74C3C", "#F1948A"]
+          : ["#0A3D62", "#2980B9", "#85C1E9"]
+      }
+      style={styles.container}
+    >
+      <View style={styles.flexibleContent}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={{ alignItems: "center" }}>
             <Icon
               name={
                 title === "Income"
@@ -128,18 +115,30 @@ function EntryRow({
                   ? "arrow-up-bold-circle-outline"
                   : "clipboard-text-outline"
               }
-              size={250}
+              size={200}
               backgroundColor="transparent"
               iconColor={colors.white}
             />
           </View>
-          <View style={styles.promptBox}>
+          <View
+            style={[
+              styles.promptBox,
+              {
+                borderColor:
+                  title === "Income"
+                    ? "#32cd32"
+                    : title === "Expense"
+                    ? "#dc3545"
+                    : colors.primary,
+              },
+            ]}
+          >
             <View style={styles.titleContainer}>
               <AppText style={styles.title}>Add {title}</AppText>
               <TouchableOpacity onPress={() => closeModal()}>
                 <Icon
                   name={"close"}
-                  size={30}
+                  size={40}
                   backgroundColor="transparent"
                   iconColor={colors.danger}
                 />
@@ -157,10 +156,6 @@ function EntryRow({
                 placeholder={"Add utility name."}
               />
             ) : (
-              // <DropdownComponentNew
-              //   dropdownOptions={categoryData}
-              //   onValueChange={handleValueChange}
-              // />
               <AppPicker
                 dropdownOptions={categoryData}
                 onValueChange={handleValueChange}
@@ -196,30 +191,38 @@ function EntryRow({
             )}
           </View>
         </ScrollView>
-      </LinearGradient>
-    </View>
+      </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: colors.light,
     backgroundColor: "transparent",
-    alignItems: "center",
+  },
+  flexibleContent: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: "flex-end",
   },
   promptBox: {
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderTopWidth: 2,
     padding: 20,
-    width: "90%",
+    marginHorizontal: 10,
     backgroundColor: "#fff",
-    borderRadius: 10,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-    margin: 20,
   },
   title: {
     fontSize: 24,

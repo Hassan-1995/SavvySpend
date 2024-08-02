@@ -1,6 +1,6 @@
 import React from "react";
-
 import { View, StyleSheet, ScrollView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import colors from "../config/colors";
@@ -9,7 +9,11 @@ import TestingComponent from "../components/TestingComponent";
 function TestingScreen(props) {
   return (
     <Screen>
-      <View style={styles.container}>
+      {/* Use LinearGradient for the background */}
+      <LinearGradient
+        colors={[colors.primary, colors.secondary, colors.tertiary]}
+        style={styles.container}
+      >
         <AppText style={styles.screenName}>Budget</AppText>
         <AppText style={styles.remainingAmount}>Rs 1,192 left</AppText>
         <AppText style={styles.enteredAmount}>out of Rs 2,640 budgeted</AppText>
@@ -18,7 +22,7 @@ function TestingScreen(props) {
           color="secondary"
           onPress={() => console.log("Press")}
         />
-      </View>
+      </LinearGradient>
       <View style={styles.content}>
         <ScrollView>
           <View style={styles.box}>
@@ -66,8 +70,9 @@ function TestingScreen(props) {
 const styles = StyleSheet.create({
   container: {
     height: "50%",
-    backgroundColor: "blue",
     alignItems: "center",
+    // justifyContent: "center",
+    padding: 20,
   },
   screenName: {
     fontSize: 20,
@@ -94,6 +99,7 @@ const styles = StyleSheet.create({
     height: "65%",
     alignSelf: "center",
     backgroundColor: "yellow",
+    paddingHorizontal: 10,
     position: "absolute",
     bottom: 0,
     width: "100%",

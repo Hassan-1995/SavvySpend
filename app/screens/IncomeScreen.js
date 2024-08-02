@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import incomesApi from "../api/incomes";
 import expensesApi from "../api/expenses";
 import categoriesApi from "../api/categories";
+import { LinearGradient } from "expo-linear-gradient";
 
 import {
   View,
@@ -22,6 +23,8 @@ import IncomeTable from "../components/IncomeTable";
 import EntryRow from "../components/EntryRow";
 import IncomeEditDetailsScreen from "./IncomeEditDetailsScreen";
 import AuthContext from "../auth/context";
+import TestingComponent from "../components/TestingComponent";
+import SmallButtonWithIcon from "../components/SmallButtonWithIcon";
 
 const monthNames = [
   "January",
@@ -163,7 +166,41 @@ function IncomeScreen(props) {
 
   return (
     <Screen>
-      <LogoContainer />
+      <LinearGradient
+        colors={[colors.primary, colors.secondary, colors.tertiary]}
+        style={styles.banner}
+      >
+        <AppText style={styles.screenName}>Income</AppText>
+        <AppText style={styles.remainingAmount}>
+          Rs {totalIncomes.toLocaleString()} earned
+        </AppText>
+        <AppText style={styles.enteredAmount}>
+          {/* out of Rs {totalIncomes.toLocaleString()} income */}
+        </AppText>
+        <SmallButtonWithIcon
+          title={"Add New Income"}
+          color="primary"
+          onPress={toggleAddModal}
+        />
+
+        <View style={styles.filterContainer}>
+          <AppText style={styles.filterText}>
+            For the month of:{" "}
+            <AppText
+              style={[
+                styles.filterText,
+                {
+                  color: colors.primary,
+                },
+              ]}
+            >
+              {currentMonthName} {new Date().getFullYear()}
+            </AppText>
+          </AppText>
+        </View>
+      </LinearGradient>
+
+      {/* <LogoContainer />
       <View style={styles.labelContainer}>
         <AppText style={styles.label}>Incomes</AppText>
       </View>
@@ -173,10 +210,11 @@ function IncomeScreen(props) {
         totalLabelOne={totalIncomes}
         labelTwo={"Expense"}
         totalLabelTwo={totalExpenses}
-      />
+      /> */}
 
-      <ScrollView style={styles.container}>
-        <View style={styles.filterContainer}>
+      <View style={styles.content}>
+        <ScrollView style={styles.container}>
+          {/* <View style={styles.filterContainer}>
           <AppText style={styles.filterText}>
             For the month of:{" "}
             <AppText style={[styles.filterText, { color: colors.primary }]}>
@@ -198,20 +236,22 @@ function IncomeScreen(props) {
               />
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
 
-        {loading ? (
-          <ActivityIndicator size="large" color={colors.primary} />
-        ) : filteredIncomeData.length > 0 ? (
-          <IncomeTable
-            assets={filteredIncomeData}
-            onPressingEachRow={pressedRow}
-          />
-        ) : (
-          <AppText>No data for the selected month</AppText>
-        )}
-      </ScrollView>
-
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.primary} />
+          ) : filteredIncomeData.length > 0 ? (
+            <>
+              <IncomeTable
+                incomes={filteredIncomeData}
+                onPressingEachRow={pressedRow}
+              />
+            </>
+          ) : (
+            <AppText>No data for the selected month</AppText>
+          )}
+        </ScrollView>
+      </View>
       <Modal animationType="slide" transparent={true} visible={modalAddVisible}>
         <EntryRow
           onClick={(newData, categoryID) => addIncome(newData, categoryID)}
@@ -257,10 +297,9 @@ const styles = StyleSheet.create({
     color: colors.secondary,
   },
   filterContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     padding: 10,
     borderRadius: 10,
+    width: "100%",
   },
   filterText: {
     fontSize: 18,
@@ -287,6 +326,41 @@ const styles = StyleSheet.create({
     color: colors.secondary,
     borderBottomWidth: 1,
     borderBottomColor: colors.secondary,
+  },
+  banner: {
+    height: "50%",
+    backgroundColor: "blue",
+    alignItems: "center",
+  },
+  screenName: {
+    fontSize: 18,
+    marginTop: 10,
+    color: colors.white,
+    fontWeight: "bold",
+  },
+  remainingAmount: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: colors.white,
+    marginTop: 25,
+  },
+  enteredAmount: {
+    fontSize: 16,
+    color: colors.white,
+    marginTop: 16,
+  },
+  content: {
+    height: "65%",
+    width: "100%",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    // borderWidth: 1,
+    overflow: "hidden",
+    alignSelf: "center",
+    backgroundColor: "transparent",
+    // paddingHorizontal: 10,
+    position: "absolute",
+    bottom: 0,
   },
 });
 

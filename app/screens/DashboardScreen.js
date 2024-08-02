@@ -10,6 +10,11 @@ import ChartComponent from "../components/ChartComponent";
 import AuthContext from "../auth/context";
 import authStorage from "../auth/storage";
 import BankCard from "../components/BankCard";
+import { LinearGradient } from "expo-linear-gradient";
+import SmallButtonWithIcon from "../components/SmallButtonWithIcon";
+import ChartContentScreen from "./ChartContentScreen";
+import IncomeContentScreen from "./IncomeContentScreen";
+import ExpenseContentScreen from "./ExpenseContentScreen";
 
 function DashboardScreen(props) {
   const { user, setUser } = useContext(AuthContext);
@@ -19,6 +24,12 @@ function DashboardScreen(props) {
   const [expensesMonthly, setExpensesMonthly] = useState([]);
   const [expensesCurrent, setExpensesCurrent] = useState([]);
 
+  const [graphs, setGraphs] = useState(false);
+  const [incomes, setIncomes] = useState(false);
+  const [expenses, setExpenses] = useState(false);
+  const [budgets, setBudgets] = useState(false);
+  const [screen, setScreen] = useState("graph");
+
   const [status, setStatus] = useState("");
 
   const [refresh, setRefresh] = useState(false);
@@ -26,7 +37,7 @@ function DashboardScreen(props) {
   useEffect(() => {
     loadIncomeTable();
     loadExpenseTable();
-  }, [refresh]);
+  }, []);
 
   useEffect(() => {
     const totalIncomes = calculateTotalAmount(incomesCurrent);
@@ -153,23 +164,99 @@ function DashboardScreen(props) {
     authStorage.removeToken();
   };
 
+  const handleContent = (value) => {
+    console.log(value);
+    setScreen(value);
+  };
+
   return (
     <Screen>
-      <LogoContainer />
+      <LinearGradient
+        colors={[colors.primary, colors.secondary, colors.tertiary]}
+        style={styles.banner}
+      >
+        <AppText style={styles.screenName}>Dashboard</AppText>
+        <AppText style={styles.remainingAmount}>
+          {[user.firstName, " ", user.lastName]}
+        </AppText>
+
+        {/* <View>
+          <View style={styles.infoSection}>
+            <AppText style={styles.infoTitle}>Email</AppText>
+            <AppText style={styles.infoValue}>user@example.com</AppText>
+          </View>
+
+          <View style={styles.infoSection}>
+            <AppText style={styles.infoTitle}>Phone Number</AppText>
+            <AppText style={styles.infoValue}>123-456-7890</AppText>
+          </View>
+
+          <View style={styles.infoSection}>
+            <AppText style={styles.infoTitle}>Date of Birth</AppText>
+            <AppText style={styles.infoValue}>January 1, 1990</AppText>
+          </View>
+        </View> */}
+        <View style={{justifyContent: 'flex-start', width: '100%', marginLeft: 20, marginTop: 20,}}>
+          <AppText style={{fontWeight: 'bold', color: colors.white, fontSize: 20}}>Historical Data</AppText>
+
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <ScrollView horizontal>
+            <SmallButtonWithIcon
+              name={"chart-line"}
+              title={"Graphs"}
+              color={screen === "graph" ? "secondary" : "primary"}
+              onPress={() => handleContent("graph")}
+            />
+            <SmallButtonWithIcon
+              name={"arrow-down-bold-circle-outline"}
+              title={"Incomes"}
+              color={screen === "income" ? "secondary" : "primary"}
+              onPress={() => handleContent("income")}
+            />
+            <SmallButtonWithIcon
+              name={"arrow-up-bold-circle-outline"}
+              title={"Expenses"}
+              color={screen === "expense" ? "secondary" : "primary"}
+              onPress={() => handleContent("expense")}
+            />
+            {/* <SmallButtonWithIcon
+              name={"clipboard-text-outline"}
+              title={"Budgets"}
+              color={screen === "budget" ? "secondary" : "primary"}
+              onPress={() => handleContent("budget")}
+            /> */}
+          </ScrollView>
+        </View>
+      </LinearGradient>
+      <View style={styles.content}>
+        {/* <LogoContainer />
       <View style={styles.labelContainer}>
         <AppText style={styles.label}>Dashboard</AppText>
       </View>
-      <ScrollView>
       <BankCard
-        balance={remainingBalance}
-        cardHolder={[user.firstName, " ", user.lastName]}
-        status={status}
-        onClick={handleLogout}
-      />
-        <ChartComponent data={incomeData} title="Income" />
-        <View style={{ borderBottomWidth: 2, borderStyle: "dashed" }} />
-        <ChartComponent data={expenseData} title="Expense" />
-      </ScrollView>
+      balance={remainingBalance}
+      cardHolder={[user.firstName, " ", user.lastName]}
+      status={status}
+      onClick={handleLogout}
+      /> */}
+        <ScrollView>
+          {/* <AppText>{screen}</AppText> */}
+
+          {screen == "graph" ? (
+            <ChartContentScreen
+              incomeData={incomeData}
+              expenseData={expenseData}
+            />
+          ) : screen == "income" ? (
+            <IncomeContentScreen />
+          ) : screen == "expense" ? (
+            <ExpenseContentScreen />
+          ) : (
+            <></>
+          )}
+        </ScrollView>
+      </View>
     </Screen>
   );
 }
@@ -190,6 +277,53 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: colors.secondary,
+  },
+  banner: {
+    height: "50%",
+    backgroundColor: "blue",
+    alignItems: "center",
+  },
+  screenName: {
+    fontSize: 18,
+    marginTop: 10,
+    color: colors.white,
+    fontWeight: "bold",
+  },
+  remainingAmount: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: colors.white,
+    marginTop: 25,
+  },
+  enteredAmount: {
+    fontSize: 16,
+    color: colors.white,
+    marginTop: 16,
+  },
+  content: {
+    height: "70%",
+    width: "100%",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    // borderWidth: 1,
+    overflow: "hidden",
+    alignSelf: "center",
+    backgroundColor: "transparent",
+    // paddingHorizontal: 10,
+    position: "absolute",
+    bottom: 0,
+  },
+  infoSection: {
+    marginBottom: 20,
+  },
+  infoTitle: {
+    fontSize: 16,
+    color: colors.secondary,
+  },
+  infoValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.primary,
   },
 });
 

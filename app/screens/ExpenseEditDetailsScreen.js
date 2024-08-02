@@ -43,61 +43,92 @@ function ExpenseEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
 
   return (
     <LinearGradient
-      colors={["rgba(0,0,0,0.8)", "transparent"]}
+      colors={["#8B0000", "#E74C3C", "#F1948A"]}
       style={styles.container}
     >
-      <View style={{ position: "relative", top: 0, alignItems: "center" }}>
-        <Icon
-          name={assets.icon_name}
-          size={150}
-          backgroundColor="transparent"
-          iconColor={colors.tertiary}
-        />
-      </View>
-      <View style={styles.promptBox}>
-        <ScrollView style={styles.scrollView}>
-          <TouchableOpacity
-            style={{ alignItems: "flex-end" }}
-            onPress={handleModal}
-          >
+      <View style={styles.flexibleContent}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.iconContainer}>
             <Icon
-              name={"close"}
-              size={30}
+              name={assets.icon_name}
+              size={200}
               backgroundColor="transparent"
-              iconColor={colors.danger}
+              iconColor={colors.white}
             />
-          </TouchableOpacity>
-          <AppText style={styles.header}>Edit {assets.name}</AppText>
-          <AppTextInput
-            value={editAmount}
-            onChangeText={(text) => setEditAmount(text)}
-            keyboardType="numeric"
-            placeholder={"Add utility amount."}
-            style={styles.subHeader}
-          />
-          <AppTextInput
-            value={editDescription}
-            onChangeText={(text) => setEditDescription(text)}
-            placeholder={"Add utility description."}
-            multiline={true}
-          />
-          <AppText style={styles.date}>
-            <AppText>Date: </AppText>
-            {formattedDate}
-          </AppText>
-          <View style={styles.buttonContainer}>
-            <AppText style={styles.links}>Delete this entry.</AppText>
-            <TouchableOpacity onPress={handleDelete}>
-              <Icon
-                name={"trash-can-outline"}
-                size={40}
-                backgroundColor="transparent"
-                iconColor={colors.danger}
-              />
-            </TouchableOpacity>
+            <AppText style={styles.header}>{assets.name}</AppText>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+
+                marginBottom: 20,
+              }}
+            >
+              <AppText style={styles.subHeader}>You've spent </AppText>
+              <View
+                style={{
+                  backgroundColor: colors.danger,
+                  padding: 4,
+                  borderRadius: 25,
+                }}
+              >
+                <AppText style={[styles.subHeader, styles.highlight]}>
+                  {" "}
+                  Rs {parseInt(assets.amount).toLocaleString()}{" "}
+                </AppText>
+              </View>
+              <AppText style={styles.subHeader}> in August</AppText>
+            </View>
           </View>
-          <View style={styles.confirmButton}>
-            <AppButton title={"Confirm"} onPress={handleUpdate} />
+
+          <View style={styles.promptBox}>
+            <View style={styles.titleContainer}>
+              <AppText style={styles.title}>Edit {assets.name}</AppText>
+              <TouchableOpacity
+                style={{ alignItems: "flex-end" }}
+                onPress={handleModal}
+              >
+                <Icon
+                  name={"close"}
+                  size={40}
+                  backgroundColor="transparent"
+                  iconColor={colors.danger}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <AppTextInput
+              value={editAmount}
+              onChangeText={(text) => setEditAmount(text)}
+              keyboardType="numeric"
+              placeholder={"Add utility amount."}
+              style={styles.subTitle}
+            />
+            <AppTextInput
+              value={editDescription}
+              onChangeText={(text) => setEditDescription(text)}
+              placeholder={"Add utility description."}
+              multiline={true}
+            />
+            <AppText style={styles.date}>
+              <AppText>Date: </AppText>
+              {formattedDate}
+            </AppText>
+            <View style={styles.buttonContainer}>
+              <AppText style={styles.links}>Delete this entry.</AppText>
+              <TouchableOpacity onPress={handleDelete}>
+                <Icon
+                  name={"trash-can-outline"}
+                  size={40}
+                  backgroundColor="transparent"
+                  iconColor={colors.danger}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.confirmButton}>
+              <AppButton title={"Confirm"} onPress={handleUpdate} />
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -108,37 +139,33 @@ function ExpenseEditDetailsScreen({ assets, closeModal, onEdit, onDelete }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
-    alignItems: "center",
-    justifyContent: "flex-end",
+    backgroundColor: "transparent",
   },
   promptBox: {
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderTopWidth: 2,
+    borderColor: "#dc3545",
     padding: 20,
-    width: "90%",
-    height: "80%",
+    marginHorizontal: 10,
     backgroundColor: "#fff",
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
   },
-  scrollView: {
-    flex: 1,
-    marginVertical: 10,
-  },
   header: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
-    color: colors.primary,
-    marginBottom: 10,
+    color: colors.white,
+    marginBottom: 15,
   },
   subHeader: {
-    fontSize: 20,
-    fontWeight: "600",
-    flex: 1,
+    fontSize: 16,
+    color: colors.white,
   },
   description: {
     fontSize: 16,
@@ -150,21 +177,49 @@ const styles = StyleSheet.create({
     color: colors.medium,
     marginVertical: 10,
   },
+  flexibleContent: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
   buttonContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    marginTop: 10,
+    marginVertical: 10,
   },
   confirmButton: {
     justifyContent: "flex-end",
-    // flex: 1,
-    // marginTop: 20,
   },
   links: {
     fontStyle: "italic",
     fontSize: 14,
-    borderBottomColor: colors.secondary,
+  },
+  iconContainer: {
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: colors.primary,
+    marginBottom: 10,
+  },
+  subTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    flex: 1,
+  },
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  highlight: {
+    fontWeight: "bold",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "flex-end",
   },
 });
 

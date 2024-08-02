@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+
 import colors from "../config/colors";
 import AppText from "./AppText";
 import Icon from "./Icon";
@@ -21,55 +23,61 @@ function BudgetTable({ budgets, expenses, onPressingEachRow }) {
     const amount = calculateTotalAmount(categoryData);
 
     return amount;
-    // setFilteredExpenseData(categoryData);
   };
 
   return (
     <ScrollView>
       {budgets.map((item) => (
-        <View style={styles.container} key={item.budget_id}>
-          <View style={styles.header}>
-            <View style={styles.row}>
-              <Icon name={item.icon_name} backgroundColor={colors.primary} />
-              <View style={styles.textContainer}>
-                <AppText style={styles.title}>{item.name}</AppText>
-                <AppText style={styles.subtitle}>Subtitle</AppText>
+        <View key={item.budget_id}>
+          <LinearGradient
+            colors={["#c5cae9", colors.tertiary]}
+            style={styles.container}
+          >
+            <View style={styles.header}>
+              <View style={styles.row}>
+                <Icon name={item.icon_name} backgroundColor={colors.primary} />
+                <View style={styles.textContainer}>
+                  <AppText style={styles.title}>{item.name}</AppText>
+                  <AppText style={styles.subtitle}>Subtitle</AppText>
+                </View>
+              </View>
+              <TouchableOpacity onPress={() => onPressingEachRow(item)}>
+                <Icon
+                  name={"chevron-right"}
+                  backgroundColor={colors.secondary}
+                  iconColor={colors.white}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.subHeader}>
+              <View style={styles.summaryItem}>
+                <AppText style={styles.summaryLabel}>Spent</AppText>
+                <AppText style={styles.summaryValue}>
+                  Rs {totalExpenseOfEachBudget(item)}
+                </AppText>
+              </View>
+              <View style={styles.summaryItem}>
+                <AppText style={styles.summaryLabel}>Left to spend</AppText>
+                <AppText style={styles.summaryValue}>
+                  Rs {item.amount - totalExpenseOfEachBudget(item)}
+                </AppText>
+              </View>
+              <View style={styles.summaryItem}>
+                <AppText style={styles.summaryLabel}>Limit</AppText>
+                <AppText
+                  style={[styles.summaryValue, { color: colors.income }]}
+                >
+                  Rs {parseInt(item.amount)}
+                </AppText>
               </View>
             </View>
-            <TouchableOpacity onPress={() => onPressingEachRow(item)}>
-              <Icon
-                name={"chevron-right"}
-                backgroundColor={colors.secondary}
-                iconColor={colors.white}
-              />
-            </TouchableOpacity>
-          </View>
 
-          <View style={styles.subHeader}>
-            <View style={styles.summaryItem}>
-              <AppText style={styles.summaryLabel}>Spent</AppText>
-              <AppText style={styles.summaryValue}>
-                Rs {totalExpenseOfEachBudget(item)}
-              </AppText>
-            </View>
-            <View style={styles.summaryItem}>
-              <AppText style={styles.summaryLabel}>Left to spend</AppText>
-              <AppText style={styles.summaryValue}>
-                Rs {item.amount - totalExpenseOfEachBudget(item)}
-              </AppText>
-            </View>
-            <View style={styles.summaryItem}>
-              <AppText style={styles.summaryLabel}>Limit</AppText>
-              <AppText style={[styles.summaryValue, { color: colors.income }]}>
-                Rs {parseInt(item.amount)}
-              </AppText>
-            </View>
-          </View>
-
-          <ProgressBar
-            asset1={totalExpenseOfEachBudget(item)}
-            asset2={item.amount}
-          />
+            <ProgressBar
+              asset1={totalExpenseOfEachBudget(item)}
+              asset2={item.amount}
+            />
+          </LinearGradient>
         </View>
       ))}
     </ScrollView>
@@ -83,8 +91,13 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 1,
     borderColor: colors.primary,
-    backgroundColor: colors.tertiary,
     marginVertical: 5,
+
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   header: {
     flexDirection: "row",

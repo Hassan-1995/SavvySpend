@@ -21,6 +21,17 @@ const getAllIncomesInCurrentMonth = async (id) => {
     throw error;
   }
 };
+const getAllIncomesInPickedMonth = async (id, month) => {
+  try {
+    const result = await client.get(
+      endPoint + "/userId/" + id + "/month/" + month
+    );
+    return result;
+  } catch (error) {
+    console.error("Error getting data:", error);
+    throw error;
+  }
+};
 const addNewRowInIncomes = async (user_id, newData) => {
   const data = {
     category_id: newData.nameValue,
@@ -68,6 +79,7 @@ const deleteRowFromIncome = async (id) => {
 export default {
   getAllIncomes,
   getAllIncomesInCurrentMonth,
+  getAllIncomesInPickedMonth,
   addNewRowInIncomes,
   updateRowInIncome,
   deleteRowFromIncome,
