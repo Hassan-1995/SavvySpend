@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import expensesApi from "../api/expenses";
 import incomesApi from "../api/incomes";
+import budgetsApi from "../api/budgets";
 import categoriesApi from "../api/categories";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -50,6 +51,7 @@ function ExpenseScreen(props) {
   const [editItem, setEditItem] = useState([]);
 
   const [incomes, setIncomes] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const [modalAddVisible, setModalAddVisible] = useState(false);
@@ -62,6 +64,7 @@ function ExpenseScreen(props) {
   useEffect(() => {
     loadExpenseTable();
     loadIncomeTable();
+    loadBudgetTable();
     loadCategoriesTable();
   }, [refresh]);
 
@@ -107,6 +110,20 @@ function ExpenseScreen(props) {
       Alert.alert("Error", "Failed to load incomes");
     }
   };
+  const loadBudgetTable = async () => {
+    try {
+      const response = await budgetsApi.getAllBudgetsInCurrentMonth(
+        user.user_id
+      );
+      if (response.data.length > 0) {
+        setBudgets(response.data);
+      } else {
+        setBudgets([]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to load budgets");
+    }
+  };
 
   const refreshScreen = () => {
     setRefresh(!refresh);
@@ -120,6 +137,9 @@ function ExpenseScreen(props) {
 
   const totalExpenses = calculateTotalAmount(expenses);
   const totalIncomes = calculateTotalAmount(incomes);
+  const totalBudgets = calculateTotalAmount(
+    budgets.filter((item) => item.type == "Expense")
+  );
 
   const toggleAddModal = () => {
     setModalAddVisible(!modalAddVisible);
@@ -189,7 +209,7 @@ function ExpenseScreen(props) {
           Rs {totalExpenses.toLocaleString()} spent
         </AppText>
         <AppText style={styles.enteredAmount}>
-          out of Rs {totalIncomes.toLocaleString()} income
+          out of Rs {totalBudgets.toLocaleString()} budgeted expense
         </AppText>
         <SmallButtonWithIcon
           title={"Add New Expense"}

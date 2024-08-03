@@ -251,24 +251,25 @@ function BudgetScreen(props) {
         colors={[colors.primary, colors.secondary, colors.tertiary]}
         style={styles.banner}
       >
+        <AppText style={styles.screenName}>Budget</AppText>
         {screen === "expense" ? (
           <>
-            <AppText style={styles.screenName}>Budget</AppText>
             <AppText style={styles.remainingAmount}>
-              Rs {(totalExpenseBudgets - totalExpenses).toLocaleString()} left
+              Rs {totalExpenseBudgets.toLocaleString()}{" "}
+              <AppText style={styles.enteredAmount}>allocated</AppText>
             </AppText>
             <AppText style={styles.enteredAmount}>
-              out of Rs {totalExpenseBudgets.toLocaleString()} budgeted
+              against Rs {totalIncomeBudgets.toLocaleString()} budgeted income.
             </AppText>
           </>
         ) : (
           <>
-            <AppText style={styles.screenName}>Budget</AppText>
             <AppText style={styles.remainingAmount}>
-              Rs {totalIncomes.toLocaleString()} earned
+              Rs {totalIncomeBudgets.toLocaleString()}{" "}
+              <AppText style={styles.enteredAmount}>budgeted</AppText>
             </AppText>
             <AppText style={styles.enteredAmount}>
-              out of Rs {totalIncomeBudgets.toLocaleString()} budgeted
+              out of which Rs {totalIncomes.toLocaleString()} earned.
             </AppText>
           </>
         )}
@@ -304,16 +305,16 @@ function BudgetScreen(props) {
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <SmallButtonWithIcon
-            name={"arrow-up-bold-circle-outline"}
-            title={"Budgeted Expenses"}
-            color={screen === "expense" ? "secondary" : "primary"}
-            onPress={() => handleContent("expense")}
-          />
-          <SmallButtonWithIcon
             name={"arrow-down-bold-circle-outline"}
             title={"Budgeted Incomes"}
             color={screen === "income" ? "secondary" : "primary"}
             onPress={() => handleContent("income")}
+          />
+          <SmallButtonWithIcon
+            name={"arrow-up-bold-circle-outline"}
+            title={"Budgeted Expenses"}
+            color={screen === "expense" ? "secondary" : "primary"}
+            onPress={() => handleContent("expense")}
           />
         </View>
       </LinearGradient>

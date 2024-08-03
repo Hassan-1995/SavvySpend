@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import incomesApi from "../api/incomes";
 import expensesApi from "../api/expenses";
+import budgetsApi from "../api/budgets";
 import categoriesApi from "../api/categories";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -51,6 +52,7 @@ function IncomeScreen(props) {
   const [editItem, setEditItem] = useState(null);
 
   const [expenses, setExpenses] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const [modalAddVisible, setModalAddVisible] = useState(false);
@@ -60,6 +62,7 @@ function IncomeScreen(props) {
   useEffect(() => {
     loadIncomeTable();
     loadExpenseTable();
+    loadBudgetTable();
     loadCategoriesTable();
   }, []);
 
@@ -89,6 +92,21 @@ function IncomeScreen(props) {
     }
   };
 
+  const loadBudgetTable = async () => {
+    try {
+      const response = await budgetsApi.getAllBudgetsInCurrentMonth(
+        user.user_id
+      );
+      if (response.data.length > 0) {
+        setBudgets(response.data);
+      } else {
+        setBudgets([]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to load budgets");
+    }
+  };
+
   const loadCategoriesTable = async () => {
     try {
       const response = await categoriesApi.getAllContentFromCategories();
@@ -104,6 +122,9 @@ function IncomeScreen(props) {
 
   const totalIncomes = calculateTotalAmount(incomes);
   const totalExpenses = calculateTotalAmount(expenses);
+  const totalBudgets = calculateTotalAmount(
+    budgets.filter((item) => item.type == "Income")
+  );
 
   const toggleAddModal = () => {
     setModalAddVisible(!modalAddVisible);
@@ -175,7 +196,7 @@ function IncomeScreen(props) {
           Rs {totalIncomes.toLocaleString()} earned
         </AppText>
         <AppText style={styles.enteredAmount}>
-          {/* out of Rs {totalIncomes.toLocaleString()} income */}
+          out of Rs {totalBudgets.toLocaleString()} budgeted income
         </AppText>
         <SmallButtonWithIcon
           title={"Add New Income"}
