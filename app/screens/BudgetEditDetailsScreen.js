@@ -9,6 +9,8 @@ import Icon from "../components/Icon";
 import AppTextInput from "../components/AppTextInput";
 import BudgetExpenseTable from "../components/BudgetExpenseTable";
 import ProgressBar from "../components/ProgressBar";
+import BudgetedIncomeTable from "../components/BudgetedIncomeTable";
+import BudgetIncomeTable from "../components/BudgetIncomeTable";
 
 function BudgetEditDetailsScreen({
   assets,
@@ -37,6 +39,9 @@ function BudgetEditDetailsScreen({
     return `${day}-${month}-${year}`;
   };
   const formattedDate = formatDate(assets.updated_at);
+
+  console.log("Assets: ", assets.type);
+  console.log("BudgetExpenses: ", budgetExpenses);
 
   const handleModal = () => {
     closeModal();
@@ -148,8 +153,11 @@ function BudgetEditDetailsScreen({
                 />
               </TouchableOpacity>
             </View>
-
-            <BudgetExpenseTable assets={budgetExpenses} label={assets.name} />
+            {assets.type === "Expense" ? (
+              <BudgetExpenseTable assets={budgetExpenses} label={assets.name} />
+            ) : (
+              <BudgetIncomeTable assets={budgetExpenses} label={assets.name} />
+            )}
 
             <View style={styles.confirmButton}>
               <AppButton title={"Confirm"} onPress={handleUpdate} />
@@ -170,7 +178,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 2,
     borderRightWidth: 2,
     borderTopWidth: 2,
-    borderColor: "#dc3545",
+    borderColor: colors.primary,
     padding: 20,
     marginHorizontal: 10,
     backgroundColor: "#fff",

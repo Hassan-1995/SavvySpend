@@ -19,6 +19,13 @@ function AccountProfileScreen({ onEditProfile, onLogout }) {
     const day = String(date.getDate()).padStart(2, "0");
     return `${day}-${month}-${year}`;
   };
+  function formatPhoneNumber(number) {
+    number = number.toString();
+    let length = number.length;
+    let formattedNumber =
+      number.slice(0, length - 7) + "-" + number.slice(length - 7);
+    return formattedNumber;
+  }
 
   const handleLogout = () => {
     setUser(null);
@@ -31,13 +38,35 @@ function AccountProfileScreen({ onEditProfile, onLogout }) {
         style={styles.banner}
       >
         <AppText style={styles.screenName}>Profile</AppText>
-        <AppText style={styles.remainingAmount}>
-          {[user.firstName, " ", user.lastName]}
-        </AppText>
+
+        <View style={styles.profileContainer}>
+          <AppText style={styles.label}>User Name:</AppText>
+          <AppText style={styles.value}>
+            {user.firstName} {user.lastName}
+          </AppText>
+          <AppText style={styles.label}>Email:</AppText>
+          <AppText style={styles.value}>{user.email}</AppText>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <View>
+              <AppText style={styles.label}>Mobile Number:</AppText>
+              <AppText style={styles.value}>
+                {formatPhoneNumber(user.phoneNumber)}
+              </AppText>
+            </View>
+            <View>
+              <AppText style={styles.label}>Date of Birth:</AppText>
+              <AppText style={styles.value}>
+                {formatDate(user.dateOfBirth)}
+              </AppText>
+            </View>
+          </View>
+        </View>
       </LinearGradient>
       <View style={styles.content}>
         <ScrollView>
-          <View style={styles.container}>
+          {/* <View style={styles.container}>
             <View style={styles.profileContainer}>
               <AppText style={styles.label}>First Name:</AppText>
               <AppText style={styles.value}>{user.firstName}</AppText>
@@ -76,7 +105,7 @@ function AccountProfileScreen({ onEditProfile, onLogout }) {
               onPress={handleLogout}
               color={colors.secondary}
             />
-          </View>
+          </View> */}
         </ScrollView>
       </View>
     </Screen>
@@ -90,20 +119,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   profileContainer: {
-    backgroundColor: colors.tertiary,
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
+    width: "100%",
+    marginTop: 20,
+    paddingHorizontal: 15,
   },
   label: {
     fontSize: 16,
     fontWeight: "bold",
-    color: colors.primary,
+    color: colors.tertiary,
     marginBottom: 5,
   },
   value: {
     fontSize: 16,
-    color: colors.dark,
+    color: colors.white,
     marginBottom: 15,
   },
   buttonsContainer: {

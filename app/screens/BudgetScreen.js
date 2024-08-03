@@ -155,8 +155,14 @@ function BudgetScreen(props) {
       return total + parseFloat(item.amount);
     }, 0);
   };
-  const totalBudgets = calculateTotalAmount(budgets);
+  const totalExpenseBudgets = calculateTotalAmount(
+    budgets.filter((item) => item.type == "Expense")
+  );
+  const totalIncomeBudgets = calculateTotalAmount(
+    budgets.filter((item) => item.type == "Income")
+  );
   const totalExpenses = calculateTotalAmount(expenses);
+  const totalIncomes = calculateTotalAmount(incomes);
   const totalUnAlllocatedBudget = calculateTotalAmount(unAllocatedBudgets);
 
   const toogleAddModal = () => {
@@ -196,12 +202,22 @@ function BudgetScreen(props) {
   };
 
   const pressedRow = (rowItems) => {
+    console.log("rowItems: ", rowItems);
     toogleEditModal();
     setEditItem(rowItems);
-    const categoryData = expenses.filter(
-      (item) => item.category_id === rowItems.category_id
-    );
-    setFilteredExpenseData(categoryData);
+
+    if (rowItems.type == "Expense") {
+      const categoryData = expenses.filter(
+        (item) => item.category_id === rowItems.category_id
+      );
+      setFilteredExpenseData(categoryData);
+    }
+    if (rowItems.type == "Income") {
+      const categoryData = incomes.filter(
+        (item) => item.category_id === rowItems.category_id
+      );
+      setFilteredExpenseData(categoryData);
+    }
   };
   const editBudget = async (updatedData) => {
     const data = {
@@ -235,13 +251,36 @@ function BudgetScreen(props) {
         colors={[colors.primary, colors.secondary, colors.tertiary]}
         style={styles.banner}
       >
-        <AppText style={styles.screenName}>Budget</AppText>
+        {screen === "expense" ? (
+          <>
+            <AppText style={styles.screenName}>Budget</AppText>
+            <AppText style={styles.remainingAmount}>
+              Rs {(totalExpenseBudgets - totalExpenses).toLocaleString()} left
+            </AppText>
+            <AppText style={styles.enteredAmount}>
+              out of Rs {totalExpenseBudgets.toLocaleString()} budgeted
+            </AppText>
+          </>
+        ) : (
+          <>
+            <AppText style={styles.screenName}>Budget</AppText>
+            <AppText style={styles.remainingAmount}>
+              Rs {totalIncomes.toLocaleString()} earned
+            </AppText>
+            <AppText style={styles.enteredAmount}>
+              out of Rs {totalIncomeBudgets.toLocaleString()} budgeted
+            </AppText>
+          </>
+        )}
+
+        {/* <AppText style={styles.screenName}>Budget</AppText>
         <AppText style={styles.remainingAmount}>
-          Rs {(totalBudgets - totalExpenses).toLocaleString()} left
+          Rs {(totalExpenseBudgets - totalExpenses).toLocaleString()} left
         </AppText>
         <AppText style={styles.enteredAmount}>
-          out of Rs {totalBudgets.toLocaleString()} budgeted
-        </AppText>
+          out of Rs {totalExpenseBudgets.toLocaleString()} budgeted
+        </AppText> */}
+
         <SmallButtonWithIcon
           title={"Create New Budget"}
           color="primary"
