@@ -38,7 +38,7 @@ function BudgetedIncomeTable({ budgets, incomes, onPressingEachRow }) {
                 <Icon name={item.icon_name} backgroundColor={colors.primary} />
                 <View style={styles.textContainer}>
                   <AppText style={styles.title}>{item.name}</AppText>
-                  <AppText style={styles.subtitle}>Subtitle</AppText>
+                  <AppText style={styles.subtitle}>Source of income.</AppText>
                 </View>
               </View>
               <TouchableOpacity onPress={() => onPressingEachRow(item)}>
@@ -76,6 +76,7 @@ function BudgetedIncomeTable({ budgets, incomes, onPressingEachRow }) {
             <ProgressBar
               asset1={totalIncomeOfEachBudget(item)}
               asset2={item.amount}
+              color="income"
             />
           </LinearGradient>
         </View>

@@ -60,70 +60,100 @@ function BudgetEditDetailsScreen({
 
   return (
     <LinearGradient
-      colors={["rgba(0,0,0,0.8)", "transparent"]}
+      colors={["#0A3D62", "#2980B9", "#85C1E9"]}
       style={styles.container}
     >
-      <View style={{ position: "relative", top: 0, alignItems: "center" }}>
-        <Icon
-          name={assets.icon_name}
-          size={150}
-          backgroundColor="transparent"
-          iconColor={colors.tertiary}
-        />
-      </View>
-      <View style={styles.promptBox}>
-        <ScrollView style={styles.scrollView}>
-          <TouchableOpacity
-            style={{ alignItems: "flex-end" }}
-            onPress={handleModal}
-          >
+      <View style={styles.flexibleContent}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.iconContainer}>
             <Icon
-              name={"close"}
-              size={30}
+              name={assets.icon_name}
+              size={200}
               backgroundColor="transparent"
-              iconColor={colors.danger}
+              iconColor={colors.white}
             />
-          </TouchableOpacity>
-          <AppText style={styles.header}>{assets.name}</AppText>
-          <AppTextInput
-            value={editAmount}
-            onChangeText={(text) => setEditAmount(text)}
-            keyboardType="numeric"
-            placeholder={"Add utility amount."}
-            style={styles.subHeader}
-          />
-          <AppText style={styles.date}>
-            <AppText>Date: </AppText>
-            {formattedDate}
-          </AppText>
+            <AppText style={styles.header}>{assets.name}</AppText>
 
-          <View>
-            <AppText>
-              Allocated Budget: {parseFloat(allocatedBudget).toLocaleString()}
-            </AppText>
-            <AppText>
-              Spend Budget: {parseFloat(totalExpenses).toLocaleString()}
-            </AppText>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+
+                marginBottom: 20,
+              }}
+            >
+              <AppText style={styles.subHeader}>Your budget is </AppText>
+              <View
+                style={{
+                  backgroundColor: colors.secondary,
+                  padding: 4,
+                  borderRadius: 25,
+                }}
+              >
+                <AppText style={[styles.subHeader, styles.highlight]}>
+                  {" "}
+                  Rs {parseInt(assets.amount).toLocaleString()}{" "}
+                </AppText>
+              </View>
+              <AppText style={styles.subHeader}> in August</AppText>
+            </View>
           </View>
 
-          <ProgressBar asset1={totalExpenses} asset2={allocatedBudget} />
+          <View style={styles.promptBox}>
+            <View style={styles.titleContainer}>
+              <AppText style={styles.title}>{assets.name}</AppText>
+              <TouchableOpacity
+                style={{ alignItems: "flex-end" }}
+                onPress={handleModal}
+              >
+                <Icon
+                  name={"close"}
+                  size={40}
+                  backgroundColor="transparent"
+                  iconColor={colors.danger}
+                />
+              </TouchableOpacity>
+            </View>
+            <AppTextInput
+              value={editAmount}
+              onChangeText={(text) => setEditAmount(text)}
+              keyboardType="numeric"
+              placeholder={"Add utility amount."}
+              style={styles.subTitle}
+            />
+            <AppText style={styles.date}>
+              <AppText>Date: </AppText>
+              {formattedDate}
+            </AppText>
 
-          <View style={styles.buttonContainer}>
-            <AppText style={styles.links}>Delete this entry.</AppText>
-            <TouchableOpacity onPress={handleDelete}>
-              <Icon
-                name={"trash-can-outline"}
-                size={40}
-                backgroundColor="transparent"
-                iconColor={colors.danger}
-              />
-            </TouchableOpacity>
-          </View>
+            <View>
+              <AppText>
+                Targeted: {parseFloat(allocatedBudget).toLocaleString()}
+              </AppText>
+              <AppText>
+                Achieved: {parseFloat(totalExpenses).toLocaleString()}
+              </AppText>
+            </View>
 
-          <BudgetExpenseTable assets={budgetExpenses} label={assets.name} />
+            <ProgressBar asset1={totalExpenses} asset2={allocatedBudget} />
 
-          <View style={styles.confirmButton}>
-            <AppButton title={"Confirm"} onPress={handleUpdate} />
+            <View style={styles.buttonContainer}>
+              <AppText style={styles.links}>Delete this entry.</AppText>
+              <TouchableOpacity onPress={handleDelete}>
+                <Icon
+                  name={"trash-can-outline"}
+                  size={40}
+                  backgroundColor="transparent"
+                  iconColor={colors.danger}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <BudgetExpenseTable assets={budgetExpenses} label={assets.name} />
+
+            <View style={styles.confirmButton}>
+              <AppButton title={"Confirm"} onPress={handleUpdate} />
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -135,16 +165,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "transparent",
-    alignItems: "center",
-    justifyContent: "flex-end",
   },
   promptBox: {
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderTopWidth: 2,
+    borderColor: "#dc3545",
     padding: 20,
-    width: "90%",
-    height: "75%",
+    marginHorizontal: 10,
     backgroundColor: "#fff",
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -155,16 +186,32 @@ const styles = StyleSheet.create({
     flex: 1,
     marginVertical: 10,
   },
-  header: {
+  titleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  title: {
     fontSize: 24,
     fontWeight: "bold",
     color: colors.primary,
     marginBottom: 10,
   },
-  subHeader: {
+  subTitle: {
     fontSize: 20,
     fontWeight: "600",
     flex: 1,
+  },
+  header: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: colors.white,
+    marginBottom: 15,
+  },
+  subHeader: {
+    fontSize: 16,
+    color: colors.white,
   },
   description: {
     fontSize: 16,
@@ -191,6 +238,20 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     fontSize: 14,
     borderBottomColor: colors.secondary,
+  },
+  flexibleContent: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "flex-end",
+  },
+  iconContainer: {
+    alignItems: "center",
+  },
+  highlight: {
+    fontWeight: "bold",
   },
 });
 

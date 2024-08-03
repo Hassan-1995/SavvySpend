@@ -38,7 +38,7 @@ function BudgetedExpenseTable({ budgets, expenses, onPressingEachRow }) {
                 <Icon name={item.icon_name} backgroundColor={colors.primary} />
                 <View style={styles.textContainer}>
                   <AppText style={styles.title}>{item.name}</AppText>
-                  <AppText style={styles.subtitle}>Subtitle</AppText>
+                  <AppText style={styles.subtitle}>Source of expense.</AppText>
                 </View>
               </View>
               <TouchableOpacity onPress={() => onPressingEachRow(item)}>
