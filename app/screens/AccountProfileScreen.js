@@ -1,17 +1,30 @@
-import React, { useContext } from "react";
-import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import AppText from "../components/AppText"; // Assuming you have a custom AppText component
-import AppButton from "../components/AppButton"; // Assuming you have a custom AppButton component
-import colors from "../config/colors"; // Assuming you have a colors config
-import Icon from "../components/Icon"; // Assuming you have a custom Icon component
+import React, { useContext, useEffect, useState } from "react";
+import usersApi from "../api/users";
+
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import AppText from "../components/AppText";
+import colors from "../config/colors";
 import AuthContext from "../auth/context";
 import authStorage from "../auth/storage";
-import Screen from "../components/Screen";
-import { LinearGradient } from "expo-linear-gradient";
 
-function AccountProfileScreen({ onEditProfile, onLogout }) {
+function AccountProfileScreen(props) {
   const { user, setUser } = useContext(AuthContext);
+  const [userInfo, setUserInfo] = useState(null); // Set initial state to null
 
+  useEffect(() => {
+    loadUserInformation();
+  }, []);
+
+  const handleLogout = () => {
+    setUser(null);
+    authStorage.removeToken();
+  };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -19,166 +32,130 @@ function AccountProfileScreen({ onEditProfile, onLogout }) {
     const day = String(date.getDate()).padStart(2, "0");
     return `${day}-${month}-${year}`;
   };
-  function formatPhoneNumber(number) {
-    number = number.toString();
-    let length = number.length;
-    let formattedNumber =
-      number.slice(0, length - 7) + "-" + number.slice(length - 7);
-    return formattedNumber;
+  function formatNumberWithHyphen(number) {
+    const numStr = number.toString();
+    const firstPart = numStr.slice(0, -7);
+    const lastPart = numStr.slice(-7);
+
+    return `${firstPart}-${lastPart}`;
   }
 
-  const handleLogout = () => {
-    setUser(null);
-    authStorage.removeToken();
+  const loadUserInformation = async () => {
+    try {
+      const response = await usersApi.getSingleUserByUserID(user.user_id);
+      setUserInfo(response);
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    }
   };
+
   return (
-    <Screen>
-      <LinearGradient
-        colors={[colors.primary, colors.secondary, colors.tertiary]}
-        style={styles.banner}
-      >
-        <AppText style={styles.screenName}>Profile</AppText>
-
-        <View style={styles.profileContainer}>
-          <AppText style={styles.label}>User Name:</AppText>
-          <AppText style={styles.value}>
-            {user.firstName} {user.lastName}
-          </AppText>
-          <AppText style={styles.label}>Email:</AppText>
-          <AppText style={styles.value}>{user.email}</AppText>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
-          >
-            <View>
-              <AppText style={styles.label}>Mobile Number:</AppText>
-              <AppText style={styles.value}>
-                {formatPhoneNumber(user.phoneNumber)}
-              </AppText>
-            </View>
-            <View>
-              <AppText style={styles.label}>Date of Birth:</AppText>
-              <AppText style={styles.value}>
-                {formatDate(user.dateOfBirth)}
-              </AppText>
-            </View>
-          </View>
-        </View>
-      </LinearGradient>
-      <View style={styles.content}>
-        <ScrollView>
-          {/* <View style={styles.container}>
-            <View style={styles.profileContainer}>
-              <AppText style={styles.label}>First Name:</AppText>
-              <AppText style={styles.value}>{user.firstName}</AppText>
-
-              <AppText style={styles.label}>Last Name:</AppText>
-              <AppText style={styles.value}>{user.lastName}</AppText>
-
-              <AppText style={styles.label}>Email:</AppText>
-              <AppText style={styles.value}>{user.email}</AppText>
-
-              <AppText style={styles.label}>Phone Number:</AppText>
-              <AppText style={styles.value}>{user.phoneNumber}</AppText>
-
-              <AppText style={styles.label}>Date of Birth:</AppText>
-              <AppText style={styles.value}>
-                {formatDate(user.dateOfBirth)}
-              </AppText>
-
-              <AppText style={styles.label}>Account Created At:</AppText>
-              <AppText style={styles.value}>
-                {formatDate(user.createdAt)}
-              </AppText>
-            </View>
-
-            <View style={styles.buttonsContainer}>
-              <TouchableOpacity
-                style={styles.editButton}
-                // onPress={onEditProfile}
-              >
-                <Icon name="account-edit" size={24} color={colors.white} />
-                <AppText style={styles.editButtonText}>Edit Profile</AppText>
-              </TouchableOpacity>
-            </View>
-            <AppButton
-              title="Log Out"
-              onPress={handleLogout}
-              color={colors.secondary}
-            />
-          </View> */}
-        </ScrollView>
+    <ScrollView contentContainerStyle={styles.scrollView}>
+      <View style={styles.profileSection}>
+        {/* <Image
+          source={require("../assets/adaptive-icon.png")}
+          style={styles.profilePicture}
+        /> */}
+        <AppText style={styles.username}>Username</AppText>
+        <AppText style={styles.fullName}>
+          {userInfo
+            ? `${userInfo.first_name} ${userInfo.last_name}`
+            : "Loading..."}
+        </AppText>
       </View>
-    </Screen>
+
+      <View style={styles.infoSection}>
+        <AppText style={styles.infoTitle}>Email</AppText>
+        <AppText style={styles.infoValue}>
+          {userInfo ? userInfo.email : "Loading..."}
+        </AppText>
+      </View>
+
+      <View style={styles.infoSection}>
+        <AppText style={styles.infoTitle}>Phone Number</AppText>
+        <AppText style={styles.infoValue}>
+          {userInfo
+            ? formatNumberWithHyphen(userInfo.phone_number)
+            : "Loading..."}
+        </AppText>
+      </View>
+
+      <View style={styles.infoSection}>
+        <AppText style={styles.infoTitle}>Date of Birth</AppText>
+        <AppText style={styles.infoValue}>
+          {userInfo ? formatDate(userInfo.date_of_birth) : "Loading..."}
+        </AppText>
+      </View>
+
+      <TouchableOpacity style={styles.button}>
+        <AppText style={styles.buttonText}>Edit Profile</AppText>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button}>
+        <AppText style={styles.buttonText}>Change Password</AppText>
+      </TouchableOpacity>
+
+      {/* <TouchableOpacity style={styles.button}>
+        <AppText style={styles.buttonText}>Notification Settings</AppText>
+      </TouchableOpacity> */}
+
+      <TouchableOpacity style={styles.button} onPress={handleLogout}>
+        <AppText style={styles.buttonText}>Logout</AppText>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: colors.primary,
-  },
-  profileContainer: {
-    width: "100%",
-    marginTop: 20,
-    paddingHorizontal: 15,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: colors.tertiary,
-    marginBottom: 5,
-  },
-  value: {
-    fontSize: 16,
-    color: colors.white,
-    marginBottom: 15,
-  },
-  buttonsContainer: {
+  profileSection: {
     alignItems: "center",
-  },
-  editButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 5,
     marginBottom: 20,
   },
-  editButtonText: {
-    color: colors.white,
+  profilePicture: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  username: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.primary,
+  },
+  fullName: {
+    fontSize: 20,
+    color: colors.dark,
+    fontWeight: "bold",
+  },
+  infoSection: {
+    marginBottom: 20,
+  },
+  infoTitle: {
     fontSize: 16,
-    marginLeft: 10,
+    color: colors.secondary,
   },
-  banner: {
-    height: "50%",
-    backgroundColor: "blue",
-    alignItems: "center",
+  infoValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.primary,
   },
-  content: {
-    height: "75%",
-    width: "90%",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    // borderWidth: 1,
-    overflow: "hidden",
-    alignSelf: "center",
-    backgroundColor: "transparent",
-    // paddingHorizontal: 10,
-    position: "absolute",
+  button: {
+    backgroundColor: colors.light,
+    padding: 15,
+    borderRadius: 5,
+    marginBottom: 10,
+    // position: "absolute",
+    flex: 1,
     bottom: 0,
   },
-  screenName: {
-    fontSize: 18,
-    marginTop: 10,
-    color: colors.white,
+  buttonText: {
+    color: colors.primary,
     fontWeight: "bold",
   },
-  remainingAmount: {
-    fontSize: 36,
-    fontWeight: "bold",
-    color: colors.white,
-    marginTop: 25,
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 16,
   },
 });
 

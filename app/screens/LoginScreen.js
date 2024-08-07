@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   View,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import * as Yup from "yup";
 import usersApi from "../api/users";
@@ -62,44 +63,46 @@ function LoginScreen({ navigation }) {
 
   return (
     <Screen style={styles.container}>
-      <LogoContainer />
-      {loginID ? null : (
-        <Text style={styles.errorText}>
-          User Email or Password is incorrect
-        </Text>
-      )}
-      {loading && <ActivityIndicator size="large" color={colors.primary} />}
-      <AppForm
-        initialValues={{ user_email: "", user_password: "" }}
-        onSubmit={handleSubmit}
-        validationSchema={validationSchema}
-      >
-        <AppFormField
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon={"email"}
-          keyboardType="email-address"
-          name={"user_email"}
-          placeholder="Email"
-          textContentType="emailAddress"
-        />
-        <AppFormPassword
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon={"lock-outline"}
-          name={"user_password"}
-          placeholder="Password"
-          secureTextEntry={true}
-          textContentType="password"
-        />
-        <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center" }}
-          onPress={() => navigation.navigate("Forget Password")}
+      <ScrollView>
+        <LogoContainer />
+        {loginID ? null : (
+          <Text style={styles.errorText}>
+            User Email or Password is incorrect
+          </Text>
+        )}
+        {loading && <ActivityIndicator size="large" color={colors.primary} />}
+        <AppForm
+          initialValues={{ user_email: "", user_password: "" }}
+          onSubmit={handleSubmit}
+          validationSchema={validationSchema}
         >
-          <AppText style={styles.links}>Forget password?</AppText>
-        </TouchableOpacity>
-        <SubmitButton title={"Login"} />
-      </AppForm>
+          <AppFormField
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon={"email"}
+            keyboardType="email-address"
+            name={"user_email"}
+            placeholder="Email"
+            textContentType="emailAddress"
+          />
+          <AppFormPassword
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon={"lock-outline"}
+            name={"user_password"}
+            placeholder="Password"
+            secureTextEntry={true}
+            textContentType="password"
+          />
+          <TouchableOpacity
+            style={{ flexDirection: "row", alignItems: "center" }}
+            onPress={() => navigation.navigate("Forget Password")}
+          >
+            <AppText style={styles.links}>Forget password?</AppText>
+          </TouchableOpacity>
+          <SubmitButton title={"Login"} />
+        </AppForm>
+      </ScrollView>
     </Screen>
   );
 }

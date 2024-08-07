@@ -15,6 +15,7 @@ import SmallButtonWithIcon from "../components/SmallButtonWithIcon";
 import ChartContentScreen from "./ChartContentScreen";
 import IncomeContentScreen from "./IncomeContentScreen";
 import ExpenseContentScreen from "./ExpenseContentScreen";
+import AccountProfileScreen from "./AccountProfileScreen";
 
 function DashboardScreen(props) {
   const { user, setUser } = useContext(AuthContext);
@@ -24,11 +25,13 @@ function DashboardScreen(props) {
   const [expensesMonthly, setExpensesMonthly] = useState([]);
   const [expensesCurrent, setExpensesCurrent] = useState([]);
 
+  // console.log("User: ", user);
+
   const [graphs, setGraphs] = useState(false);
   const [incomes, setIncomes] = useState(false);
   const [expenses, setExpenses] = useState(false);
   const [budgets, setBudgets] = useState(false);
-  const [screen, setScreen] = useState("graph");
+  const [screen, setScreen] = useState("account");
 
   const [status, setStatus] = useState("");
 
@@ -175,12 +178,16 @@ function DashboardScreen(props) {
         colors={[colors.primary, colors.secondary, colors.tertiary]}
         style={styles.banner}
       >
-        <AppText style={styles.screenName}>Dashboard</AppText>
-        <AppText style={styles.remainingAmount}>
-          {[user.firstName, " ", user.lastName]}
-        </AppText>
-
-        {/* <View>
+        <View
+          style={{
+            alignItems: "center",
+            height: "70%",
+            justifyContent: "space-between",
+          }}
+        >
+          <AppText style={styles.screenName}>Dashboard</AppText>
+          <LogoContainer />
+          {/* <View>
           <View style={styles.infoSection}>
             <AppText style={styles.infoTitle}>Email</AppText>
             <AppText style={styles.infoValue}>user@example.com</AppText>
@@ -196,47 +203,50 @@ function DashboardScreen(props) {
             <AppText style={styles.infoValue}>January 1, 1990</AppText>
           </View>
         </View> */}
-        <View
-          style={{
-            justifyContent: "flex-start",
-            width: "100%",
-            marginLeft: 20,
-            marginTop: 20,
-          }}
-        >
-          <AppText
-            style={{ fontWeight: "bold", color: colors.white, fontSize: 20 }}
+          <View
+            style={{
+              justifyContent: "flex-start",
+              width: "100%",
+              marginLeft: 20,
+              // marginTop: 20,
+            }}
+          ></View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            Historical Data
-          </AppText>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <ScrollView horizontal>
-            <SmallButtonWithIcon
-              name={"chart-line"}
-              title={"Graphs"}
-              color={screen === "graph" ? "secondary" : "primary"}
-              onPress={() => handleContent("graph")}
-            />
-            <SmallButtonWithIcon
-              name={"arrow-down-bold-circle-outline"}
-              title={"Incomes"}
-              color={screen === "income" ? "secondary" : "primary"}
-              onPress={() => handleContent("income")}
-            />
-            <SmallButtonWithIcon
-              name={"arrow-up-bold-circle-outline"}
-              title={"Expenses"}
-              color={screen === "expense" ? "secondary" : "primary"}
-              onPress={() => handleContent("expense")}
-            />
-            {/* <SmallButtonWithIcon
+            <ScrollView horizontal>
+              <SmallButtonWithIcon
+                name={"account"}
+                title={"Profile"}
+                color={screen === "account" ? "secondary" : "primary"}
+                onPress={() => handleContent("account")}
+              />
+              <SmallButtonWithIcon
+                name={"chart-line"}
+                title={"Graphs"}
+                color={screen === "graph" ? "secondary" : "primary"}
+                onPress={() => handleContent("graph")}
+              />
+              <SmallButtonWithIcon
+                name={"arrow-down-bold-circle-outline"}
+                title={"Incomes"}
+                color={screen === "income" ? "secondary" : "primary"}
+                onPress={() => handleContent("income")}
+              />
+              <SmallButtonWithIcon
+                name={"arrow-up-bold-circle-outline"}
+                title={"Expenses"}
+                color={screen === "expense" ? "secondary" : "primary"}
+                onPress={() => handleContent("expense")}
+              />
+              {/* <SmallButtonWithIcon
               name={"clipboard-text-outline"}
               title={"Budgets"}
               color={screen === "budget" ? "secondary" : "primary"}
               onPress={() => handleContent("budget")}
-            /> */}
-          </ScrollView>
+              /> */}
+            </ScrollView>
+          </View>
         </View>
       </LinearGradient>
       <View style={styles.content}>
@@ -253,7 +263,9 @@ function DashboardScreen(props) {
         <ScrollView>
           {/* <AppText>{screen}</AppText> */}
 
-          {screen == "graph" ? (
+          {screen == "account" ? (
+            <AccountProfileScreen />
+          ) : screen == "graph" ? (
             <ChartContentScreen
               incomeData={incomeData}
               expenseData={expenseData}
@@ -295,7 +307,7 @@ const styles = StyleSheet.create({
   },
   screenName: {
     fontSize: 18,
-    marginTop: 10,
+    // marginTop: 10,
     color: colors.white,
     fontWeight: "bold",
   },
@@ -303,7 +315,7 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: "bold",
     color: colors.white,
-    marginTop: 25,
+    // marginTop: 25,
   },
   enteredAmount: {
     fontSize: 16,
@@ -311,7 +323,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   content: {
-    height: "70%",
+    height: "65%",
+    // flex: 1,
     width: "100%",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
@@ -334,6 +347,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: colors.primary,
+  },
+  filterText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.white,
   },
 });
 

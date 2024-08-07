@@ -204,33 +204,42 @@ function ExpenseScreen(props) {
         colors={[colors.primary, colors.secondary, colors.tertiary]}
         style={styles.banner}
       >
-        <AppText style={styles.screenName}>Expense</AppText>
-        <AppText style={styles.remainingAmount}>
-          Rs {totalExpenses.toLocaleString()} spent
-        </AppText>
-        <AppText style={styles.enteredAmount}>
-          out of Rs {totalBudgets.toLocaleString()} budgeted expense
-        </AppText>
-        <SmallButtonWithIcon
-          title={"Add New Expense"}
-          color="primary"
-          onPress={toggleAddModal}
-        />
-
-        <View style={styles.filterContainer}>
-          <AppText style={styles.filterText}>
-            For the month of:{" "}
-            <AppText
-              style={[
-                styles.filterText,
-                {
-                  color: colors.primary,
-                },
-              ]}
-            >
-              {currentMonthName} {new Date().getFullYear()}
-            </AppText>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "space-between",
+            height: "70%",
+            // backgroundColor: "pink",
+          }}
+        >
+          <AppText style={styles.screenName}>Expense</AppText>
+          <AppText style={styles.remainingAmount}>
+            Rs {totalExpenses.toLocaleString()} spent
           </AppText>
+          <AppText style={styles.enteredAmount}>
+            out of Rs {totalBudgets.toLocaleString()} budgeted expense
+          </AppText>
+          <SmallButtonWithIcon
+            title={"Add New Expense"}
+            color="primary"
+            onPress={toggleAddModal}
+          />
+
+          <View style={styles.filterContainer}>
+            <AppText style={styles.filterText}>
+              For the month of:{" "}
+              <AppText
+                style={[
+                  styles.filterText,
+                  {
+                    color: colors.primary,
+                  },
+                ]}
+              >
+                {currentMonthName} {new Date().getFullYear()}
+              </AppText>
+            </AppText>
+          </View>
         </View>
       </LinearGradient>
 
@@ -348,14 +357,14 @@ const styles = StyleSheet.create({
     color: colors.secondary,
   },
   filterContainer: {
-    padding: 10,
+    // padding: 10,
     borderRadius: 10,
     width: "100%",
   },
   filterText: {
     fontSize: 18,
     fontWeight: "bold",
-    marginRight: 10,
+    // marginRight: 10,
   },
   subHeader: {
     fontSize: 20,
@@ -376,7 +385,7 @@ const styles = StyleSheet.create({
   },
   screenName: {
     fontSize: 18,
-    marginTop: 10,
+    // marginTop: 10,
     color: colors.white,
     fontWeight: "bold",
   },
@@ -384,12 +393,12 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: "bold",
     color: colors.white,
-    marginTop: 25,
+    // marginTop: 25,
   },
   enteredAmount: {
     fontSize: 16,
     color: colors.white,
-    marginTop: 16,
+    // marginTop: 16,
   },
   content: {
     height: "65%",

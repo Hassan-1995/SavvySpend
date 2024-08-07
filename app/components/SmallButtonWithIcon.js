@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     // width: '100%',
     flexDirection: "row",
     marginVertical: 10,
-    margin: 5,
+    marginHorizontal: 5,
   },
   text: {
     color: colors.white,

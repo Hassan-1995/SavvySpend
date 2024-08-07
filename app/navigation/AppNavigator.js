@@ -16,7 +16,7 @@ const AppNavigator = () => (
       headerShown: false,
     }}
   >
-    <Tab.Screen
+    {/* <Tab.Screen
       name="Accout"
       component={AccountProfileScreen}
       options={{
@@ -25,7 +25,7 @@ const AppNavigator = () => (
           <MaterialCommunityIcons name="account" color={color} size={size} />
         ),
       }}
-    />
+    /> */}
     <Tab.Screen
       name="Dashboard"
       component={DashboardScreen}

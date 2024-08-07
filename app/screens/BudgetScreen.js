@@ -251,30 +251,38 @@ function BudgetScreen(props) {
         colors={[colors.primary, colors.secondary, colors.tertiary]}
         style={styles.banner}
       >
-        <AppText style={styles.screenName}>Budget</AppText>
-        {screen === "expense" ? (
-          <>
-            <AppText style={styles.remainingAmount}>
-              Rs {totalExpenseBudgets.toLocaleString()}{" "}
-              <AppText style={styles.enteredAmount}>allocated</AppText>
-            </AppText>
-            <AppText style={styles.enteredAmount}>
-              against Rs {totalIncomeBudgets.toLocaleString()} budgeted income.
-            </AppText>
-          </>
-        ) : (
-          <>
-            <AppText style={styles.remainingAmount}>
-              Rs {totalIncomeBudgets.toLocaleString()}{" "}
-              <AppText style={styles.enteredAmount}>budgeted</AppText>
-            </AppText>
-            <AppText style={styles.enteredAmount}>
-              out of which Rs {totalIncomes.toLocaleString()} earned.
-            </AppText>
-          </>
-        )}
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "space-between",
+            height: "80%",
+          }}
+        >
+          <AppText style={styles.screenName}>Budget</AppText>
+          {screen === "expense" ? (
+            <>
+              <AppText style={styles.remainingAmount}>
+                Rs {totalExpenseBudgets.toLocaleString()}{" "}
+                <AppText style={styles.enteredAmount}>allocated</AppText>
+              </AppText>
+              <AppText style={styles.enteredAmount}>
+                against Rs {totalIncomeBudgets.toLocaleString()} budgeted
+                income.
+              </AppText>
+            </>
+          ) : (
+            <>
+              <AppText style={styles.remainingAmount}>
+                Rs {totalIncomeBudgets.toLocaleString()}{" "}
+                <AppText style={styles.enteredAmount}>budgeted</AppText>
+              </AppText>
+              <AppText style={styles.enteredAmount}>
+                out of which Rs {totalIncomes.toLocaleString()} earned.
+              </AppText>
+            </>
+          )}
 
-        {/* <AppText style={styles.screenName}>Budget</AppText>
+          {/* <AppText style={styles.screenName}>Budget</AppText>
         <AppText style={styles.remainingAmount}>
           Rs {(totalExpenseBudgets - totalExpenses).toLocaleString()} left
         </AppText>
@@ -282,40 +290,43 @@ function BudgetScreen(props) {
           out of Rs {totalExpenseBudgets.toLocaleString()} budgeted
         </AppText> */}
 
-        <SmallButtonWithIcon
-          title={"Create New Budget"}
-          color="primary"
-          onPress={handleAddModal}
-        />
+          <SmallButtonWithIcon
+            title={"Create New Budget"}
+            color="primary"
+            onPress={handleAddModal}
+          />
 
-        <View style={styles.filterContainer}>
-          <AppText style={styles.filterText}>
-            For the month of:{" "}
-            <AppText
-              style={[
-                styles.filterText,
-                {
-                  color: colors.primary,
-                },
-              ]}
-            >
-              {currentMonthName} {new Date().getFullYear()}
+          <View style={styles.filterContainer}>
+            <AppText style={styles.filterText}>
+              For the month of:{" "}
+              <AppText
+                style={[
+                  styles.filterText,
+                  {
+                    color: colors.primary,
+                  },
+                ]}
+              >
+                {currentMonthName} {new Date().getFullYear()}
+              </AppText>
             </AppText>
-          </AppText>
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <SmallButtonWithIcon
-            name={"arrow-down-bold-circle-outline"}
-            title={"Budgeted Incomes"}
-            color={screen === "income" ? "secondary" : "primary"}
-            onPress={() => handleContent("income")}
-          />
-          <SmallButtonWithIcon
-            name={"arrow-up-bold-circle-outline"}
-            title={"Budgeted Expenses"}
-            color={screen === "expense" ? "secondary" : "primary"}
-            onPress={() => handleContent("expense")}
-          />
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <SmallButtonWithIcon
+              name={"arrow-down-bold-circle-outline"}
+              title={"Budgeted Incomes"}
+              color={screen === "income" ? "secondary" : "primary"}
+              onPress={() => handleContent("income")}
+            />
+            <SmallButtonWithIcon
+              name={"arrow-up-bold-circle-outline"}
+              title={"Budgeted Expenses"}
+              color={screen === "expense" ? "secondary" : "primary"}
+              onPress={() => handleContent("expense")}
+            />
+          </View>
         </View>
       </LinearGradient>
 
@@ -477,14 +488,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   filterContainer: {
-    padding: 10,
+    // padding: 10,
     borderRadius: 10,
     width: "100%",
   },
   filterText: {
     fontSize: 18,
     fontWeight: "bold",
-    marginRight: 10,
+    // marginRight: 10,
   },
   subHeader: {
     fontSize: 20,
@@ -505,7 +516,7 @@ const styles = StyleSheet.create({
   },
   screenName: {
     fontSize: 18,
-    marginTop: 0,
+    // marginTop: 0,
     color: colors.white,
     fontWeight: "bold",
   },
@@ -513,12 +524,12 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: "bold",
     color: colors.white,
-    marginTop: 20,
+    // marginTop: 20,
   },
   enteredAmount: {
     fontSize: 16,
     color: colors.white,
-    marginTop: 6,
+    // marginTop: 6,
   },
   content: {
     height: "60%",

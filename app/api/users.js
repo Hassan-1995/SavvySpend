@@ -6,9 +6,24 @@ const getAllContentFromUsers = () => client.get(endPoint);
 
 const getSingleUserByEmail = async (email) => {
   try {
-    const result = await client.get(endPoint + "/" + email);
+    const result = await client.get(endPoint + "/email/" + email);
     if (result.length === 0) {
       throw new Error(`User with email ${email} not found`);
+    }
+
+    const user = result.data;
+
+    return user;
+  } catch (error) {
+    console.error("Error getting data:", error);
+    throw error;
+  }
+};
+const getSingleUserByUserID = async (userID) => {
+  try {
+    const result = await client.get(endPoint + "/userID/" + userID);
+    if (result.length === 0) {
+      throw new Error(`User with userID ${userID} not found`);
     }
 
     const user = result.data;
@@ -56,7 +71,6 @@ const addNewUser = async (newData) => {
     throw error;
   }
 };
-
 const updateUser = async (user_id, updatedData) => {
   console.log("Updated Data: ", updatedData);
 
@@ -83,6 +97,7 @@ const updateUser = async (user_id, updatedData) => {
 export default {
   getAllContentFromUsers, //getListings,
   getSingleUserByEmail,
+  getSingleUserByUserID,
   authenticateUser,
   addNewUser,
   updateUser,
